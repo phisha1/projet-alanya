@@ -4,6 +4,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import LoginPage from "../app/(auth)/login/login"
 import ChatRoomPage from "../app/(protected)/chats/[chatId]/chat"
 import ChatsPage from "../app/(protected)/chats/chats"
+import CallRoomPage from "../app/(protected)/calls/[callId]/call"
+import CallsPage from "../app/(protected)/calls/calls"
 import ProtectedLayout from "../app/(protected)/layout"
 import DashboardPage from "../app/(protected)/dashboard/dashboard"
 import SignInPage from "../app/(auth)/sign-in/sign-in"
@@ -33,9 +35,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/chats" element={<ProtectedLayout><ChatsPage /></ProtectedLayout>} />
         <Route path="/chats/new" element={<ProtectedPlaceholder title="Nouveau chat" />} />
         <Route path="/chats/:chatId" element={<ProtectedLayout><ChatRoomPage /></ProtectedLayout>} />
-        <Route path="/calls" element={<ProtectedPlaceholder title="Appels" />} />
-        <Route path="/calls/new" element={<ProtectedPlaceholder title="Nouvel appel" />} />
-        <Route path="/calls/:callId" element={<ProtectedPlaceholder title="Detail appel" />} />
+        <Route path="/calls" element={<ProtectedLayout><CallsPage /></ProtectedLayout>} />
+        <Route path="/calls/new" element={<ProtectedLayout><CallRoomPage /></ProtectedLayout>} />
+        <Route path="/calls/:callId" element={<ProtectedLayout><CallRoomPage /></ProtectedLayout>} />
         <Route path="/settings" element={<ProtectedPlaceholder title="Parametres" />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
