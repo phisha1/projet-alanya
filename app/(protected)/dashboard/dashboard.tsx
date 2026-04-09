@@ -1,23 +1,11 @@
-"use client"
-
-import Link from "next/link"
+import { Link } from "react-router-dom"
+import { MOCK_CONVERSATIONS } from "../../../src/mocks/chat-data"
 import "./dashboard-page.css"
 
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TYPES
 // ══════════════════════════════════════════════════════════════════════════════
-
-interface Chat {
-  id:          string
-  name:        string
-  initials:    string
-  lastMessage: string
-  time:        string
-  unread:      number
-  online:      boolean
-  isGroup?:    boolean
-}
 
 interface Call {
   id:        string
@@ -58,14 +46,6 @@ const MOCK_USER = {
   statusMsg:   "Ingénieur en formation 🚀",
   memberSince: "Avril 2026",
 }
-
-const MOCK_CHATS: Chat[] = [
-  { id: "1", name: "Kevin Manga",      initials: "KM", lastMessage: "T'as envoyé le TP de BD ?",        time: "10:43", unread: 2, online: true  },
-  { id: "2", name: "Groupe Alanya II", initials: "GA", lastMessage: "Réunion demain à 14h sur Teams",    time: "09:12", unread: 5, online: false, isGroup: true },
-  { id: "3", name: "Dr. NANA BINKEU", initials: "NB", lastMessage: "Votre cahier des charges est reçu", time: "Hier",  unread: 0, online: false },
-  { id: "4", name: "Laure Ateba",     initials: "LA", lastMessage: "Ok merci, je regarde ça ce soir",   time: "Hier",  unread: 0, online: true  },
-  { id: "5", name: "Paul Essomba",    initials: "PE", lastMessage: "La démo est prête pour vendredi",   time: "Lun.",  unread: 0, online: false },
-]
 
 const MOCK_CALLS: Call[] = [
   { id: "1", name: "Kevin Manga",  initials: "KM", type: "video", direction: "out",    duration: "14 min", time: "Hier 20:30"  },
@@ -158,7 +138,8 @@ function CallDirectionIcon({ direction }: { direction: Call["direction"] }) {
 // ══════════════════════════════════════════════════════════════════════════════
 
 export default function DashboardPage() {
-  const totalUnread   = MOCK_CHATS.reduce((acc, chat) => acc + chat.unread, 0)
+  const recentChats = MOCK_CONVERSATIONS.slice(0, 5)
+  const totalUnread   = recentChats.reduce((acc, chat) => acc + chat.unread, 0)
   const onlineCount   = MOCK_CONTACTS.filter(c => c.online).length
   const firstName     = MOCK_USER.name.split(" ")[0]
 
@@ -183,7 +164,7 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Conversations"
-          value={String(MOCK_CHATS.length)}
+          value={String(recentChats.length)}
           sub="actives ce mois"
         />
         <StatCard
@@ -205,13 +186,13 @@ export default function DashboardPage() {
         <div className="card">
           <div className="card-head">
             <span className="card-title">Conversations récentes</span>
-            <Link href="/chats" className="card-link">Tout voir →</Link>
+            <Link to="/chats" className="card-link">Tout voir →</Link>
           </div>
 
-          {MOCK_CHATS.map((chat, i) => {
+          {recentChats.map((chat, i) => {
             const color = avatarColor(i)
             return (
-              <Link href={`/chats/${chat.id}`} className="chat-item" key={chat.id}>
+              <Link to={`/chats/${chat.id}`} className="chat-item" key={chat.id}>
                 <div
                   className="avatar"
                   // background et color restent inline : calculés dynamiquement
@@ -284,7 +265,7 @@ export default function DashboardPage() {
         <div className="card">
           <div className="card-head">
             <span className="card-title">Appels récents</span>
-            <Link href="/calls" className="card-link">Tout voir →</Link>
+            <Link to="/calls" className="card-link">Tout voir →</Link>
           </div>
 
           {MOCK_CALLS.map((call, i) => {
@@ -350,7 +331,7 @@ export default function DashboardPage() {
                   <div className="contact-status">{contact.status}</div>
                 </div>
 
-                <Link href={`/chats?contact=${contact.id}`} className="contact-write">
+                <Link to={`/chats?contact=${contact.id}`} className="contact-write">
                   Écrire
                 </Link>
               </div>

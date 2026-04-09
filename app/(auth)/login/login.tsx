@@ -1,7 +1,5 @@
-"use client"
-
 import { useState } from "react"
-import Link from "next/link"
+import { Link } from "react-router-dom"
 import "./login-page.css"
 
 export default function LoginPage() {
@@ -101,7 +99,7 @@ export default function LoginPage() {
             </div>
 
             <div className="forgot-row">
-              <a href="#" className="forgot-link">Mot de passe oublié ?</a>
+              <Link to="/sign-in" className="forgot-link">Mot de passe oublié ?</Link>
             </div>
 
             <button
@@ -134,7 +132,7 @@ export default function LoginPage() {
 
             <p className="signup-txt">
               Pas encore de compte ?{" "}
-              <Link href="/sign-in" className="signup-link">Créer un compte</Link>
+              <Link to="/sign-in" className="signup-link">Créer un compte</Link>
             </p>
 
           </form>

@@ -1,0 +1,468 @@
+import { useState, useRef, useEffect, useCallback } from "react"
+import { Navigate, useNavigate, useParams } from "react-router-dom"
+import {
+  CHAT_COLORS,
+  MOCK_CHAT_INFOS,
+  MOCK_CHAT_MESSAGES,
+  type ChatInfoMock,
+  type ChatMessageMock,
+  type ChatMessageStatus,
+  type ChatMessageType,
+} from "../../../../src/mocks/chat-data"
+import "./chat-room-page.css"
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+type MessageStatus = ChatMessageStatus
+type MessageType = ChatMessageType
+type Message = ChatMessageMock
+type ChatInfo = ChatInfoMock
+
+// ─── Mock data ─────────────────────────────────────────────────────────────── 
+// TODO : GET /api/chats/:id  +  GET /api/chats/:id/messages?page=1&limit=50
+// TODO : WebSocket ws://.../chats/:id  (STOMP)
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function formatTime(d: Date) {
+  return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+}
+
+function formatDateSeparator(d: Date) {
+  const today = new Date(); const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1)
+  if (d.toDateString() === today.toDateString()) return "Aujourd'hui"
+  if (d.toDateString() === yesterday.toDateString()) return "Hier"
+  return d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+}
+
+function StatusIcon({ status }: { status: MessageStatus }) {
+  if (status === "sending")   return <span style={{ color: "#374151", fontSize: 10 }}>◷</span>
+  if (status === "sent")      return <span style={{ color: "#4B5563", fontSize: 11 }}>✓</span>
+  if (status === "delivered") return <span style={{ color: "#4B5563", fontSize: 11 }}>✓✓</span>
+  return <span style={{ color: "#60a5fa", fontSize: 11 }}>✓✓</span>
+}
+
+// ─── Composant message ────────────────────────────────────────────────────────
+function MessageBubble({
+  msg, isMe, replyMsg, onReply, chatColor,
+}: {
+  msg: Message
+  isMe: boolean
+  replyMsg?: Message
+  onReply: (m: Message) => void
+  chatColor: { bg: string; text: string }
+}) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <div
+      style={{ display: "flex", flexDirection: "column", alignItems: isMe ? "flex-end" : "flex-start", marginBottom: 2 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 6, flexDirection: isMe ? "row-reverse" : "row" }}>
+        {/* Bouton répondre */}
+        {hovered && (
+          <button
+            onClick={() => onReply(msg)}
+            style={{ background: "#1E2736", border: "1px solid #2a3444", borderRadius: 6, padding: "4px 8px", color: "#9CA3AF", fontSize: 10, cursor: "pointer", flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}
+          >
+            ↩ Répondre
+          </button>
+        )}
+
+        <div style={{ maxWidth: "72%", display: "flex", flexDirection: "column", gap: 2 }}>
+          {/* Citation */}
+          {replyMsg && (
+            <div style={{
+              background: isMe ? "#E8B84B20" : "#1E2736",
+              borderLeft: `3px solid ${isMe ? "#E8B84B" : chatColor.text}`,
+              borderRadius: "0 6px 6px 0",
+              padding: "6px 10px",
+              fontSize: 11, color: "#6B7280",
+              marginBottom: 2, maxWidth: "100%",
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+            }}>
+              {replyMsg.content}
+            </div>
+          )}
+
+          {/* Bulle */}
+          <div style={{
+            background: isMe ? "#E8B84B" : "#1E2736",
+            color: isMe ? "#080C14" : "#E2E8F0",
+            padding: msg.type === "file" ? "10px 14px" : "10px 14px",
+            borderRadius: isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+            fontSize: 13, lineHeight: 1.55,
+            wordBreak: "break-word",
+          }}>
+            {msg.type === "file" && (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 200 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: isMe ? "#E8B84B40" : "#2a3444", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: isMe ? "#080C14" : "#9CA3AF" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{msg.fileName}</div>
+                  <div style={{ fontSize: 10, opacity: .7 }}>{msg.fileSize}</div>
+                </div>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+              </div>
+            )}
+
+            {msg.type === "image" && (
+              <div style={{ width: 200, height: 140, background: isMe ? "#E8B84B30" : "#2a3444", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4 }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ opacity: .4 }}>
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+            )}
+
+            {(msg.type === "text" || msg.type === "image") && (
+              <span>{msg.content}</span>
+            )}
+          </div>
+
+          {/* Méta */}
+          <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: isMe ? "flex-end" : "flex-start", padding: "0 2px" }}>
+            <span style={{ fontSize: 10, color: "#374151" }}>{formatTime(msg.timestamp)}</span>
+            {isMe && <StatusIcon status={msg.status} />}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Page principale ──────────────────────────────────────────────────────────
+export default function ChatRoomPage() {
+  const params   = useParams()
+  const navigate = useNavigate()
+  const chatId   = params.chatId as string
+
+  const chat = MOCK_CHAT_INFOS[chatId]
+
+  const [messages, setMessages] = useState<Message[]>(MOCK_CHAT_MESSAGES)
+  const [input, setInput]       = useState("")
+  const [replyTo, setReplyTo]   = useState<Message | null>(null)
+  const [isTyping, setIsTyping] = useState(false)   // typing de l'interlocuteur
+  const [sending, setSending]   = useState(false)
+  const [showAttach, setShowAttach] = useState(false)
+
+  const bottomRef  = useRef<HTMLDivElement>(null)
+  const inputRef   = useRef<HTMLTextAreaElement>(null)
+  const fileRef    = useRef<HTMLInputElement>(null)
+  const typingTimer = useRef<ReturnType<typeof setTimeout>>()
+
+  // Scroll en bas à chaque nouveau message
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  // Simuler "en train d'écrire" de l'interlocuteur après envoi
+  const simulateTyping = useCallback(() => {
+    setIsTyping(true)
+    const delay = 1500 + Math.random() * 1000
+    setTimeout(() => {
+      setIsTyping(false)
+      const replies = [
+        "Super, je regarde ça !",
+        "OK merci 👍",
+        "Reçu, je te réponds dès que possible.",
+        "Nickel, on en parle à la prochaine réunion.",
+      ]
+      const reply: Message = {
+        id: `m${Date.now()}`,
+        senderId: chatId,
+        content: replies[Math.floor(Math.random() * replies.length)],
+        type: "text",
+        status: "delivered",
+        timestamp: new Date(),
+      }
+      setMessages(prev => [...prev, reply])
+    }, delay)
+  }, [chatId])
+
+  // Envoi d'un message
+  const sendMessage = useCallback(async () => {
+    const text = input.trim()
+    if (!text || sending) return
+
+    const optimistic: Message = {
+      id: `tmp-${Date.now()}`,
+      senderId: "me",
+      content: text,
+      type: "text",
+      status: "sending",
+      timestamp: new Date(),
+      replyTo: replyTo?.id,
+    }
+
+    setMessages(prev => [...prev, optimistic])
+    setInput("")
+    setReplyTo(null)
+    setSending(false)
+
+    // TODO : POST /api/chats/:id/messages via WebSocket STOMP
+    // stompClient.publish({ destination: `/app/chats/${chatId}`, body: JSON.stringify({ content: text, type: "text", replyTo: replyTo?.id }) })
+
+    // Simule la confirmation du serveur après 400ms
+    setTimeout(() => {
+      setMessages(prev => prev.map(m =>
+        m.id === optimistic.id ? { ...m, status: "sent" } : m
+      ))
+      setTimeout(() => {
+        setMessages(prev => prev.map(m =>
+          m.id === optimistic.id ? { ...m, status: "delivered" } : m
+        ))
+        simulateTyping()
+      }, 600)
+    }, 400)
+  }, [input, sending, replyTo, simulateTyping])
+
+  // Touche Entrée = envoi (Shift+Entrée = saut de ligne)
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
+  }
+
+  // Auto-resize du textarea
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+    e.target.style.height = "auto"
+    e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px"
+
+    // TODO : envoyer l'événement "typing" via WebSocket
+    // stompClient.publish({ destination: `/app/chats/${chatId}/typing`, body: JSON.stringify({ userId: "me" }) })
+    clearTimeout(typingTimer.current)
+    typingTimer.current = setTimeout(() => {
+      // stompClient.publish({ destination: `/app/chats/${chatId}/typing/stop`, body: ... })
+    }, 1500)
+  }
+
+  // Upload fichier
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 50 * 1024 * 1024) {
+      alert("Fichier trop volumineux. Maximum 50 Mo.")
+      return
+    }
+    const isImage = file.type.startsWith("image/")
+    const msg: Message = {
+      id: `tmp-${Date.now()}`,
+      senderId: "me",
+      content: file.name,
+      type: isImage ? "image" : "file",
+      status: "sending",
+      timestamp: new Date(),
+      fileName: file.name,
+      fileSize: `${(file.size / 1024 / 1024).toFixed(1)} Mo`,
+    }
+    setMessages(prev => [...prev, msg])
+    setShowAttach(false)
+    // TODO : POST /api/chats/:id/files (multipart/form-data)
+    setTimeout(() => {
+      setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, status: "delivered" } : m))
+    }, 1200)
+    e.target.value = ""
+  }
+
+  // Grouper les messages par date
+  const grouped = messages.reduce<{ date: string; msgs: Message[] }[]>((acc, msg) => {
+    const dateStr = formatDateSeparator(msg.timestamp)
+    const last = acc[acc.length - 1]
+    if (!last || last.date !== dateStr) acc.push({ date: dateStr, msgs: [msg] })
+    else last.msgs.push(msg)
+    return acc
+  }, [])
+
+  if (!chat) {
+    return <Navigate to="/chats" replace />
+  }
+
+  const color = CHAT_COLORS[chat.colorIdx % CHAT_COLORS.length]
+
+  return (
+    <div className="room-root">
+        {/* ── Top bar ── */}
+        <div className="room-top">
+          <button className="back-btn" onClick={() => navigate("/chats")} aria-label="Retour">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+          </button>
+
+          <div className="room-av" style={{ background: color.bg, color: color.text }}>
+            {chat.initials}
+            {chat.online && !chat.isGroup && <div className="room-av-dot" />}
+          </div>
+
+          <div className="room-info">
+            <div className="room-name">{chat.name}</div>
+            <div className="room-sub" style={{ color: isTyping ? "#E8B84B" : chat.online ? "#4ade80" : "#4B5563" }}>
+              {isTyping ? "en train d'écrire…"
+                : chat.isGroup ? `${chat.members?.length ?? 0} membres`
+                : chat.online ? "En ligne" : "Hors ligne"}
+            </div>
+          </div>
+
+          <div className="room-actions">
+            {/* Appel audio */}
+            <button className="action-btn" aria-label="Appel audio" title="Appel audio"
+              onClick={() => navigate(`/calls/new?contact=${chatId}&type=audio`)}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+              </svg>
+            </button>
+            {/* Appel vidéo */}
+            <button className="action-btn" aria-label="Appel vidéo" title="Appel vidéo"
+              onClick={() => navigate(`/calls/new?contact=${chatId}&type=video`)}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+              </svg>
+            </button>
+            {/* Info */}
+            <button className="action-btn" aria-label="Infos conversation" title="Infos">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* ── Messages ── */}
+        <div className="room-body">
+          {grouped.map(({ date, msgs }) => (
+            <div key={date}>
+              <div className="date-sep">
+                <div className="date-sep-line" />
+                <div className="date-sep-txt">{date}</div>
+                <div className="date-sep-line" />
+              </div>
+
+              {msgs.map(msg => {
+                const isMe = msg.senderId === "me"
+                const reply = msg.replyTo ? messages.find(m => m.id === msg.replyTo) : undefined
+                return (
+                  <MessageBubble
+                    key={msg.id}
+                    msg={msg}
+                    isMe={isMe}
+                    replyMsg={reply}
+                    onReply={setReplyTo}
+                    chatColor={color}
+                  />
+                )
+              })}
+            </div>
+          ))}
+
+          {/* Indicateur de frappe */}
+          {isTyping && (
+            <div className="typing-indicator">
+              <div className="typing-av" style={{ background: color.bg, color: color.text }}>{chat.initials}</div>
+              <div className="typing-bubble">
+                <div className="td" /><div className="td" /><div className="td" />
+              </div>
+            </div>
+          )}
+
+          <div ref={bottomRef} />
+        </div>
+
+        {/* ── Barre de réponse ── */}
+        {replyTo && (
+          <div className="reply-bar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8B84B" strokeWidth="2" strokeLinecap="round">
+              <polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/>
+            </svg>
+            <div className="reply-bar-content">
+              <div className="reply-bar-label">Répondre à</div>
+              <div className="reply-bar-txt">{replyTo.content}</div>
+            </div>
+            <button className="reply-cancel" onClick={() => setReplyTo(null)} aria-label="Annuler la réponse">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {/* ── Zone de saisie ── */}
+        <div className="room-input-wrap">
+          <input ref={fileRef} type="file" style={{ display: "none" }} onChange={handleFileSelect}
+            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.mp3,.mp4,.wav" />
+
+          <div className="room-input-row" style={{ position: "relative" }}>
+            {/* Popup attachement */}
+            {showAttach && (
+              <div className="attach-menu">
+                <button className="attach-opt" onClick={() => { fileRef.current!.accept = "image/*"; fileRef.current!.click(); }}>
+                  <div className="attach-icon" style={{ background: "#a78bfa20", color: "#a78bfa" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+                  Photo / image
+                </button>
+                <button className="attach-opt" onClick={() => { fileRef.current!.accept = ".pdf,.doc,.docx,.xls,.xlsx,.txt"; fileRef.current!.click(); }}>
+                  <div className="attach-icon" style={{ background: "#60a5fa20", color: "#60a5fa" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                  </div>
+                  Document
+                </button>
+                <button className="attach-opt" onClick={() => { fileRef.current!.accept = ".mp3,.wav,.ogg,.m4a"; fileRef.current!.click(); }}>
+                  <div className="attach-icon" style={{ background: "#34d39920", color: "#34d399" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                    </svg>
+                  </div>
+                  Audio
+                </button>
+              </div>
+            )}
+
+            <button
+              className="attach-btn"
+              onClick={() => setShowAttach(v => !v)}
+              aria-label="Joindre un fichier"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+              </svg>
+            </button>
+
+            <textarea
+              ref={inputRef}
+              className="room-textarea"
+              placeholder="Message…"
+              value={input}
+              onChange={handleInput}
+              onKeyDown={handleKeyDown}
+              rows={1}
+              aria-label="Saisir un message"
+            />
+
+            <button
+              className="send-btn"
+              onClick={sendMessage}
+              disabled={!input.trim()}
+              aria-label="Envoyer"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#080C14" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+          <div className="input-hint">Entrée pour envoyer · Shift+Entrée pour sauter une ligne · Max 50 Mo par fichier</div>
+        </div>
+      </div>
+  )
+}

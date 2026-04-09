@@ -1,8 +1,5 @@
-"use client"
-
 import { useState } from "react"
-import Link from "next/link"
-import { useLocation, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import "./layout.css"
 
 
@@ -136,7 +133,7 @@ function Sidebar({ onClose }: SidebarProps) {
           return (
             <Link
               key={href}
-              href={href}
+              to={href}
               className={`sb-link ${isActive ? "active" : ""}`}
               onClick={onClose}
             >
@@ -152,7 +149,7 @@ function Sidebar({ onClose }: SidebarProps) {
         <div className="sb-nav-section">Compte</div>
 
         <Link
-          href="/settings"
+          to="/settings"
           className={`sb-link ${pathname === "/settings" ? "active" : ""}`}
           onClick={onClose}
         >

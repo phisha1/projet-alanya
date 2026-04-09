@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { Link } from "react-router-dom"
 import "./welcome-page.css"
 
 export default function WelcomePage() {
@@ -12,9 +12,9 @@ export default function WelcomePage() {
             <span className="display-font" style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Alanya</span>
           </div>
           <div className="nav-links">
-            <a href="#">Fonctionnalités</a>
-            <a href="#">À propos</a>
-            <Link href="/login" className="btn-nav">Se connecter</Link>
+            <a href="#features">Fonctionnalités</a>
+            <a href="#about">À propos</a>
+            <Link to="/login" className="btn-nav">Se connecter</Link>
           </div>
         </nav>
 
@@ -38,17 +38,17 @@ export default function WelcomePage() {
             </p>
 
             <div className="cta-row">
-              <Link href="/sign-in" className="btn-primary">
+              <Link to="/sign-in" className="btn-primary">
                 Commencer gratuitement
                 <span style={{ fontSize: 18 }}>→</span>
               </Link>
-              <a href="#" className="btn-ghost">
+              <Link to="/sign-in" className="btn-ghost">
                 Voir une démo
                 <span style={{ fontSize: 14 }}>↗</span>
-              </a>
+              </Link>
             </div>
 
-            <div className="features">
+            <div id="features" className="features">
               <div className="feat">
                 <div className="feat-label">Latence</div>
                 <div className="feat-val"><strong>&lt; 500ms</strong> livraison</div>
@@ -65,7 +65,7 @@ export default function WelcomePage() {
           </div>
 
           {/* Chat preview */}
-          <div className="hero-right">
+          <div id="about" className="hero-right">
             <div className="phone">
               <div className="phone-bar">
                 <div className="avatar-sm">KM</div>
