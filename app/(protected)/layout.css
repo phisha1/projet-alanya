@@ -1,0 +1,320 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   layout.css
+   Layout protégé : sidebar fixe desktop + topbar mobile + overlay.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500&display=swap');
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --gold:          #E8B84B;
+  --bg-deep:       #080C14;
+  --bg-card:       #10151F;
+  --bg-border:     #1E2736;
+
+  --text-white:    #ffffff;
+  --text-muted:    #9CA3AF;
+  --text-dim:      #4B5563;
+  --text-faint:    #374151;
+  --color-online:  #4ade80;
+  --color-error:   #ef4444;
+
+  --font-display:  'Bricolage Grotesque', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+
+  --radius:        9px;
+  --radius-sm:     6px;
+  --sidebar-width: 240px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   LAYOUT GLOBAL
+   Sidebar fixe à gauche + zone de contenu qui prend le reste.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.layout-root {
+  display:    flex;
+  min-height: 100vh;
+  background: var(--bg-deep);
+}
+
+/* Zone de contenu — flex: 1 pour occuper tout l'espace restant */
+.layout-main {
+  flex:           1;
+  min-width:      0; /* évite le débordement avec flex */
+  display:        flex;
+  flex-direction: column;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SIDEBAR
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.sidebar {
+  width:          var(--sidebar-width);
+  height:         100vh;
+  background:     var(--bg-deep);
+  border-right:   1px solid var(--bg-border);
+  display:        flex;
+  flex-direction: column;
+  flex-shrink:    0;
+  position:       sticky;
+  top:            0;
+  font-family:    var(--font-body);
+}
+
+/* --- Logo --- */
+
+.sb-logo {
+  display:       flex;
+  align-items:   center;
+  gap:           9px;
+  padding:       24px 20px 20px;
+  border-bottom: 1px solid var(--bg-border);
+}
+
+.sb-hex {
+  width:       26px;
+  height:      26px;
+  background:  var(--gold);
+  clip-path:   polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  flex-shrink: 0;
+}
+
+.sb-logo-txt {
+  font-family:    var(--font-display);
+  font-size:      18px;
+  font-weight:    800;
+  color:          var(--text-white);
+  letter-spacing: -0.5px;
+}
+
+/* Bouton de fermeture — visible uniquement sur mobile */
+.sb-close {
+  margin-left: auto;
+  background:  none;
+  border:      none;
+  color:       var(--text-dim);
+  cursor:      pointer;
+  padding:     4px;
+  display:     none;
+}
+
+@media (max-width: 860px) {
+  .sb-close { display: flex; }
+}
+
+/* --- Navigation --- */
+
+.sb-nav {
+  flex:           1;
+  padding:        16px 12px;
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+}
+
+/* Titre de section ("Navigation", "Compte") */
+.sb-nav-section {
+  font-size:      9px;
+  color:          var(--text-faint);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding:        0 8px;
+  margin:         12px 0 6px;
+}
+.sb-nav-section:first-child { margin-top: 0; }
+
+/* Lien de navigation */
+.sb-link {
+  display:         flex;
+  align-items:     center;
+  gap:             11px;
+  padding:         10px 12px;
+  border-radius:   var(--radius);
+  color:           var(--text-dim);
+  text-decoration: none;
+  font-size:       13px;
+  font-weight:     500;
+  transition:      background 0.15s, color 0.15s;
+}
+.sb-link:hover        { background: var(--bg-card); color: var(--text-muted); }
+.sb-link.active       { background: #E8B84B15; color: var(--gold); }
+.sb-link.active svg   { stroke: var(--gold); }
+
+/* Badge de messages non lus */
+.sb-badge {
+  margin-left:   auto;
+  background:    var(--gold);
+  color:         var(--bg-deep);
+  font-size:     10px;
+  font-weight:   700;
+  padding:       1px 6px;
+  border-radius: 20px;
+  min-width:     18px;
+  text-align:    center;
+}
+
+/* --- Pied de sidebar : profil + déconnexion --- */
+
+.sb-footer {
+  border-top: 1px solid var(--bg-border);
+  padding:    14px 12px;
+}
+
+.sb-profile {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  padding:     10px;
+  border-radius: var(--radius);
+  cursor:      pointer;
+  transition:  background 0.15s;
+}
+.sb-profile:hover { background: var(--bg-card); }
+
+.sb-avatar {
+  width:           34px;
+  height:          34px;
+  border-radius:   50%;
+  background:      var(--gold);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       12px;
+  font-weight:     700;
+  color:           var(--bg-deep);
+  flex-shrink:     0;
+  position:        relative;
+}
+
+/* Point vert "en ligne" sur l'avatar */
+.sb-avatar-dot {
+  position:      absolute;
+  bottom:        0;
+  right:         0;
+  width:         9px;
+  height:        9px;
+  border-radius: 50%;
+  background:    var(--color-online);
+  border:        2px solid var(--bg-deep);
+}
+
+.sb-user-info {
+  flex:      1;
+  min-width: 0; /* permet le text-overflow sur le nom */
+}
+
+.sb-user-name {
+  font-size:     13px;
+  font-weight:   500;
+  color:         #E2E8F0;
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.sb-user-status {
+  font-size: 11px;
+  color:     var(--color-online);
+}
+
+/* Bouton déconnexion */
+.sb-logout {
+  background:    none;
+  border:        none;
+  cursor:        pointer;
+  color:         var(--text-faint);
+  padding:       6px;
+  border-radius: var(--radius-sm);
+  display:       flex;
+  align-items:   center;
+  transition:    color 0.15s, background 0.15s;
+}
+.sb-logout:hover { color: var(--color-error); background: #ef444415; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   OVERLAY + SIDEBAR MOBILE
+   Sur mobile, la sidebar slide depuis la gauche par-dessus le contenu.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* Fond semi-transparent derrière la sidebar mobile */
+.mobile-overlay {
+  display:    none;
+  position:   fixed;
+  inset:      0;
+  background: #00000080;
+  z-index:    40;
+}
+.mobile-overlay.open { display: block; }
+
+/* Wrapper de la sidebar mobile — glisse depuis la gauche */
+.sidebar-mobile-wrap {
+  position:   fixed;
+  top:        0;
+  left:       0;
+  height:     100vh;
+  z-index:    50;
+  transform:  translateX(-100%);
+  transition: transform 0.25s ease;
+}
+.sidebar-mobile-wrap.open { transform: translateX(0); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TOPBAR MOBILE
+   Visible uniquement sur mobile à la place de la sidebar.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.topbar {
+  display:       none; /* caché sur desktop */
+  align-items:   center;
+  gap:           12px;
+  padding:       14px 20px;
+  border-bottom: 1px solid var(--bg-border);
+  background:    var(--bg-deep);
+  position:      sticky;
+  top:           0;
+  z-index:       30;
+}
+
+.topbar-menu {
+  background: none;
+  border:     none;
+  cursor:     pointer;
+  color:      var(--text-dim);
+  padding:    4px;
+  display:    flex;
+}
+
+.topbar-title {
+  font-family:    var(--font-display);
+  font-size:      17px;
+  font-weight:    800;
+  color:          var(--text-white);
+  letter-spacing: -0.4px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 860px) {
+  /* On cache la sidebar statique et on affiche la topbar */
+  .layout-sidebar-static { display: none; }
+  .topbar                { display: flex; }
+}
+
+@media (min-width: 861px) {
+  /* Sur desktop, plus besoin de la sidebar mobile */
+  .sidebar-mobile-wrap   { display: none; }
+  .mobile-overlay        { display: none !important; }
+}
