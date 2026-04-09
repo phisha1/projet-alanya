@@ -1,15 +1,12 @@
 # Alanya
 
-Alanya est une application de messagerie en cours de développement.
+Front-end React/TypeScript d'une app de messagerie (en evolution).
 
-Pour l'instant, ce projet contient surtout le front-end avec les pages:
-- Welcome
-- Login
-- Sign-in (avec UI OTP)
+## Etat actuel
 
-## Statut
-
-Projet en cours de dev.
+- Public: `/welcome`, `/login`, `/sign-in`
+- Protege (UI): `/dashboard`, `/chats`, `/chats/:chatId`, `/calls`, `/calls/new`, `/calls/:callId`
+- Placeholders: `/chats/new`, `/settings`
 
 ## Stack
 
@@ -18,18 +15,20 @@ Projet en cours de dev.
 - Vite
 - React Router DOM
 
-## Lancer le projet en local
+## Lancement local
 
 ```bash
 npm install
 npm run dev
 ```
 
-Puis ouvre:
-- http://localhost:5173/welcome
-- http://localhost:5173/login
-- http://localhost:5173/sign-in
+## Build / Preview
+
+```bash
+npm run build
+npm run preview
+```
 
 ## Note
 
-Certaines fonctionnalites (authentification, envoi/verification OTP) dependent encore d'un backend/API.
+Le backend (auth, OTP, donnees temps reel) n'est pas encore branche.
