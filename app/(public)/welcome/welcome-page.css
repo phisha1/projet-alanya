@@ -222,3 +222,65 @@
   background: #E8B84B; display: flex; align-items: center;
   justify-content: center; flex-shrink: 0;
 }
+
+/* --- responsive --- */
+@media (max-width: 1024px) {
+  .nav { padding: 18px 24px; }
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .hero-left { padding: 40px 24px 24px; }
+  .hero-right { padding: 24px 24px 40px; }
+  .features { margin-top: 40px; }
+}
+
+@media (max-width: 768px) {
+  .alanya-root { overflow-x: hidden; overflow-y: auto; }
+  .nav-links { gap: 14px; }
+  .nav-links a { font-size: 13px; }
+  .btn-nav { padding: 8px 14px; font-size: 13px; }
+  .headline {
+    font-size: clamp(34px, 11vw, 48px);
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .headline .overflow-word { left: 0; }
+  .subline {
+    font-size: 15px;
+    max-width: 100%;
+    margin-bottom: 28px;
+  }
+  .cta-row { gap: 10px; }
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 18px;
+  }
+  .btn-ghost { width: 100%; justify-content: center; padding-bottom: 8px; }
+  .features {
+    flex-direction: column;
+    border-radius: 10px;
+  }
+  .feat { border-right: none; border-bottom: 1px solid #ffffff0a; }
+  .feat:last-child { border-bottom: none; }
+  .phone {
+    width: min(100%, 340px);
+    border-radius: 22px;
+  }
+}
+
+@media (max-width: 520px) {
+  .nav { padding: 14px 14px; }
+  .nav-links a:not(.btn-nav) { display: none; }
+  .nav-logo .display-font { font-size: 18px !important; }
+  .hex { width: 28px; height: 28px; }
+  .hero-left { padding: 28px 14px 14px; }
+  .hero-right { padding: 12px 14px 28px; }
+  .badge { margin-bottom: 20px; }
+  .badge span { font-size: 11px; }
+  .chat-body { padding: 14px 12px; }
+  .bubble { font-size: 12px; max-width: 88%; }
+  .phone-bar { padding: 12px 14px; }
+  .phone-input { padding: 10px 12px; }
+}
