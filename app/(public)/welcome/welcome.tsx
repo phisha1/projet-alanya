@@ -1,0 +1,110 @@
+import Link from "next/link"
+import "./welcome-page.css"
+
+export default function WelcomePage() {
+  return (
+    <>
+      <div className="alanya-root">
+        {/* Navbar */}
+        <nav className="nav">
+          <div className="nav-logo">
+            <div className="hex" />
+            <span className="display-font" style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Alanya</span>
+          </div>
+          <div className="nav-links">
+            <a href="#">Fonctionnalités</a>
+            <a href="#">À propos</a>
+            <Link href="/login" className="btn-nav">Se connecter</Link>
+          </div>
+        </nav>
+
+        {/* Hero */}
+        <div className="hero">
+          <div className="hero-left">
+            <div className="badge">
+              <div className="badge-dot" />
+              <span>2 847 utilisateurs en ligne maintenant</span>
+            </div>
+
+            <h1 className="headline">
+              <span>Parle.</span>
+              <span>Partage.</span>
+              <span className="overflow-word"><em>Connecte.</em></span>
+            </h1>
+
+            <p className="subline">
+              La messagerie pensée pour les ingénieurs de demain.
+              Sécurisée, rapide, et taillée pour les esprits brillants de l'ENSPY.
+            </p>
+
+            <div className="cta-row">
+              <Link href="/sign-in" className="btn-primary">
+                Commencer gratuitement
+                <span style={{ fontSize: 18 }}>→</span>
+              </Link>
+              <a href="#" className="btn-ghost">
+                Voir une démo
+                <span style={{ fontSize: 14 }}>↗</span>
+              </a>
+            </div>
+
+            <div className="features">
+              <div className="feat">
+                <div className="feat-label">Latence</div>
+                <div className="feat-val"><strong>&lt; 500ms</strong> livraison</div>
+              </div>
+              <div className="feat">
+                <div className="feat-label">Fichiers</div>
+                <div className="feat-val">Jusqu'à <strong>50 Mo</strong></div>
+              </div>
+              <div className="feat">
+                <div className="feat-label">Appels</div>
+                <div className="feat-val">Audio <strong>&amp;</strong> Vidéo</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Chat preview */}
+          <div className="hero-right">
+            <div className="phone">
+              <div className="phone-bar">
+                <div className="avatar-sm">KM</div>
+                <div>
+                  <div className="phone-name">Kevin Manga</div>
+                  <div className="phone-status">en ligne</div>
+                </div>
+              </div>
+              <div className="chat-body">
+                <div>
+                  <div className="bubble them">T'as envoyé le TP de BD ?</div>
+                  <div className="meta">10:42</div>
+                </div>
+                <div>
+                  <div className="bubble me">Oui, je viens de l'uploader 📎</div>
+                  <div className="meta right">10:43 ✓✓</div>
+                </div>
+                <div>
+                  <div className="bubble them">Merci frère, tu gères vraiment</div>
+                  <div className="meta">10:43</div>
+                </div>
+                <div className="typing">
+                  <div className="typing-dot" />
+                  <div className="typing-dot" />
+                  <div className="typing-dot" />
+                </div>
+              </div>
+              <div className="phone-input">
+                <div className="phone-input-field">Message…</div>
+                <div className="send-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#080C14">
+                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#080C14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}

@@ -1,0 +1,560 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   sign-in-page.css
+   Page d'inscription en 3 étapes : infos → mot de passe → vérification OTP
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Sans:wght@300;400;500&display=swap');
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Toutes les valeurs de la charte en un seul endroit.
+   Modifier ici → tout le fichier suit automatiquement.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Couleurs principales */
+  --gold:          #E8B84B;   /* accent doré — boutons, focus, labels actifs   */
+  --bg-deep:       #080C14;   /* fond de page — le plus sombre                 */
+  --bg-card:       #10151F;   /* fond des inputs et icônes                     */
+  --bg-border:     #1E2736;   /* bordures subtiles                              */
+
+  /* Texte — du plus visible au plus discret */
+  --text-white:    #ffffff;
+  --text-muted:    #9CA3AF;
+  --text-dim:      #4B5563;
+  --text-faint:    #374151;
+
+  /* États des champs */
+  --color-ok:      #22c55e;
+  --color-error:   #ef4444;
+
+  /* Typographie */
+  --font-display:  'Bricolage Grotesque', sans-serif;  /* titres, logo         */
+  --font-body:     'DM Sans', sans-serif;              /* tout le reste        */
+
+  /* Formes */
+  --radius:        10px;
+  --radius-sm:     6px;
+  --radius-full:   99px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   RESET MINIMAL
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin:     0;
+  padding:    0;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   LAYOUT GLOBAL
+   Deux colonnes : panneau décoratif gauche (380px fixe) + formulaire à droite.
+   Sur mobile (< 860px) : on cache le panneau gauche pour gagner de la place.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.si-root {
+  font-family: var(--font-body);
+  background:  var(--bg-deep);
+  min-height:  100vh;
+  color:       var(--text-white);
+  display:     grid;
+  grid-template-columns: 380px 1fr;
+}
+
+@media (max-width: 860px) {
+  .si-root  { grid-template-columns: 1fr; }
+  .si-left  { display: none; }
+  .si-right { padding: 40px 24px; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   PANNEAU GAUCHE — décoration + stepper + promesses sécurité
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.si-left {
+  padding:         48px 40px;
+  border-right:    1px solid #ffffff08;
+  display:         flex;
+  flex-direction:  column;
+  justify-content: space-between;
+  position:        relative;
+  overflow:        hidden;
+}
+
+/* Grille de points en fond — donne une texture subtile sans surcharger */
+.si-left::before {
+  content:          '';
+  position:         absolute;
+  inset:            0;
+  background-image: radial-gradient(circle, #ffffff09 1px, transparent 1px);
+  background-size:  26px 26px;
+  pointer-events:   none;
+}
+
+/* Hexagone décoratif en bas à droite — rappelle la forme du logo */
+.si-left::after {
+  content:        '';
+  position:       absolute;
+  width:          340px;
+  height:         340px;
+  background:     #E8B84B06;
+  clip-path:      polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  bottom:         -80px;
+  right:          -100px;
+  pointer-events: none;
+}
+
+/* --- Logo --- */
+
+.logo {
+  display:     flex;
+  align-items: center;
+  gap:         9px;
+  position:    relative; /* passe au-dessus du pseudo-élément ::before */
+  z-index:     1;
+}
+
+/* Petit hexagone doré — même forme que le décor de fond, mais en vrai */
+.hex {
+  width:      28px;
+  height:     28px;
+  background: var(--gold);
+  clip-path:  polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.logo-txt {
+  font-family:    var(--font-display);
+  font-size:      19px;
+  font-weight:    800;
+  letter-spacing: -0.5px;
+}
+
+/* --- Stepper (indicateur d'étapes) --- */
+
+.stepper {
+  display:        flex;
+  flex-direction: column;
+  position:       relative;
+  z-index:        1;
+}
+
+.step-item {
+  display:     flex;
+  align-items: flex-start;
+  gap:         16px;
+}
+
+/* La "piste" verticale qui contient le cercle + le trait de connexion */
+.step-track {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  flex-shrink:    0;
+}
+
+.step-circle {
+  width:           32px;
+  height:          32px;
+  border-radius:   50%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       12px;
+  font-weight:     700;
+  flex-shrink:     0;
+  transition:      all 0.3s;
+}
+
+/* Trois états visuels possibles pour un cercle d'étape */
+.step-circle.done   { background: var(--gold);    color: var(--bg-deep);   }
+.step-circle.active { background: #E8B84B20; border: 2px solid var(--gold); color: var(--gold); }
+.step-circle.todo   { background: var(--bg-card); border: 1px solid var(--bg-border); color: var(--text-faint); }
+
+/* Trait vertical qui relie deux étapes */
+.step-line {
+  width:      1px;
+  height:     40px;
+  margin:     4px 0;
+  background: var(--bg-border);
+  transition: background 0.3s;
+}
+.step-line.done { background: #E8B84B40; }
+
+.step-info              { padding: 4px 0 44px; }
+.step-info:last-child   { padding-bottom: 0; }
+
+.step-label {
+  font-size:   13px;
+  font-weight: 500;
+  color:       var(--text-muted);
+  transition:  color 0.3s;
+}
+.step-label.active { color: var(--gold);     }
+.step-label.done   { color: var(--text-dim); }
+
+.step-desc {
+  font-size:   11px;
+  color:       var(--text-faint);
+  margin-top:  3px;
+  line-height: 1.5;
+}
+
+/* --- Promesses de sécurité --- */
+
+.sec-promises {
+  position: relative;
+  z-index:  1;
+}
+
+.sec-title {
+  font-size:      10px;
+  color:          var(--text-faint);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom:  12px;
+}
+
+.sec-item {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           10px;
+  margin-bottom: 10px;
+}
+
+.sec-icon {
+  width:           22px;
+  height:          22px;
+  border-radius:   var(--radius-sm);
+  background:      var(--bg-card);
+  border:          1px solid var(--bg-border);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  margin-top:      1px;
+  font-size:       11px;
+}
+
+.sec-txt {
+  font-size:   12px;
+  color:       var(--text-dim);
+  line-height: 1.5;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   PANNEAU DROIT — formulaire centré
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.si-right {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         48px 80px;
+}
+
+/* Largeur max du formulaire pour rester lisible sur grands écrans */
+.form-wrap {
+  width:     100%;
+  max-width: 420px;
+}
+
+/* --- En-tête d'étape (numéro / titre / sous-titre) --- */
+
+.step-head    { margin-bottom: 32px; }
+
+.step-pre {
+  font-size:      10px;
+  color:          var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight:    500;
+  margin-bottom:  8px;
+}
+
+.step-title {
+  font-family:    var(--font-display);
+  font-size:      28px;
+  font-weight:    800;
+  letter-spacing: -1px;
+  color:          var(--text-white);
+  margin-bottom:  6px;
+}
+
+.step-sub        { font-size: 13px; color: var(--text-dim); line-height: 1.65; }
+.step-sub strong { color: var(--gold); font-weight: 500; }
+
+/* --- Champs avec label flottant ---
+  Technique :
+  - Le label est positionné au centre (comme un placeholder).
+  - Dès que le champ est focus ou rempli, le label remonte en haut et rétrécit.
+  - Le placeholder vaut " " (espace) pour déclencher :not(:placeholder-shown)
+    dès la première saisie, sans avoir besoin de JS.
+*/
+
+.field {
+  position:      relative;
+  margin-bottom: 16px;
+}
+
+.field input {
+  width:         100%;
+  background:    var(--bg-card);
+  border:        1px solid var(--bg-border);
+  border-radius: var(--radius);
+  padding:       22px 16px 9px; /* padding-top élevé = espace réservé pour le label flottant */
+  font-size:     14px;
+  color:         var(--text-white);
+  font-family:   var(--font-body);
+  outline:       none;
+  transition:    border-color 0.2s;
+}
+
+.field input:focus  { border-color: #E8B84B50; }
+.field input.err    { border-color: #ef444460 !important; }
+.field input.ok     { border-color: #22c55e40; }
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label {
+  top:            8px;
+  font-size:      10px;
+  color:          var(--gold);
+  letter-spacing: 0.3px;
+}
+
+.field label {
+  position:       absolute;
+  top:            50%;
+  left:           16px;
+  transform:      translateY(-50%);
+  font-size:      14px;
+  color:          var(--text-faint);
+  pointer-events: none;
+  transition:     all 0.18s ease;
+}
+
+/* Icône / bouton à droite dans un champ (Afficher / Masquer) */
+.field-icon {
+  position:    absolute;
+  right:       14px;
+  top:         50%;
+  transform:   translateY(-50%);
+  display:     flex;
+  align-items: center;
+}
+
+.field-icon--gap { gap: 6px; }
+
+.tog {
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  color:       var(--text-dim);
+  font-size:   11px;
+  font-family: var(--font-body);
+  padding:     4px;
+  transition:  color 0.2s;
+}
+.tog:hover { color: var(--gold); }
+
+.match-icon         { font-size: 14px; }
+
+/* Champ avec icône à droite : on évite que le texte passe sous l'icône */
+.input-with-toggle  { padding-right: 60px !important; }
+
+
+/* --- Indicateur de force du mot de passe --- */
+
+.strength-wrap { margin: -6px 0 16px; }
+
+.strength-bar-track {
+  height:        3px;
+  background:    var(--bg-border);
+  border-radius: var(--radius-full);
+  overflow:      hidden;
+  margin-bottom: 6px;
+}
+
+/* La largeur et la couleur sont injectées en inline style depuis le JS (valeurs dynamiques) */
+.strength-bar-fill {
+  height:        100%;
+  border-radius: var(--radius-full);
+  transition:    width 0.35s ease, background-color 0.35s ease;
+}
+
+.strength-meta {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     flex-start;
+}
+
+.strength-label { font-size: 11px; font-weight: 500; } /* couleur injectée dynamiquement en inline */
+.strength-tips  { font-size: 10px; color: var(--text-dim); line-height: 1.6; text-align: right; }
+
+
+/* --- Bouton principal --- */
+
+.btn-submit {
+  width:           100%;
+  background:      var(--gold);
+  color:           var(--bg-deep);
+  border:          none;
+  border-radius:   var(--radius);
+  padding:         15px;
+  font-size:       15px;
+  font-weight:     700;
+  font-family:     var(--font-body);
+  cursor:          pointer;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             8px;
+  margin-top:      8px;
+  transition:      opacity 0.15s, transform 0.15s;
+}
+
+.btn-submit:hover:not(:disabled)  { opacity: 0.88; transform: translateY(-1px); }
+.btn-submit:active:not(:disabled) { transform: translateY(0); }
+.btn-submit:disabled              { opacity: 0.45; cursor: not-allowed; }
+
+/* Variante "retour" — même base que btn-submit, fond sombre */
+.btn-back {
+  background: var(--bg-card);
+  color:      var(--text-dim);
+  border:     1px solid var(--bg-border);
+  flex:       0 0 auto;
+  width:      auto;
+  padding:    15px 20px;
+}
+
+/* Rangée bouton retour + bouton soumettre côte à côte */
+.btn-row {
+  display: flex;
+  gap:     10px;
+}
+
+
+/* --- Spinner de chargement --- */
+
+.spinner {
+  width:            16px;
+  height:           16px;
+  border:           2px solid #080C1440;
+  border-top-color: #080C14;
+  border-radius:    50%;
+  animation:        spin 0.65s linear infinite;
+}
+
+/* Variante dorée pour l'étape OTP (fond sombre → le spinner doit rester visible) */
+.spinner--gold {
+  border-color:     #E8B84B30;
+  border-top-color: var(--gold);
+}
+
+.spinner-center { display: flex; justify-content: center; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* --- Bannière d'erreur --- */
+
+.error-banner {
+  background:    #ef444415;
+  border:        1px solid #ef444430;
+  border-radius: var(--radius-sm);
+  padding:       10px 14px;
+  font-size:     12px;
+  color:         #fca5a5;
+  margin-bottom: 16px;
+  line-height:   1.5;
+  display:       flex;
+  gap:           8px;
+  align-items:   flex-start;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   ÉTAPE 3 — Saisie du code OTP
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.otp-wrap { margin-bottom: 28px; }
+
+/* Les 6 cases côte à côte */
+.otp-inputs {
+  display: flex;
+  gap:     10px;
+}
+
+/*
+  Chaque case — parties STATIQUES seulement.
+  Le background et la bordure changent selon si la case est remplie :
+  ces deux propriétés sont donc injectées en inline style depuis le composant.
+*/
+.otp-digit {
+  width:          48px;
+  height:         56px;
+  border-radius:  var(--radius);
+  text-align:     center;
+  font-size:      22px;
+  font-weight:    700;
+  color:          var(--gold);
+  font-family:    var(--font-display);
+  outline:        none;
+  caret-color:    transparent; /* pas de curseur clignotant dans une case à un seul chiffre */
+  transition:     border-color 0.15s, background 0.15s;
+}
+
+/* Lien "Renvoyer le code" */
+.resend-row {
+  margin-top: 20px;
+  text-align: center;
+  font-size:  12px;
+  color:      var(--text-dim);
+}
+
+.resend-btn {
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  color:       var(--gold);
+  font-size:   12px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  padding:     0;
+  transition:  opacity 0.2s;
+}
+.resend-btn:disabled { opacity: 0.4; cursor: not-allowed; color: var(--text-dim); }
+.resend-btn--gold    { color: var(--gold); } /* couleur forcée dans certains contextes */
+
+.countdown-accent    { color: var(--gold); }
+
+/* Avertissement quand il reste peu de tentatives */
+.attempts-warn {
+  margin-top: 12px;
+  text-align: center;
+  font-size:  11px;
+  color:      #6B7280;
+}
+.attempts-warn span { color: var(--color-error); font-weight: 600; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   LIEN "Déjà un compte ?"
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.login-link {
+  margin-top: 32px;
+  text-align: center;
+  font-size:  13px;
+  color:      var(--text-dim);
+}
+.login-link a       { color: var(--gold); text-decoration: none; font-weight: 500; }
+.login-link a:hover { text-decoration: underline; }
