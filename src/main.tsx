@@ -23,24 +23,38 @@ function ProtectedPlaceholder({ title }: { title: string }) {
   )
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/welcome" replace />} />
-        <Route path="/welcome" element={<WelcomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/dashboard" element={<ProtectedLayout><DashboardPage /></ProtectedLayout>} />
-        <Route path="/chats" element={<ProtectedLayout><ChatsPage /></ProtectedLayout>} />
-        <Route path="/chats/new" element={<ProtectedPlaceholder title="Nouveau chat" />} />
-        <Route path="/chats/:chatId" element={<ProtectedLayout><ChatRoomPage /></ProtectedLayout>} />
-        <Route path="/calls" element={<ProtectedLayout><CallsPage /></ProtectedLayout>} />
-        <Route path="/calls/new" element={<ProtectedLayout><CallRoomPage /></ProtectedLayout>} />
-        <Route path="/calls/:callId" element={<ProtectedLayout><CallRoomPage /></ProtectedLayout>} />
-        <Route path="/settings" element={<ProtectedPlaceholder title="Parametres" />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>,
-)
+async function enableMocking() {
+  if (!import.meta.env.DEV) {
+    return
+  }
+
+  const { worker } = await import('./mocks/browser')
+
+  // `worker.start()` returns a Promise that resolves
+  // once the Service Worker is up and running.
+  return worker.start()
+}
+
+enableMocking().then(() => {
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/welcome" replace />} />
+          <Route path="/welcome" element={<WelcomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/dashboard" element={<ProtectedLayout><DashboardPage /></ProtectedLayout>} />
+          <Route path="/chats" element={<ProtectedLayout><ChatsPage /></ProtectedLayout>} />
+          <Route path="/chats/new" element={<ProtectedPlaceholder title="Nouveau chat" />} />
+          <Route path="/chats/:chatId" element={<ProtectedLayout><ChatRoomPage /></ProtectedLayout>} />
+          <Route path="/calls" element={<ProtectedLayout><CallsPage /></ProtectedLayout>} />
+          <Route path="/calls/new" element={<ProtectedLayout><CallRoomPage /></ProtectedLayout>} />
+          <Route path="/calls/:callId" element={<ProtectedLayout><CallRoomPage /></ProtectedLayout>} />
+          <Route path="/settings" element={<ProtectedPlaceholder title="Parametres" />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </React.StrictMode>,
+  )
+})

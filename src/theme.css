@@ -1,0 +1,110 @@
+/* --- Variables de thèmes Alanya --- */
+
+:root {
+  /* Mode Sombre (Défaut) */
+  --bg-root: #080C14;
+  --bg-panel: #10151F;
+  --bg-panel-alt: #161C28;
+  --bg-hover: #1E2736;
+  --bg-active: #E8B84B15;
+  
+  --text-main: #FFFFFF;
+  --text-body: #E2E8F0;
+  --text-muted: #9CA3AF;
+  --text-dim: #6B7280;
+  
+  --border-main: #ffffff0a;
+  --border-subtle: #ffffff05;
+  --border-focus: #E8B84B40;
+  
+  --accent: #E8B84B;
+  --accent-contrast: #080C14;
+  
+  --shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] {
+  /* Mode Clair */
+  --bg-root: #F8FAFC;
+  --bg-panel: #FFFFFF;
+  --bg-panel-alt: #F1F5F9;
+  --bg-hover: #E2E8F0;
+  --bg-active: #E8B84B20;
+  
+  --text-main: #0F172A;
+  --text-body: #334155;
+  --text-muted: #64748B;
+  --text-dim: #94A3B8;
+  
+  --border-main: #E2E8F0;
+  --border-subtle: #F1F5F9;
+  --border-focus: #E8B84B60;
+  
+  --accent: #E8B84B;
+  --accent-contrast: #FFFFFF;
+  
+  --shadow: 0 4px 20px -1px rgba(15, 23, 42, 0.08);
+}
+
+/* --- Overrides Globaux pour le Thème --- */
+
+body {
+  background-color: var(--bg-root);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cartes et Panneaux */
+.card, .stat-card, .profile-card, .login-card, .form-card, .si-right, .phone, .chat-body {
+  background-color: var(--bg-panel) !important;
+  border-color: var(--border-main) !important;
+  color: var(--text-main) !important;
+}
+
+/* Textes */
+h1, h2, h3, h4, .dash-title, .phone-name, .sb-logo-txt, .topbar-title, .profile-name {
+  color: var(--text-main) !important;
+}
+
+p, span, div, .subline, .dash-sub, .chat-preview, .call-meta, .contact-status, .sb-user-name {
+  color: var(--text-body);
+}
+
+.text-muted, .greeting, .stat-card__label, .sb-nav-section, .profile-email {
+  color: var(--text-muted) !important;
+}
+
+/* Bordures */
+border, [style*="border"], .card-head, .sb-logo, .sb-footer, .chat-item, .call-item, .contact-item, .phone-bar, .phone-input {
+  border-color: var(--border-main) !important;
+}
+
+/* Éléments Interactifs */
+.sb-link:hover, .chat-item:hover, .call-item:hover, .contact-item:hover, .profile-edit:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+.sb-link.active, .btn-primary, .btn-nav {
+  background-color: var(--accent) !important;
+  color: var(--accent-contrast) !important;
+}
+
+/* Inputs */
+input, textarea, .phone-input-field {
+  background-color: var(--bg-panel-alt) !important;
+  border-color: var(--border-main) !important;
+  color: var(--text-main) !important;
+}
+
+/* Spécifique au téléphone de la page welcome */
+.phone {
+  background: var(--bg-panel) !important;
+}
+.phone-bar {
+  background: var(--bg-panel-alt) !important;
+}
+.bubble.them {
+  background: var(--bg-panel-alt) !important;
+  color: var(--text-body) !important;
+}
+
