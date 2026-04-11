@@ -1,34 +1,46 @@
-# Alanya
+# Alanya 💬
 
-Front-end React/TypeScript d'une app de messagerie (en evolution).
+Messagerie + appels. Front React/TypeScript en évolution.
 
-## Etat actuel
+## ✨ Fonctionnalités
 
-- Public: `/welcome`, `/login`, `/sign-in`
-- Protege (UI): `/dashboard`, `/chats`, `/chats/:chatId`, `/calls`, `/calls/new`, `/calls/:callId`
-- Placeholders: `/chats/new`, `/settings`
+| Section | Routes |
+|---------|--------|
+| Auth | `/welcome`, `/login`, `/sign-in` (avec OTP) |
+| Dashboard | `/dashboard` - Stats, appels récents, profil |
+| Chats | `/chats`, `/chats/:id`, `/chats/:id/info` |
+| Appels | `/calls`, `/calls/new`, `/calls/:id` (audio/vidéo) |
+| Settings | `/settings` - Modification profil |
 
-## Stack
+## 🛠️ Stack
 
-- React
-- TypeScript
-- Vite
-- React Router DOM
+React 18 · TypeScript · Vite · React Router DOM
 
-## Lancement local
+## 🚀 Lancer
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Build / Preview
+## 📦 Build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Note
+## 🎯 Derniers ajouts
 
-Le backend (auth, OTP, donnees temps reel) n'est pas encore branche.
+- Navigation intelligente après appel (retour à la page d'origine)
+- Page info dynamique (groupe vs conversation privée)
+- Dashboard interactif (profil, rappels)
+- Refactoring des types TypeScript
+
+## 🚧 Todo
+
+Backend (WebSocket, auth réelle), création de chats, recherche, notifications.
+
+---
+
+*Projet ENSPY 2025/2026*
