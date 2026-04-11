@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom"
 import { MOCK_CONVERSATIONS } from "../../../src/mocks/chat-data"
+import { loadSessionUser, toInitials } from "../../../src/data/session-user"
 import "./dashboard-page.css"
 
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TYPES
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 interface Call {
   id:        string
@@ -26,60 +27,60 @@ interface Contact {
 }
 
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CONSTANTES
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 // Palette de couleurs cyclique pour les avatars (un par contact)
-const AVATAR_COLORS = ["#E8B84B", "#60a5fa", "#a78bfa", "#34d399", "#f87171"]
+const AVATAR_COLORS = ["var(--accent)", "var(--info)", "#a78bfa", "var(--success)", "var(--danger)"]
 
-// TODO : remplacer par les appels API réels
+// TODO : remplacer par les appels API reels
 // GET /api/users/me
 // GET /api/chats?limit=5
 // GET /api/calls?limit=5
 // GET /api/contacts
 
 const MOCK_USER = {
-  name:        "Arsène Nguemo",
+  name:        "Arsene Nguemo",
   initials:    "AN",
   email:       "a.nguemo@enspy.cm",
-  statusMsg:   "Ingénieur en formation 🚀",
+  statusMsg:   "Ingenieur en formation ðŸš€",
   memberSince: "Avril 2026",
 }
 
 const MOCK_CALLS: Call[] = [
   { id: "1", name: "Kevin Manga",  initials: "KM", type: "video", direction: "out",    duration: "14 min", time: "Hier 20:30"  },
-  { id: "2", name: "Laure Ateba", initials: "LA", type: "audio", direction: "missed",  duration: "—",      time: "Hier 18:05"  },
+  { id: "2", name: "Laure Ateba", initials: "LA", type: "audio", direction: "missed",  duration: "-",      time: "Hier 18:05"  },
   { id: "3", name: "Paul Essomba",initials: "PE", type: "audio", direction: "in",      duration: "3 min",  time: "Lun. 11:20" },
   { id: "4", name: "Kevin Manga", initials: "KM", type: "audio", direction: "out",     duration: "8 min",  time: "Dim. 16:44" },
 ]
 
 const MOCK_CONTACTS: Contact[] = [
   { id: "1", name: "Kevin Manga",  initials: "KM", status: "En train de coder",    online: true  },
-  { id: "2", name: "Laure Ateba", initials: "LA", status: "Révisions en cours 📚", online: true  },
+  { id: "2", name: "Laure Ateba", initials: "LA", status: "Revisions en cours ðŸ“š", online: true  },
   { id: "3", name: "Paul Essomba",initials: "PE", status: "Disponible",            online: false },
-  { id: "4", name: "Nina Fouda",  initials: "NF", status: "En réunion",           online: false },
+  { id: "4", name: "Nina Fouda",  initials: "NF", status: "En reunion",           online: false },
 ]
 
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // HELPERS
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-/** Retourne la couleur d'avatar correspondant à la position dans la liste. */
+/** Retourne la couleur d'avatar correspondant a la position dans la liste. */
 function avatarColor(index: number): string {
   return AVATAR_COLORS[index % AVATAR_COLORS.length]
 }
 
-/** Détermine la salutation selon l'heure de la journée. */
+/** Determine la salutation selon l'heure de la journee. */
 function getGreeting(): string {
   const hour = new Date().getHours()
   if (hour < 12) return "Bonjour"
-  if (hour < 18) return "Bon après-midi"
+  if (hour < 18) return "Bon apres-midi"
   return "Bonsoir"
 }
 
-/** Formate la date du jour en français (ex : "jeudi 10 avril"). */
+/** Formate la date du jour en francais (ex : "jeudi 10 avril"). */
 function getTodayLabel(): string {
   return new Date().toLocaleDateString("fr-FR", {
     weekday: "long",
@@ -89,13 +90,13 @@ function getTodayLabel(): string {
 }
 
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SOUS-COMPOSANTS
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
  * Carte de statistique rapide.
- * La variante `accent` (messages non lus) s'affiche en doré.
+ * La variante `accent` (messages non lus) s'affiche en dore.
  */
 function StatCard({ label, value, sub, accent = false }: {
   label:   string
@@ -113,8 +114,8 @@ function StatCard({ label, value, sub, accent = false }: {
 }
 
 /**
- * Icône de direction d'appel (entrant / sortant / manqué).
- * La couleur et la rotation sont gérées par des classes CSS (.call-icon--*).
+ * Icone de direction d'appel (entrant / sortant / manque).
+ * La couleur et la rotation sont gerees par des classes CSS (.call-icon--*).
  */
 function CallDirectionIcon({ direction }: { direction: Call["direction"] }) {
   return (
@@ -133,20 +134,28 @@ function CallDirectionIcon({ direction }: { direction: Call["direction"] }) {
 }
 
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PAGE PRINCIPALE
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export default function DashboardPage() {
+  const sessionUser = loadSessionUser()
+  const currentUser = {
+    ...MOCK_USER,
+    name: sessionUser?.name ?? MOCK_USER.name,
+    email: sessionUser?.email ?? "",
+    initials: toInitials(sessionUser?.name ?? MOCK_USER.name),
+    statusMsg: sessionUser?.statusMsg ?? MOCK_USER.statusMsg,
+  }
   const recentChats = MOCK_CONVERSATIONS.slice(0, 5)
   const totalUnread   = recentChats.reduce((acc, chat) => acc + chat.unread, 0)
   const onlineCount   = MOCK_CONTACTS.filter(c => c.online).length
-  const firstName     = MOCK_USER.name.split(" ")[0]
+  const firstName     = currentUser.name.split(" ")[0]
 
   return (
     <main className="dash">
 
-      {/* ── En-tête : salutation ───────────────────────────────────────── */}
+      {/* â”€â”€ En-tete : salutation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="dash-header">
         <div className="greeting">{getTodayLabel()}</div>
         <h1 className="dash-title">
@@ -154,7 +163,7 @@ export default function DashboardPage() {
         </h1>
       </div>
 
-      {/* ── Statistiques rapides ───────────────────────────────────────── */}
+      {/* â”€â”€ Statistiques rapides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="stats-grid">
         <StatCard
           label="Messages non lus"
@@ -168,25 +177,25 @@ export default function DashboardPage() {
           sub="actives ce mois"
         />
         <StatCard
-          label="Appels récents"
+          label="Appels recents"
           value={String(MOCK_CALLS.length)}
           sub="les 7 derniers jours"
         />
         <StatCard
           label="Contacts"
           value={String(MOCK_CONTACTS.length)}
-          sub="dans votre réseau"
+          sub="dans votre reseau"
         />
       </div>
 
-      {/* ── Conversations récentes + Profil ───────────────────────────── */}
+      {/* â”€â”€ Conversations recentes + Profil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="dash-grid">
 
         {/* Conversations */}
         <div className="card">
           <div className="card-head">
-            <span className="card-title">Conversations récentes</span>
-            <Link to="/chats" className="card-link">Tout voir →</Link>
+            <span className="card-title">Conversations recentes</span>
+            <Link to="/chats" className="card-link">Tout voir</Link>
           </div>
 
           {recentChats.map((chat, i) => {
@@ -195,7 +204,7 @@ export default function DashboardPage() {
               <Link to={`/chats/${chat.id}`} className="chat-item" key={chat.id}>
                 <div
                   className="avatar"
-                  // background et color restent inline : calculés dynamiquement
+                  // background et color restent inline : calcules dynamiquement
                   style={{ background: color + "30", color }}
                 >
                   {chat.initials}
@@ -225,12 +234,12 @@ export default function DashboardPage() {
         <div className="profile-card">
           <div className="profile-top">
             <div className="profile-avatar">
-              {MOCK_USER.initials}
+              {currentUser.initials}
               <div className="profile-avatar-dot" />
             </div>
             <div>
-              <div className="profile-name">{MOCK_USER.name}</div>
-              <div className="profile-email">{MOCK_USER.email}</div>
+              <div className="profile-name">{currentUser.name}</div>
+              {currentUser.email ? <div className="profile-email">{currentUser.email}</div> : null}
             </div>
           </div>
 
@@ -238,34 +247,34 @@ export default function DashboardPage() {
 
           <div className="profile-row">
             <span className="profile-row-label">Statut</span>
-            <span className="profile-row-val profile-row-val--online">● En ligne</span>
+            <span className="profile-row-val profile-row-val--online">En ligne</span>
           </div>
           <div className="profile-row">
             <span className="profile-row-label">Message</span>
-            <span className="profile-row-val">{MOCK_USER.statusMsg}</span>
+            <span className="profile-row-val">{currentUser.statusMsg}</span>
           </div>
           <div className="profile-row">
             <span className="profile-row-label">Membre depuis</span>
-            <span className="profile-row-val">{MOCK_USER.memberSince}</span>
+            <span className="profile-row-val">{currentUser.memberSince}</span>
           </div>
           <div className="profile-row">
             <span className="profile-row-label">Contacts</span>
             <span className="profile-row-val">{MOCK_CONTACTS.length} contacts</span>
           </div>
 
-          <button className="profile-edit">Modifier le profil →</button>
+          <button className="profile-edit">Modifier le profil</button>
         </div>
 
       </div>
 
-      {/* ── Appels récents + Contacts ──────────────────────────────────── */}
+      {/* â”€â”€ Appels recents + Contacts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="dash-grid-3">
 
-        {/* Appels récents */}
+        {/* Appels recents */}
         <div className="card">
           <div className="card-head">
-            <span className="card-title">Appels récents</span>
-            <Link to="/calls" className="card-link">Tout voir →</Link>
+            <span className="card-title">Appels recents</span>
+            <Link to="/calls" className="card-link">Tout voir</Link>
           </div>
 
           {MOCK_CALLS.map((call, i) => {
@@ -284,11 +293,11 @@ export default function DashboardPage() {
                   <div className="call-meta">
                     <CallDirectionIcon direction={call.direction} />
                     <span className="type-badge">
-                      {call.type === "video" ? "Vidéo" : "Audio"}
+                      {call.type === "video" ? "Video" : "Audio"}
                     </span>
-                    {call.duration !== "—" && <span>{call.duration}</span>}
+                    {call.duration !== "-" && <span>{call.duration}</span>}
                     {call.direction === "missed" && (
-                      <span className="call-missed-label">Manqué</span>
+                      <span className="call-missed-label">Manque</span>
                     )}
                   </div>
                 </div>
@@ -297,7 +306,7 @@ export default function DashboardPage() {
                   <div className="call-time">{call.time}</div>
                   <div className="call-btn" title="Rappeler">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                      stroke="#E8B84B" strokeWidth="2" strokeLinecap="round">
+                      stroke="var(--accent)" strokeWidth="2" strokeLinecap="round">
                       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
                     </svg>
                   </div>
@@ -311,7 +320,7 @@ export default function DashboardPage() {
         <div className="card">
           <div className="card-head">
             <span className="card-title">Contacts</span>
-            <span className="contacts-online">● {onlineCount} en ligne</span>
+            <span className="contacts-online">{onlineCount} en ligne</span>
           </div>
 
           {MOCK_CONTACTS.map((contact, i) => {
@@ -332,7 +341,7 @@ export default function DashboardPage() {
                 </div>
 
                 <Link to={`/chats?contact=${contact.id}`} className="contact-write">
-                  Écrire
+                  Ecrire
                 </Link>
               </div>
             )
@@ -343,3 +352,5 @@ export default function DashboardPage() {
     </main>
   )
 }
+
+

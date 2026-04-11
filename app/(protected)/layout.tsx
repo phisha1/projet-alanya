@@ -1,11 +1,13 @@
 import { useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import { ThemeToggle } from "../../src/components/theme-toggle"
+import { loadSessionUser, toInitials } from "../../src/data/session-user"
 import "./layout.css"
 
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TYPES
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 interface NavItem {
   href:  string
@@ -14,10 +16,10 @@ interface NavItem {
 }
 
 
-// ══════════════════════════════════════════════════════════════════════════════
-// ICÔNES SVG
-// Aucune dépendance externe — les SVG sont inlinés et réutilisables.
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ICONES SVG
+// Aucune dependance externe â€” les SVG sont inlines et reutilisables.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const Icons = {
   Dashboard: () => (
@@ -65,9 +67,9 @@ const Icons = {
 }
 
 
-// ══════════════════════════════════════════════════════════════════════════════
-// DONNÉES DE NAVIGATION
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// DONNEES DE NAVIGATION
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: <Icons.Dashboard /> },
@@ -75,15 +77,15 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/calls",     label: "Appels",    icon: <Icons.Call />      },
 ]
 
-// Nombre de messages non lus par section — sera alimenté par WebSocket
+// Nombre de messages non lus par section â€” sera alimente par WebSocket
 const UNREAD_COUNTS: Record<string, number> = {
   "/chats": 3,
 }
 
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // COMPOSANT Sidebar
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 interface SidebarProps {
   onClose?: () => void
@@ -94,16 +96,17 @@ function Sidebar({ onClose }: SidebarProps) {
   const navigate = useNavigate()
   const pathname = location.pathname
 
-  // Données utilisateur fictives — seront remplacées par GET /api/users/me
+  // Donnees utilisateur fictives â€” seront remplacees par GET /api/users/me
+  const sessionUser = loadSessionUser()
   const user = {
-    name:     "Arsène Nguemo",
-    email:    "a.nguemo@enspy.cm",
-    initials: "AN",
+    name:     sessionUser?.name ?? "Utilisateur Alanya",
+    email:    sessionUser?.email ?? "",
+    initials: toInitials(sessionUser?.name ?? "Utilisateur Alanya"),
     status:   "En ligne",
   }
 
   async function handleLogout() {
-    // POST /api/auth/logout révoque le refresh token côté serveur
+    // POST /api/auth/logout revoque le refresh token cote serveur
     await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" })
     navigate("/login")
   }
@@ -154,12 +157,16 @@ function Sidebar({ onClose }: SidebarProps) {
           onClick={onClose}
         >
           <Icons.Settings />
-          Paramètres
+          Parametres
         </Link>
       </nav>
 
-      {/* Profil + déconnexion */}
+      {/* Profil + deconnexion */}
       <div className="sb-footer">
+        <div className="sb-theme-row">
+          <span className="sb-theme-label">Theme</span>
+          <ThemeToggle />
+        </div>
         <div className="sb-profile" onClick={() => navigate("/settings")}>
           <div className="sb-avatar">
             {user.initials}
@@ -172,8 +179,8 @@ function Sidebar({ onClose }: SidebarProps) {
           <button
             className="sb-logout"
             onClick={e => { e.stopPropagation(); handleLogout() }}
-            aria-label="Se déconnecter"
-            title="Se déconnecter"
+            aria-label="Se deconnecter"
+            title="Se deconnecter"
           >
             <Icons.Logout />
           </button>
@@ -185,9 +192,9 @@ function Sidebar({ onClose }: SidebarProps) {
 }
 
 
-// ══════════════════════════════════════════════════════════════════════════════
-// LAYOUT PROTÉGÉ
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// LAYOUT PROTEGE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -195,18 +202,18 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   return (
     <div className="layout-root">
 
-      {/* Sidebar fixe — desktop uniquement */}
+      {/* Sidebar fixe â€” desktop uniquement */}
       <div className="layout-sidebar-static">
         <Sidebar />
       </div>
 
-      {/* Overlay semi-transparent — ferme la sidebar mobile au clic */}
+      {/* Overlay semi-transparent â€” ferme la sidebar mobile au clic */}
       <div
         className={`mobile-overlay ${mobileOpen ? "open" : ""}`}
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* Sidebar mobile — slide depuis la gauche */}
+      {/* Sidebar mobile â€” slide depuis la gauche */}
       <div className={`sidebar-mobile-wrap ${mobileOpen ? "open" : ""}`}>
         <Sidebar onClose={() => setMobileOpen(false)} />
       </div>
@@ -214,7 +221,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       {/* Zone de contenu principale */}
       <div className="layout-main">
 
-        {/* Topbar mobile (cache la sidebar sur petit écran) */}
+        {/* Topbar mobile (cache la sidebar sur petit ecran) */}
         <header className="topbar">
           <button
             className="topbar-menu"
@@ -224,6 +231,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             <Icons.Menu />
           </button>
           <span className="topbar-title">Alanya</span>
+          <ThemeToggle />
         </header>
 
         {children}
@@ -232,3 +240,9 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     </div>
   )
 }
+
+
+
+
+
+

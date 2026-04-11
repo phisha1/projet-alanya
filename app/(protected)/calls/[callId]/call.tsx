@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import "./call-room-page.css"
 type CallState = "connecting" | "ringing" | "active" | "ended"
@@ -45,6 +45,7 @@ export default function CallRoomPage() {
 
   const contactId = searchParams.get("contact") ?? "1"
   const queryType = searchParams.get("type") === "video" ? "video" : "audio"
+  const returnTo = searchParams.get("returnTo") || "/calls"
 
   const callData = useMemo(() => {
     if (callId && callId !== "new" && MOCK_CALLS[callId]) {
@@ -182,9 +183,9 @@ export default function CallRoomPage() {
     }
 
     leaveTimerRef.current = window.setTimeout(() => {
-      navigate("/calls")
+      navigate(returnTo)
     }, 1400)
-  }, [navigate])
+  }, [navigate, returnTo])
 
   const stateLabel: Record<CallState, string> = {
     connecting: "Connexion en cours...",
@@ -196,7 +197,7 @@ export default function CallRoomPage() {
   const statusColor = callState === "active" ? "#4ade80" : callState === "ended" ? "#ef4444" : "#E8B84B"
 
   return (
-    <><div className="room-root" onMouseMove={resetHideTimer} onClick={resetHideTimer}>
+    <><div className="call-room-root" onMouseMove={resetHideTimer} onClick={resetHideTimer}>
         <div className="bg-layer">
           {isVideo && callState === "active"
             ? <video ref={remoteVideoRef} className="bg-video" autoPlay playsInline muted />
@@ -211,7 +212,7 @@ export default function CallRoomPage() {
                 if (callState === "active") {
                   setShowEndConfirm(true)
                 } else {
-                  navigate("/calls")
+                  navigate(returnTo)
                 }
               }}
             >
@@ -278,12 +279,12 @@ export default function CallRoomPage() {
               <button className="ctrl-btn" onClick={() => setMicOn((value) => !value)} aria-label={micOn ? "Couper le micro" : "Activer le micro"}>
                 <div className={`ctrl-btn-icon ${micOn ? "ctrl-on" : "ctrl-off"}`}>
                   {micOn ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                       <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
                       <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
                     </svg>
                   ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                       <line x1="1" y1="1" x2="23" y2="23" />
                       <path d="M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6" />
                       <path d="M17 16.95A7 7 0 015 12v-2m14 0v2a7 7 0 01-.11 1.23M12 19v4M8 23h8" />
@@ -297,12 +298,12 @@ export default function CallRoomPage() {
                 <button className="ctrl-btn" onClick={() => setCamOn((value) => !value)} aria-label={camOn ? "Couper la camera" : "Activer la camera"}>
                   <div className={`ctrl-btn-icon ${camOn ? "ctrl-on" : "ctrl-off"}`}>
                     {camOn ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                         <polygon points="23 7 16 12 23 17 23 7" />
                         <rect x="1" y="5" width="15" height="14" rx="2" />
                       </svg>
                     ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                         <line x1="1" y1="1" x2="23" y2="23" />
                         <path d="M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34M23 7l-7 5 7 5V7z" />
                       </svg>
@@ -315,7 +316,7 @@ export default function CallRoomPage() {
               {isVideo && (
                 <button className="ctrl-btn" onClick={() => setScreenShare((value) => !value)} aria-label="Partager l'ecran">
                   <div className={`ctrl-btn-icon ${screenShare ? "ctrl-on" : "ctrl-off"}`}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                       <rect x="2" y="3" width="20" height="14" rx="2" />
                       <line x1="8" y1="21" x2="16" y2="21" />
                       <line x1="12" y1="17" x2="12" y2="21" />
@@ -329,12 +330,12 @@ export default function CallRoomPage() {
               <button className="ctrl-btn" onClick={() => setSpeakerOn((value) => !value)} aria-label="Haut-parleur">
                 <div className={`ctrl-btn-icon ${speakerOn ? "ctrl-on" : "ctrl-off"}`}>
                   {speakerOn ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                       <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                       <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" />
                     </svg>
                   ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                       <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                       <line x1="23" y1="9" x2="17" y2="15" />
                       <line x1="17" y1="9" x2="23" y2="15" />
@@ -346,7 +347,7 @@ export default function CallRoomPage() {
 
               <button className="ctrl-btn" onClick={() => navigate(`/chats/${contact.id}`)} aria-label="Ouvrir le chat">
                 <div className="ctrl-btn-icon ctrl-on">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
                 </div>
@@ -355,7 +356,7 @@ export default function CallRoomPage() {
 
               <button className="ctrl-btn" onClick={() => setShowEndConfirm(true)} aria-label="Raccrocher">
                 <div className="ctrl-btn-icon ctrl-end" style={{ width: 60, height: 60 }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path
                       d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 012 2V21a2 2 0 01-2 2A17 17 0 013 5a2 2 0 012-2h3.5a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L9.49 10a16 16 0 001.19 3.31z"
                       style={{ transform: "rotate(135deg)", transformOrigin: "center" }}
@@ -399,5 +400,7 @@ export default function CallRoomPage() {
     </>
   )
 }
+
+
 
 

@@ -14,7 +14,7 @@
 .dash {
   font-family: 'DM Sans', sans-serif;
   padding:     32px 36px;
-  color:       white;
+  color:       var(--text-primary);
 }
 
 
@@ -26,7 +26,7 @@
 
 .greeting {
   font-size:      11px;
-  color:          #4B5563;
+  color:          var(--text-muted);
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom:  6px;
@@ -37,11 +37,11 @@
   font-size:      30px;
   font-weight:    800;
   letter-spacing: -1px;
-  color:          #fff;
+  color:          var(--text-primary);
 }
 
 /* Le prénom est mis en valeur en doré */
-.dash-title span { color: #E8B84B; }
+.dash-title span { color: var(--accent); }
 
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -58,21 +58,21 @@
 /* --- Carte statistique --- */
 
 .stat-card {
-  background:    #10151F;
-  border:        1px solid #1E2736;
+  background:    var(--bg-elevated);
+  border:        1px solid var(--border-subtle);
   border-radius: 12px;
   padding:       16px 18px;
 }
 
 /* Variante accentuée (ex : messages non lus) */
 .stat-card--accent {
-  background: #E8B84B10;
-  border-color: #E8B84B30;
+  background: var(--accent-dim);
+  border-color: var(--accent-border);
 }
 
 .stat-card__label {
   font-size:      11px;
-  color:          #4B5563;
+  color:          var(--text-muted);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom:  6px;
@@ -83,16 +83,16 @@
   font-size:      28px;
   font-weight:    800;
   letter-spacing: -1px;
-  color:          #E2E8F0;
+  color:          var(--text-primary);
   margin-bottom:  4px;
 }
 
 /* La valeur est dorée sur la carte accentuée */
-.stat-card--accent .stat-card__value { color: #E8B84B; }
+.stat-card--accent .stat-card__value { color: var(--accent); }
 
 .stat-card__sub {
   font-size: 11px;
-  color:     #374151;
+  color:     var(--text-faint);
 }
 
 
@@ -121,8 +121,8 @@
    ══════════════════════════════════════════════════════════════════════════════ */
 
 .card {
-  background:    #10151F;
-  border:        1px solid #1E2736;
+  background:    var(--bg-elevated);
+  border:        1px solid var(--border-subtle);
   border-radius: 14px;
   overflow:      hidden;
 }
@@ -132,20 +132,20 @@
   align-items:     center;
   justify-content: space-between;
   padding:         16px 18px;
-  border-bottom:   1px solid #1E2736;
+  border-bottom:   1px solid var(--border-subtle);
 }
 
 .card-title {
   font-family:    'Bricolage Grotesque', sans-serif;
   font-size:      14px;
   font-weight:    700;
-  color:          #fff;
+  color:          var(--text-primary);
   letter-spacing: -0.3px;
 }
 
 .card-link {
   font-size:       11px;
-  color:           #E8B84B;
+  color:           var(--accent);
   text-decoration: none;
   font-weight:     500;
   transition:      opacity 0.15s;
@@ -168,7 +168,7 @@
   justify-content: center;
   font-size:       12px;
   font-weight:     700;
-  color:           #080C14; /* sera surchargé par inline style */
+  color:           var(--bg-base); /* sera surchargé par inline style */
   flex-shrink:     0;
   position:        relative;
 }
@@ -189,8 +189,8 @@
   width:         9px;
   height:        9px;
   border-radius: 50%;
-  background:    #4ade80;
-  border:        2px solid #10151F;
+  background:    var(--success);
+  border:        2px solid var(--bg-elevated);
 }
 
 /* Point vert plus petit pour les contacts (8px) */
@@ -209,13 +209,13 @@
   align-items:     center;
   gap:             12px;
   padding:         13px 18px;
-  border-bottom:   1px solid #1E2736;
+  border-bottom:   1px solid var(--border-subtle);
   cursor:          pointer;
   text-decoration: none;
   transition:      background 0.15s;
 }
 .chat-item:last-child { border-bottom: none; }
-.chat-item:hover      { background: #161C28; }
+.chat-item:hover      { background: var(--bg-hover); }
 
 .chat-meta {
   flex:      1;
@@ -225,7 +225,7 @@
 .chat-name {
   font-size:    13px;
   font-weight:  500;
-  color:        #E2E8F0;
+  color:        var(--text-primary);
   margin-bottom: 2px;
   display:      flex;
   align-items:  center;
@@ -234,7 +234,7 @@
 
 .chat-preview {
   font-size:     11px;
-  color:         #4B5563;
+  color:         var(--text-muted);
   white-space:   nowrap;
   overflow:      hidden;
   text-overflow: ellipsis;
@@ -248,11 +248,11 @@
   flex-shrink:    0;
 }
 
-.chat-time { font-size: 10px; color: #374151; }
+.chat-time { font-size: 10px; color: var(--text-faint); }
 
 .unread-badge {
-  background:    #E8B84B;
-  color:         #080C14;
+  background:    var(--accent);
+  color:         var(--bg-base);
   font-size:     10px;
   font-weight:   700;
   padding:       1px 6px;
@@ -264,8 +264,8 @@
 /* Étiquette "groupe" accolée au nom */
 .group-pill {
   font-size:     9px;
-  background:    #1E2736;
-  color:         #4B5563;
+  background:    var(--border-subtle);
+  color:         var(--text-muted);
   padding:       1px 6px;
   border-radius: 4px;
   font-weight:   500;
@@ -281,7 +281,7 @@
   align-items:   center;
   gap:           12px;
   padding:       12px 18px;
-  border-bottom: 1px solid #1E2736;
+  border-bottom: 1px solid var(--border-subtle);
 }
 .call-item:last-child { border-bottom: none; }
 
@@ -293,7 +293,7 @@
 .call-name {
   font-size:     13px;
   font-weight:   500;
-  color:         #E2E8F0;
+  color:         var(--text-primary);
   margin-bottom: 2px;
 }
 
@@ -302,21 +302,21 @@
   align-items: center;
   gap:         6px;
   font-size:   11px;
-  color:       #4B5563;
+  color:       var(--text-muted);
 }
 
 /* Étiquette "Audio" / "Vidéo" */
 .type-badge {
   font-size:     9px;
-  background:    #1E2736;
-  color:         #4B5563;
+  background:    var(--border-subtle);
+  color:         var(--text-muted);
   padding:       2px 7px;
   border-radius: 5px;
   font-weight:   500;
 }
 
 /* Label "Manqué" en rouge */
-.call-missed-label { color: #ef4444; }
+.call-missed-label { color: var(--danger); }
 
 .call-right {
   display:        flex;
@@ -327,7 +327,7 @@
 
 .call-time {
   font-size:  10px;
-  color:      #374151;
+  color:      var(--text-faint);
   text-align: right;
   flex-shrink: 0;
 }
@@ -337,8 +337,8 @@
   width:           30px;
   height:          30px;
   border-radius:   50%;
-  background:      #E8B84B15;
-  border:          1px solid #E8B84B30;
+  background:      var(--accent-dim);
+  border:          1px solid var(--accent-border);
   display:         flex;
   align-items:     center;
   justify-content: center;
@@ -346,15 +346,15 @@
   flex-shrink:     0;
   transition:      background 0.15s;
 }
-.call-btn:hover { background: #E8B84B30; }
+.call-btn:hover { background: var(--accent-border); }
 
 /*
   Icône de direction d'appel — la couleur (stroke) et la rotation (out = 180°)
   sont définies via des classes CSS plutôt qu'en inline style.
 */
-.call-icon--in     { stroke: #4ade80; }
-.call-icon--out    { stroke: #60a5fa; transform: rotate(180deg); }
-.call-icon--missed { stroke: #ef4444; }
+.call-icon--in     { stroke: var(--success); }
+.call-icon--out    { stroke: var(--info); transform: rotate(180deg); }
+.call-icon--missed { stroke: var(--danger); }
 
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -366,7 +366,7 @@
   align-items:   center;
   gap:           10px;
   padding:       11px 18px;
-  border-bottom: 1px solid #1E2736;
+  border-bottom: 1px solid var(--border-subtle);
 }
 .contact-item:last-child { border-bottom: none; }
 
@@ -378,33 +378,33 @@
 .contact-name {
   font-size:     13px;
   font-weight:   500;
-  color:         #E2E8F0;
+  color:         var(--text-primary);
   margin-bottom: 2px;
 }
 
 .contact-status {
   font-size: 11px;
-  color:     #4B5563;
+  color:     var(--text-muted);
 }
 
 /* Bouton "Écrire" en bas à droite de chaque contact */
 .contact-write {
-  background:      #1E2736;
-  border:          1px solid #2a3444;
+  background:      var(--border-subtle);
+  border:          1px solid var(--border-default);
   border-radius:   7px;
   padding:         6px 10px;
   font-size:       11px;
-  color:           #9CA3AF;
+  color:           var(--text-secondary);
   text-decoration: none;
   white-space:     nowrap;
   transition:      color 0.15s;
 }
-.contact-write:hover { color: #E8B84B; }
+.contact-write:hover { color: var(--accent); }
 
 /* Indicateur de contacts en ligne dans le card-head */
 .contacts-online {
   font-size:   11px;
-  color:       #4ade80;
+  color:       var(--success);
   font-weight: 500;
 }
 
@@ -414,8 +414,8 @@
    ══════════════════════════════════════════════════════════════════════════════ */
 
 .profile-card {
-  background:    #10151F;
-  border:        1px solid #1E2736;
+  background:    var(--bg-elevated);
+  border:        1px solid var(--border-subtle);
   border-radius: 14px;
   padding:       20px 18px;
 }
@@ -431,13 +431,13 @@
   width:           52px;
   height:          52px;
   border-radius:   50%;
-  background:      #E8B84B;
+  background:      var(--accent);
   display:         flex;
   align-items:     center;
   justify-content: center;
   font-size:       16px;
   font-weight:     700;
-  color:           #080C14;
+  color:           var(--bg-base);
   flex-shrink:     0;
   position:        relative;
 }
@@ -449,24 +449,24 @@
   width:         12px;
   height:        12px;
   border-radius: 50%;
-  background:    #4ade80;
-  border:        2px solid #10151F;
+  background:    var(--success);
+  border:        2px solid var(--bg-elevated);
 }
 
 .profile-name {
   font-family:    'Bricolage Grotesque', sans-serif;
   font-size:      16px;
   font-weight:    700;
-  color:          #fff;
+  color:          var(--text-primary);
   letter-spacing: -0.3px;
   margin-bottom:  2px;
 }
 
-.profile-email { font-size: 11px; color: #4B5563; }
+.profile-email { font-size: 11px; color: var(--text-muted); }
 
 .profile-divider {
   height:        1px;
-  background:    #1E2736;
+  background:    var(--border-subtle);
   margin-bottom: 14px;
 }
 
@@ -477,28 +477,28 @@
   font-size:       12px;
 }
 
-.profile-row-label { color: #4B5563; }
-.profile-row-val   { color: #9CA3AF; font-weight: 500; }
+.profile-row-label { color: var(--text-muted); }
+.profile-row-val   { color: var(--text-secondary); font-weight: 500; }
 
 /* Statut "En ligne" affiché en vert */
-.profile-row-val--online { color: #4ade80; }
+.profile-row-val--online { color: var(--success); }
 
 /* Bouton "Modifier le profil" */
 .profile-edit {
   width:         100%;
   margin-top:    14px;
-  background:    #E8B84B15;
-  border:        1px solid #E8B84B30;
+  background:    var(--accent-dim);
+  border:        1px solid var(--accent-border);
   border-radius: 8px;
   padding:       10px;
   font-size:     13px;
-  color:         #E8B84B;
+  color:         var(--accent);
   font-weight:   600;
   cursor:        pointer;
   font-family:   'DM Sans', sans-serif;
   transition:    background 0.15s;
 }
-.profile-edit:hover { background: #E8B84B25; }
+.profile-edit:hover { background: var(--accent-dim); }
 
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -511,3 +511,5 @@
   .dash-grid-3 { grid-template-columns: 1fr; }
   .dash       { padding: 24px 20px; }
 }
+
+

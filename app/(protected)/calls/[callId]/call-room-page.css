@@ -1,12 +1,12 @@
 ﻿        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@300;400;500&display=swap');
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        .call-room-root, .call-room-root *, .call-room-root *::before, .call-room-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .room-root {
+        .call-room-root {
           font-family: 'DM Sans', sans-serif;
           height: 100vh;
-          background: #050810;
-          color: white;
+          background: var(--bg-base);
+          color: var(--text-primary);
           display: flex;
           flex-direction: column;
           position: relative;
@@ -14,36 +14,36 @@
           user-select: none;
         }
 
-        .bg-layer { position: absolute; inset: 0; z-index: 0; }
-        .bg-video { width: 100%; height: 100%; object-fit: cover; filter: brightness(.45) blur(1px); }
-        .bg-audio-pattern {
+        .call-room-root .bg-layer { position: absolute; inset: 0; z-index: 0; }
+        .call-room-root .bg-video { width: 100%; height: 100%; object-fit: cover; filter: brightness(.45) blur(1px); }
+        .call-room-root .bg-audio-pattern {
           width: 100%;
           height: 100%;
-          background: #080C14;
+          background: var(--bg-base);
           background-image:
-            radial-gradient(circle at 30% 20%, #E8B84B08 0%, transparent 50%),
-            radial-gradient(circle at 70% 80%, #60a5fa06 0%, transparent 50%),
-            radial-gradient(circle, #ffffff05 1px, transparent 1px);
+            radial-gradient(circle at 30% 20%, var(--accent-dim) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, color-mix(in srgb, var(--info) 6%, transparent) 0%, transparent 50%),
+            radial-gradient(circle, color-mix(in srgb, var(--text-primary) 5%, transparent) 1px, transparent 1px);
           background-size: auto, auto, 28px 28px;
         }
 
-        .room-content { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; }
+        .call-room-root .room-content { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; }
 
-        .room-top {
+        .call-room-root .room-top {
           display: flex;
           align-items: center;
           justify-content: space-between;
           padding: 20px 28px;
-          background: linear-gradient(to bottom, #00000060, transparent);
+          background: linear-gradient(to bottom, color-mix(in srgb, var(--overlay) 60%, transparent), transparent);
           flex-shrink: 0;
         }
 
-        .back-btn {
-          background: #ffffff15;
-          border: 1px solid #ffffff15;
+        .call-room-root .back-btn {
+          background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+          border: 1px solid color-mix(in srgb, var(--text-primary) 18%, transparent);
           border-radius: 9px;
           padding: 8px 14px;
-          color: #fff;
+          color: var(--text-primary);
           font-size: 13px;
           cursor: pointer;
           display: flex;
@@ -52,31 +52,31 @@
           font-family: 'DM Sans', sans-serif;
           transition: background .15s;
         }
-        .back-btn:hover { background: #ffffff25; }
+        .call-room-root .back-btn:hover { background: color-mix(in srgb, var(--text-primary) 16%, transparent); }
 
-        .call-type-pill {
+        .call-room-root .call-type-pill {
           display: flex;
           align-items: center;
           gap: 6px;
-          background: #ffffff10;
-          border: 1px solid #ffffff15;
+          background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+          border: 1px solid color-mix(in srgb, var(--text-primary) 18%, transparent);
           border-radius: 20px;
           padding: 6px 14px;
           font-size: 12px;
           font-weight: 500;
-          color: #ffffffcc;
+          color: var(--text-primary);
         }
 
-        .rec-dot {
+        .call-room-root .rec-dot {
           width: 7px;
           height: 7px;
           border-radius: 50%;
-          background: #ef4444;
+          background: var(--danger);
           animation: recBlink 1.5s ease-in-out infinite;
         }
         @keyframes recBlink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 
-        .room-center {
+        .call-room-root .room-center {
           flex: 1;
           display: flex;
           flex-direction: column;
@@ -85,8 +85,8 @@
           padding: 20px;
         }
 
-        .contact-avatar-wrap { position: relative; margin-bottom: 20px; }
-        .contact-avatar {
+        .call-room-root .contact-avatar-wrap { position: relative; margin-bottom: 20px; }
+        .call-room-root .contact-avatar {
           width: 100px;
           height: 100px;
           border-radius: 50%;
@@ -100,7 +100,7 @@
           z-index: 1;
         }
 
-        .pulse-ring {
+        .call-room-root .pulse-ring {
           position: absolute;
           inset: -8px;
           border-radius: 50%;
@@ -108,21 +108,21 @@
           opacity: 0;
           animation: pulseRing 2s ease-out infinite;
         }
-        .pulse-ring:nth-child(2) { animation-delay: .5s; }
-        .pulse-ring:nth-child(3) { animation-delay: 1s; }
+        .call-room-root .pulse-ring:nth-child(2) { animation-delay: .5s; }
+        .call-room-root .pulse-ring:nth-child(3) { animation-delay: 1s; }
         @keyframes pulseRing { 0%{opacity:.4;transform:scale(1);} 100%{opacity:0;transform:scale(1.6);} }
 
-        .contact-name {
+        .call-room-root .contact-name {
           font-family: 'Bricolage Grotesque', sans-serif;
           font-size: 28px;
           font-weight: 800;
           letter-spacing: -1px;
-          color: #fff;
+          color: var(--text-primary);
           margin-bottom: 8px;
           text-align: center;
         }
 
-        .call-status {
+        .call-room-root .call-status {
           font-size: 14px;
           font-weight: 500;
           display: flex;
@@ -130,15 +130,15 @@
           gap: 8px;
         }
 
-        .status-dot-live {
+        .call-room-root .status-dot-live {
           width: 7px;
           height: 7px;
           border-radius: 50%;
-          background: #4ade80;
+          background: var(--success);
           animation: recBlink 2s ease-in-out infinite;
         }
 
-        .local-video-pip {
+        .call-room-root .local-video-pip {
           position: absolute;
           bottom: 140px;
           right: 24px;
@@ -146,34 +146,34 @@
           aspect-ratio: 16/9;
           border-radius: 12px;
           overflow: hidden;
-          border: 2px solid #ffffff20;
+          border: 2px solid var(--border-default);
           z-index: 10;
-          background: #1A2030;
+          background: var(--bg-muted);
         }
-        .local-video-pip video { width: 100%; height: 100%; object-fit: cover; }
+        .call-room-root .local-video-pip video { width: 100%; height: 100%; object-fit: cover; }
 
-        .pip-no-cam {
+        .call-room-root .pip-no-cam {
           width: 100%;
           height: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #1A2030;
-          color: #4B5563;
+          background: var(--bg-muted);
+          color: var(--text-muted);
           font-size: 11px;
         }
 
-        .controls-bar {
+        .call-room-root .controls-bar {
           padding: 20px 28px 28px;
-          background: linear-gradient(to top, #00000080, transparent);
+          background: linear-gradient(to top, color-mix(in srgb, var(--overlay) 75%, transparent), transparent);
           flex-shrink: 0;
           transition: opacity .3s, transform .3s;
         }
-        .controls-bar.hidden { opacity: 0; pointer-events: none; transform: translateY(10px); }
+        .call-room-root .controls-bar.hidden { opacity: 0; pointer-events: none; transform: translateY(10px); }
 
-        .controls-inner { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .call-room-root .controls-inner { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
-        .ctrl-btn {
+        .call-room-root .ctrl-btn {
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -184,30 +184,31 @@
           font-family: 'DM Sans', sans-serif;
         }
 
-        .ctrl-btn-icon {
-          width: 52px;
-          height: 52px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: transform .1s, background .15s;
-        }
-        .ctrl-btn:hover .ctrl-btn-icon { transform: scale(1.06); }
-        .ctrl-btn:active .ctrl-btn-icon { transform: scale(.96); }
+.call-room-root .ctrl-btn-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .1s, background .15s;
+  color: var(--text-primary);
+}
+        .call-room-root .ctrl-btn:hover .ctrl-btn-icon { transform: scale(1.06); }
+        .call-room-root .ctrl-btn:active .ctrl-btn-icon { transform: scale(.96); }
 
-        .ctrl-btn-label { font-size: 11px; color: #ffffffaa; }
+        .call-room-root .ctrl-btn-label { font-size: 11px; color: var(--text-secondary); }
 
-        .ctrl-on  { background: #ffffff20; }
-        .ctrl-off { background: #374151; }
-        .ctrl-end { background: #ef4444; width: 60px; height: 60px; }
-        .ctrl-end:hover { background: #dc2626 !important; }
+.call-room-root .ctrl-on  { background: var(--bg-elevated); color: var(--text-primary); }
+.call-room-root .ctrl-off { background: var(--text-faint); color: var(--bg-base); }
+.call-room-root .ctrl-end { background: var(--danger); width: 60px; height: 60px; color: #ffffff; }
+        .call-room-root .ctrl-end:hover { background: #dc2626 !important; }
 
-        .ended-overlay {
+        .call-room-root .ended-overlay {
           position: absolute;
           inset: 0;
           z-index: 50;
-          background: #050810ee;
+          background: color-mix(in srgb, var(--overlay) 90%, transparent);
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -215,40 +216,40 @@
           gap: 12px;
         }
 
-        .ended-icon {
+        .call-room-root .ended-icon {
           width: 64px;
           height: 64px;
           border-radius: 50%;
-          background: #1E2736;
+          background: var(--border-subtle);
           display: flex;
           align-items: center;
           justify-content: center;
           margin-bottom: 8px;
         }
 
-        .ended-title {
+        .call-room-root .ended-title {
           font-family: 'Bricolage Grotesque', sans-serif;
           font-size: 22px;
           font-weight: 800;
           letter-spacing: -.5px;
-          color: #fff;
+          color: var(--text-primary);
         }
 
-        .ended-duration { font-size: 14px; color: #4B5563; }
+        .call-room-root .ended-duration { font-size: 14px; color: var(--text-muted); }
 
-        .confirm-overlay {
+        .call-room-root .confirm-overlay {
           position: absolute;
           inset: 0;
           z-index: 40;
-          background: #00000080;
+          background: var(--overlay);
           display: flex;
           align-items: center;
           justify-content: center;
         }
 
-        .confirm-card {
-          background: #10151F;
-          border: 1px solid #1E2736;
+        .call-room-root .confirm-card {
+          background: var(--bg-elevated);
+          border: 1px solid var(--border-subtle);
           border-radius: 16px;
           padding: 28px 32px;
           max-width: 340px;
@@ -256,52 +257,56 @@
           text-align: center;
         }
 
-        .confirm-title {
+        .call-room-root .confirm-title {
           font-family: 'Bricolage Grotesque', sans-serif;
           font-size: 18px;
           font-weight: 800;
           letter-spacing: -.3px;
-          color: #fff;
+          color: var(--text-primary);
           margin-bottom: 8px;
         }
 
-        .confirm-sub {
+        .call-room-root .confirm-sub {
           font-size: 13px;
-          color: #4B5563;
+          color: var(--text-muted);
           margin-bottom: 24px;
           line-height: 1.6;
         }
 
-        .confirm-btns { display: flex; gap: 10px; }
+        .call-room-root .confirm-btns { display: flex; gap: 10px; }
 
-        .confirm-cancel {
+        .call-room-root .confirm-cancel {
           flex: 1;
-          background: #1E2736;
-          border: 1px solid #2a3444;
+          background: var(--border-subtle);
+          border: 1px solid var(--border-default);
           border-radius: 9px;
           padding: 12px;
-          color: #9CA3AF;
+          color: var(--text-secondary);
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
           font-family: 'DM Sans', sans-serif;
           transition: background .15s;
         }
-        .confirm-cancel:hover { background: #2a3444; }
+        .call-room-root .confirm-cancel:hover { background: var(--border-default); }
 
-        .confirm-end {
+        .call-room-root .confirm-end {
           flex: 1;
-          background: #ef4444;
+          background: var(--danger);
           border: none;
           border-radius: 9px;
           padding: 12px;
-          color: white;
+          color: var(--text-primary);
           font-size: 14px;
           font-weight: 700;
           cursor: pointer;
           font-family: 'DM Sans', sans-serif;
           transition: background .15s;
         }
-        .confirm-end:hover { background: #dc2626; }
+        .call-room-root .confirm-end:hover { background: #dc2626; }
       
+
+
+
+
 

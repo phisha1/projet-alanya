@@ -118,7 +118,7 @@ function ConvItem({ conv }: { conv: ConversationMock }) {
           {conv.name}
           {conv.isPinned && <span className="pin-icon">📌</span>}
           {conv.isGroup && (
-            <span style={{ fontSize: 9, background: "#1E2736", color: "#4B5563", padding: "1px 5px", borderRadius: 3, fontWeight: 500 }}>groupe</span>
+            <span style={{ fontSize: 9, background: "var(--border-subtle)", color: "var(--text-muted)", padding: "1px 5px", borderRadius: 3, fontWeight: 500 }}>groupe</span>
           )}
         </div>
         <div className={`conv-preview ${conv.unread > 0 ? "unread" : ""}`}>
@@ -132,3 +132,5 @@ function ConvItem({ conv }: { conv: ConversationMock }) {
     </Link>
   )
 }
+
+

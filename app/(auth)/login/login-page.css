@@ -4,11 +4,11 @@
 
 .login-root {
   font-family: 'DM Sans', sans-serif;
-  background: #080C14;
+  background: var(--bg-base);
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  color: white;
+  color: var(--text-primary);
 }
 
 /* -------- PANNEAU GAUCHE -------- */
@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid #ffffff08;
+  border-right: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
   overflow: hidden;
 }
 
@@ -26,7 +26,7 @@
 .left-panel::before {
   content: '';
   position: absolute; inset: 0;
-  background-image: radial-gradient(circle, #ffffff0a 1px, transparent 1px);
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--text-primary) 10%, transparent) 1px, transparent 1px);
   background-size: 28px 28px;
   pointer-events: none;
 }
@@ -36,7 +36,7 @@
   content: '';
   position: absolute;
   width: 420px; height: 420px;
-  background: #E8B84B06;
+  background: var(--accent-dim);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   bottom: -120px; left: -80px;
   pointer-events: none;
@@ -44,12 +44,13 @@
 
 .logo { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
 .hex {
-  width: 30px; height: 30px; background: #E8B84B;
+  width: 30px; height: 30px; background: var(--accent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 .logo-name {
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+  color: var(--accent);
 }
 
 .left-body { position: relative; z-index: 1; }
@@ -59,10 +60,10 @@
   line-height: 1.1; letter-spacing: -1.5px;
   margin-bottom: 20px;
 }
-.left-heading em { font-style: normal; color: #E8B84B; }
+.left-heading em { font-style: normal; color: var(--accent); }
 
 .left-sub {
-  font-size: 15px; color: #4B5563;
+  font-size: 15px; color: var(--text-muted);
   line-height: 1.8; max-width: 320px;
 }
 
@@ -74,9 +75,9 @@
 .stat-num {
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 26px; font-weight: 800;
-  color: #E8B84B; letter-spacing: -1px;
+  color: var(--accent); letter-spacing: -1px;
 }
-.stat-lbl { font-size: 12px; color: #374151; margin-top: 2px; }
+.stat-lbl { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
 
 /* -------- PANNEAU DROIT (formulaire) -------- */
 .right-panel {
@@ -86,7 +87,7 @@
 .form-card { width: 100%; max-width: 380px; }
 
 .form-pretitle {
-  font-size: 12px; color: #E8B84B;
+  font-size: 12px; color: var(--accent);
   letter-spacing: 2px; text-transform: uppercase;
   font-weight: 500; margin-bottom: 10px;
 }
@@ -96,7 +97,7 @@
   letter-spacing: -1px; margin-bottom: 6px;
 }
 .form-subtitle {
-  font-size: 14px; color: #4B5563;
+  font-size: 14px; color: var(--text-muted);
   margin-bottom: 36px; line-height: 1.6;
 }
 
@@ -107,25 +108,26 @@
 }
 .field input {
   width: 100%;
-  background: #10151F;
-  border: 1px solid #1E2736;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
   padding: 22px 16px 10px;
-  font-size: 15px; color: white;
+  font-size: 15px; color: var(--text-primary);
   font-family: 'DM Sans', sans-serif;
   outline: none;
   transition: border-color 0.2s;
   -webkit-autofill-override: unset;
+  -webkit-text-fill-color: var(--text-primary);
 }
-.field input:focus { border-color: #E8B84B50; }
+.field input:focus { border-color: var(--accent-border); }
 .field input:focus + label,
 .field input:not(:placeholder-shown) + label {
-  top: 9px; font-size: 10px; color: #E8B84B; letter-spacing: 0.5px;
+  top: 9px; font-size: 10px; color: var(--accent); letter-spacing: 0.5px;
 }
 .field label {
   position: absolute; top: 50%; left: 16px;
   transform: translateY(-50%);
-  font-size: 14px; color: #374151;
+  font-size: 14px; color: var(--text-faint);
   pointer-events: none;
   transition: all 0.18s ease;
   text-transform: none; letter-spacing: 0;
@@ -135,26 +137,26 @@
   position: absolute; right: 14px; top: 50%;
   transform: translateY(-50%);
   background: none; border: none; cursor: pointer;
-  color: #374151; font-size: 13px; padding: 4px;
+  color: var(--text-faint); font-size: 13px; padding: 4px;
   font-family: 'DM Sans', sans-serif;
   transition: color 0.2s;
 }
-.pwd-toggle:hover { color: #E8B84B; }
+.pwd-toggle:hover { color: var(--accent); }
 
 .forgot-row {
   display: flex; justify-content: flex-end;
   margin-top: -12px; margin-bottom: 24px;
 }
 .forgot-link {
-  font-size: 12px; color: #4B5563; text-decoration: none;
+  font-size: 12px; color: var(--text-muted); text-decoration: none;
   transition: color 0.2s;
 }
-.forgot-link:hover { color: #E8B84B; }
+.forgot-link:hover { color: var(--accent); }
 
 /* ---- bouton submit ---- */
 .btn-submit {
   width: 100%;
-  background: #E8B84B; color: #080C14;
+  background: var(--accent); color: var(--bg-base);
   border: none; border-radius: 10px;
   padding: 15px; font-size: 15px;
   font-weight: 700; cursor: pointer;
@@ -171,8 +173,8 @@
 /* spinner */
 .spinner {
   width: 16px; height: 16px;
-  border: 2px solid #080C1440;
-  border-top-color: #080C14;
+  border: 2px solid color-mix(in srgb, var(--bg-base) 70%, transparent);
+  border-top-color: var(--bg-base);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -183,23 +185,23 @@
   display: flex; align-items: center; gap: 12px;
   margin-bottom: 20px;
 }
-.divider-line { flex: 1; height: 1px; background: #1E2736; }
-.divider-txt { font-size: 12px; color: #374151; }
+.divider-line { flex: 1; height: 1px; background: var(--border-subtle); }
+.divider-txt { font-size: 12px; color: var(--text-faint); }
 
 /* bouton Google */
 .btn-google {
-  width: 100%; background: #10151F;
-  border: 1px solid #1E2736; border-radius: 10px;
-  padding: 13px; font-size: 14px; color: #9CA3AF;
+  width: 100%; background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle); border-radius: 10px;
+  padding: 13px; font-size: 14px; color: var(--text-secondary);
   cursor: pointer; font-family: 'DM Sans', sans-serif;
   display: flex; align-items: center; justify-content: center; gap: 10px;
   transition: border-color 0.2s, color 0.2s;
   margin-bottom: 32px;
 }
-.btn-google:hover { border-color: #E8B84B30; color: #E2E8F0; }
+.btn-google:hover { border-color: var(--accent-border); color: var(--text-primary); }
 
-.signup-txt { text-align: center; font-size: 13px; color: #4B5563; }
-.signup-link { color: #E8B84B; text-decoration: none; font-weight: 500; }
+.signup-txt { text-align: center; font-size: 13px; color: var(--text-muted); }
+.signup-link { color: var(--accent); text-decoration: none; font-weight: 500; }
 .signup-link:hover { text-decoration: underline; }
 
 @media (max-width: 768px) {
@@ -207,3 +209,5 @@
   .left-panel { display: none; }
   .right-panel { padding: 40px 24px; }
 }
+
+

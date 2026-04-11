@@ -11,17 +11,17 @@
    ══════════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  --gold:          #E8B84B;
-  --bg-deep:       #080C14;
-  --bg-card:       #10151F;
-  --bg-border:     #1E2736;
+  --gold:          var(--accent);
+  --bg-deep:       var(--bg-base);
+  --bg-card:       var(--bg-elevated);
+  --bg-border:     var(--border-subtle);
 
-  --text-white:    #ffffff;
-  --text-muted:    #9CA3AF;
-  --text-dim:      #4B5563;
-  --text-faint:    #374151;
-  --color-online:  #4ade80;
-  --color-error:   #ef4444;
+  --text-white:    var(--text-primary);
+  --text-muted:    var(--text-secondary);
+  --text-dim:      var(--text-muted);
+  --text-faint:    var(--text-faint);
+  --color-online:  var(--success);
+  --color-error:   var(--danger);
 
   --font-display:  'Bricolage Grotesque', sans-serif;
   --font-body:     'DM Sans', sans-serif;
@@ -91,7 +91,7 @@
   font-family:    var(--font-display);
   font-size:      18px;
   font-weight:    800;
-  color:          var(--text-white);
+  color:          var(--gold);
   letter-spacing: -0.5px;
 }
 
@@ -145,7 +145,7 @@
   transition:      background 0.15s, color 0.15s;
 }
 .sb-link:hover        { background: var(--bg-card); color: var(--text-muted); }
-.sb-link.active       { background: #E8B84B15; color: var(--gold); }
+.sb-link.active       { background: var(--accent-dim); color: var(--gold); }
 .sb-link.active svg   { stroke: var(--gold); }
 
 /* Badge de messages non lus */
@@ -161,7 +161,19 @@
   text-align:    center;
 }
 
-/* --- Pied de sidebar : profil + déconnexion --- */
+.sb-theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 10px;
+}
+
+.sb-theme-label {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* --- Pied de sidebar : profil + deconnexion --- */
 
 .sb-footer {
   border-top: 1px solid var(--bg-border);
@@ -214,7 +226,7 @@
 .sb-user-name {
   font-size:     13px;
   font-weight:   500;
-  color:         #E2E8F0;
+  color:         var(--text-primary);
   white-space:   nowrap;
   overflow:      hidden;
   text-overflow: ellipsis;
@@ -237,7 +249,7 @@
   align-items:   center;
   transition:    color 0.15s, background 0.15s;
 }
-.sb-logout:hover { color: var(--color-error); background: #ef444415; }
+.sb-logout:hover { color: var(--color-error); background: var(--danger-dim); }
 
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -298,7 +310,7 @@
   font-family:    var(--font-display);
   font-size:      17px;
   font-weight:    800;
-  color:          var(--text-white);
+  color:          var(--gold);
   letter-spacing: -0.4px;
 }
 
@@ -318,3 +330,9 @@
   .sidebar-mobile-wrap   { display: none; }
   .mobile-overlay        { display: none !important; }
 }
+
+
+
+
+
+

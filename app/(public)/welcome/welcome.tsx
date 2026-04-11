@@ -96,8 +96,8 @@ export default function WelcomePage() {
               <div className="phone-input">
                 <div className="phone-input-field">Message…</div>
                 <div className="send-btn">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#080C14">
-                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#080C14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--bg-base)">
+                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="var(--bg-base)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                   </svg>
                 </div>
               </div>
@@ -108,3 +108,5 @@ export default function WelcomePage() {
     </>
   )
 }
+
+

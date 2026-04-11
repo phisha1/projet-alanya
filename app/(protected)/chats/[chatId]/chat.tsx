@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import {
   CHAT_COLORS,
@@ -9,19 +9,20 @@ import {
   type ChatMessageStatus,
   type ChatMessageType,
 } from "../../../../src/mocks/chat-data"
+import { loadContacts } from "../../../../src/data/contacts"
 import "./chat-room-page.css"
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type MessageStatus = ChatMessageStatus
 type MessageType = ChatMessageType
 type Message = ChatMessageMock
 type ChatInfo = ChatInfoMock
 
-// ─── Mock data ─────────────────────────────────────────────────────────────── 
+// â”€â”€â”€ Mock data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ 
 // TODO : GET /api/chats/:id  +  GET /api/chats/:id/messages?page=1&limit=50
 // TODO : WebSocket ws://.../chats/:id  (STOMP)
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function formatTime(d: Date) {
   return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
 }
@@ -34,13 +35,13 @@ function formatDateSeparator(d: Date) {
 }
 
 function StatusIcon({ status }: { status: MessageStatus }) {
-  if (status === "sending")   return <span style={{ color: "#374151", fontSize: 10 }}>◷</span>
-  if (status === "sent")      return <span style={{ color: "#4B5563", fontSize: 11 }}>✓</span>
-  if (status === "delivered") return <span style={{ color: "#4B5563", fontSize: 11 }}>✓✓</span>
-  return <span style={{ color: "#60a5fa", fontSize: 11 }}>✓✓</span>
+  if (status === "sending")   return <span style={{ color: "var(--text-faint)", fontSize: 10 }}>...</span>
+  if (status === "sent")      return <span style={{ color: "var(--text-muted)", fontSize: 11 }}>ok</span>
+  if (status === "delivered") return <span style={{ color: "var(--text-muted)", fontSize: 11 }}>vu</span>
+  return <span style={{ color: "var(--info)", fontSize: 11 }}>lu</span>
 }
 
-// ─── Composant message ────────────────────────────────────────────────────────
+// â”€â”€â”€ Composant message â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function MessageBubble({
   msg, isMe, replyMsg, onReply, chatColor,
 }: {
@@ -59,13 +60,13 @@ function MessageBubble({
       onMouseLeave={() => setHovered(false)}
     >
       <div style={{ display: "flex", alignItems: "flex-end", gap: 6, flexDirection: isMe ? "row-reverse" : "row" }}>
-        {/* Bouton répondre */}
+        {/* Bouton repondre */}
         {hovered && (
           <button
             onClick={() => onReply(msg)}
-            style={{ background: "#1E2736", border: "1px solid #2a3444", borderRadius: 6, padding: "4px 8px", color: "#9CA3AF", fontSize: 10, cursor: "pointer", flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}
+            style={{ background: "var(--border-subtle)", border: "1px solid var(--border-default)", borderRadius: 6, padding: "4px 8px", color: "var(--text-secondary)", fontSize: 10, cursor: "pointer", flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}
           >
-            ↩ Répondre
+            Repondre
           </button>
         )}
 
@@ -73,11 +74,11 @@ function MessageBubble({
           {/* Citation */}
           {replyMsg && (
             <div style={{
-              background: isMe ? "#E8B84B20" : "#1E2736",
-              borderLeft: `3px solid ${isMe ? "#E8B84B" : chatColor.text}`,
+              background: isMe ? "var(--accent-dim)" : "var(--border-subtle)",
+              borderLeft: `3px solid ${isMe ? "var(--accent)" : chatColor.text}`,
               borderRadius: "0 6px 6px 0",
               padding: "6px 10px",
-              fontSize: 11, color: "#6B7280",
+              fontSize: 11, color: "var(--text-secondary)",
               marginBottom: 2, maxWidth: "100%",
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
             }}>
@@ -87,8 +88,8 @@ function MessageBubble({
 
           {/* Bulle */}
           <div style={{
-            background: isMe ? "#E8B84B" : "#1E2736",
-            color: isMe ? "#080C14" : "#E2E8F0",
+            background: isMe ? "var(--accent)" : "var(--border-subtle)",
+            color: isMe ? "var(--bg-base)" : "var(--text-primary)",
             padding: msg.type === "file" ? "10px 14px" : "10px 14px",
             borderRadius: isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
             fontSize: 13, lineHeight: 1.55,
@@ -96,7 +97,7 @@ function MessageBubble({
           }}>
             {msg.type === "file" && (
               <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 200 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: isMe ? "#E8B84B40" : "#2a3444", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: isMe ? "#080C14" : "#9CA3AF" }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: isMe ? "var(--accent-border)" : "var(--border-default)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: isMe ? "var(--bg-base)" : "var(--text-secondary)" }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
                   </svg>
@@ -112,7 +113,7 @@ function MessageBubble({
             )}
 
             {msg.type === "image" && (
-              <div style={{ width: 200, height: 140, background: isMe ? "#E8B84B30" : "#2a3444", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4 }}>
+              <div style={{ width: 200, height: 140, background: isMe ? "var(--accent-border)" : "var(--border-default)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4 }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ opacity: .4 }}>
                   <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
                 </svg>
@@ -124,9 +125,9 @@ function MessageBubble({
             )}
           </div>
 
-          {/* Méta */}
+          {/* Meta */}
           <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: isMe ? "flex-end" : "flex-start", padding: "0 2px" }}>
-            <span style={{ fontSize: 10, color: "#374151" }}>{formatTime(msg.timestamp)}</span>
+            <span style={{ fontSize: 10, color: "var(--text-faint)" }}>{formatTime(msg.timestamp)}</span>
             {isMe && <StatusIcon status={msg.status} />}
           </div>
         </div>
@@ -135,15 +136,37 @@ function MessageBubble({
   )
 }
 
-// ─── Page principale ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Page principale â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function ChatRoomPage() {
   const params   = useParams()
   const navigate = useNavigate()
   const chatId   = params.chatId as string
+  const returnTo = `/chats/${chatId}`
 
-  const chat = MOCK_CHAT_INFOS[chatId]
+  const contacts = useMemo(() => loadContacts(), [])
+  const fallbackContact = useMemo(
+    () => contacts.find((contact) => contact.id === chatId),
+    [contacts, chatId],
+  )
+  const chat = useMemo(
+    () =>
+      MOCK_CHAT_INFOS[chatId] ??
+      (fallbackContact
+        ? {
+            id: fallbackContact.id,
+            name: fallbackContact.name,
+            initials: fallbackContact.initials,
+            colorIdx: 0,
+            online: fallbackContact.online,
+            isGroup: false,
+          }
+        : undefined),
+    [chatId, fallbackContact],
+  )
 
-  const [messages, setMessages] = useState<Message[]>(MOCK_CHAT_MESSAGES)
+  const [messages, setMessages] = useState<Message[]>(
+    chat && MOCK_CHAT_INFOS[chatId] ? MOCK_CHAT_MESSAGES : [],
+  )
   const [input, setInput]       = useState("")
   const [replyTo, setReplyTo]   = useState<Message | null>(null)
   const [isTyping, setIsTyping] = useState(false)   // typing de l'interlocuteur
@@ -155,22 +178,26 @@ export default function ChatRoomPage() {
   const fileRef    = useRef<HTMLInputElement>(null)
   const typingTimer = useRef<ReturnType<typeof setTimeout>>()
 
-  // Scroll en bas à chaque nouveau message
+  useEffect(() => {
+    setMessages(chat && MOCK_CHAT_INFOS[chatId] ? MOCK_CHAT_MESSAGES : [])
+  }, [chatId])
+
+  // Scroll en bas a chaque nouveau message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  // Simuler "en train d'écrire" de l'interlocuteur après envoi
+  // Simuler "en train d'ecrire" de l'interlocuteur apres envoi
   const simulateTyping = useCallback(() => {
     setIsTyping(true)
     const delay = 1500 + Math.random() * 1000
     setTimeout(() => {
       setIsTyping(false)
       const replies = [
-        "Super, je regarde ça !",
-        "OK merci 👍",
-        "Reçu, je te réponds dès que possible.",
-        "Nickel, on en parle à la prochaine réunion.",
+        "Super, je regarde ca !",
+        "OK merci ðŸ‘",
+        "Recu, je te reponds des que possible.",
+        "Nickel, on en parle a la prochaine reunion.",
       ]
       const reply: Message = {
         id: `m${Date.now()}`,
@@ -207,7 +234,7 @@ export default function ChatRoomPage() {
     // TODO : POST /api/chats/:id/messages via WebSocket STOMP
     // stompClient.publish({ destination: `/app/chats/${chatId}`, body: JSON.stringify({ content: text, type: "text", replyTo: replyTo?.id }) })
 
-    // Simule la confirmation du serveur après 400ms
+    // Simule la confirmation du serveur apres 400ms
     setTimeout(() => {
       setMessages(prev => prev.map(m =>
         m.id === optimistic.id ? { ...m, status: "sent" } : m
@@ -221,7 +248,7 @@ export default function ChatRoomPage() {
     }, 400)
   }, [input, sending, replyTo, simulateTyping])
 
-  // Touche Entrée = envoi (Shift+Entrée = saut de ligne)
+  // Touche Entree = envoi (Shift+Entree = saut de ligne)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
@@ -235,7 +262,7 @@ export default function ChatRoomPage() {
     e.target.style.height = "auto"
     e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px"
 
-    // TODO : envoyer l'événement "typing" via WebSocket
+    // TODO : envoyer l'evenement "typing" via WebSocket
     // stompClient.publish({ destination: `/app/chats/${chatId}/typing`, body: JSON.stringify({ userId: "me" }) })
     clearTimeout(typingTimer.current)
     typingTimer.current = setTimeout(() => {
@@ -288,7 +315,7 @@ export default function ChatRoomPage() {
 
   return (
     <div className="room-root">
-        {/* ── Top bar ── */}
+        {/* â”€â”€ Top bar â”€â”€ */}
         <div className="room-top">
           <button className="back-btn" onClick={() => navigate("/chats")} aria-label="Retour">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -303,8 +330,8 @@ export default function ChatRoomPage() {
 
           <div className="room-info">
             <div className="room-name">{chat.name}</div>
-            <div className="room-sub" style={{ color: isTyping ? "#E8B84B" : chat.online ? "#4ade80" : "#4B5563" }}>
-              {isTyping ? "en train d'écrire…"
+            <div className="room-sub" style={{ color: isTyping ? "var(--accent)" : chat.online ? "var(--success)" : "var(--text-muted)" }}>
+              {isTyping ? "en train d'ecrire..."
                 : chat.isGroup ? `${chat.members?.length ?? 0} membres`
                 : chat.online ? "En ligne" : "Hors ligne"}
             </div>
@@ -313,20 +340,20 @@ export default function ChatRoomPage() {
           <div className="room-actions">
             {/* Appel audio */}
             <button className="action-btn" aria-label="Appel audio" title="Appel audio"
-              onClick={() => navigate(`/calls/new?contact=${chatId}&type=audio`)}>
+              onClick={() => navigate(`/calls/new?contact=${chatId}&type=audio&returnTo=${encodeURIComponent(returnTo)}`)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
               </svg>
             </button>
-            {/* Appel vidéo */}
-            <button className="action-btn" aria-label="Appel vidéo" title="Appel vidéo"
-              onClick={() => navigate(`/calls/new?contact=${chatId}&type=video`)}>
+            {/* Appel video */}
+            <button className="action-btn" aria-label="Appel video" title="Appel video"
+              onClick={() => navigate(`/calls/new?contact=${chatId}&type=video&returnTo=${encodeURIComponent(returnTo)}`)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                 <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
               </svg>
             </button>
             {/* Info */}
-            <button className="action-btn" aria-label="Infos conversation" title="Infos">
+            <button className="action-btn" aria-label="Infos conversation" title="Infos" onClick={() => navigate(`/chats/${chatId}/info`)}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
               </svg>
@@ -334,7 +361,7 @@ export default function ChatRoomPage() {
           </div>
         </div>
 
-        {/* ── Messages ── */}
+        {/* â”€â”€ Messages â”€â”€ */}
         <div className="room-body">
           {grouped.map(({ date, msgs }) => (
             <div key={date}>
@@ -374,17 +401,17 @@ export default function ChatRoomPage() {
           <div ref={bottomRef} />
         </div>
 
-        {/* ── Barre de réponse ── */}
+        {/* â”€â”€ Barre de reponse â”€â”€ */}
         {replyTo && (
           <div className="reply-bar">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8B84B" strokeWidth="2" strokeLinecap="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round">
               <polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/>
             </svg>
             <div className="reply-bar-content">
-              <div className="reply-bar-label">Répondre à</div>
+              <div className="reply-bar-label">Repondre a</div>
               <div className="reply-bar-txt">{replyTo.content}</div>
             </div>
-            <button className="reply-cancel" onClick={() => setReplyTo(null)} aria-label="Annuler la réponse">
+            <button className="reply-cancel" onClick={() => setReplyTo(null)} aria-label="Annuler la reponse">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
@@ -392,7 +419,7 @@ export default function ChatRoomPage() {
           </div>
         )}
 
-        {/* ── Zone de saisie ── */}
+        {/* â”€â”€ Zone de saisie â”€â”€ */}
         <div className="room-input-wrap">
           <input ref={fileRef} type="file" style={{ display: "none" }} onChange={handleFileSelect}
             accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.mp3,.mp4,.wav" />
@@ -410,7 +437,7 @@ export default function ChatRoomPage() {
                   Photo / image
                 </button>
                 <button className="attach-opt" onClick={() => { fileRef.current!.accept = ".pdf,.doc,.docx,.xls,.xlsx,.txt"; fileRef.current!.click(); }}>
-                  <div className="attach-icon" style={{ background: "#60a5fa20", color: "#60a5fa" }}>
+                  <div className="attach-icon" style={{ background: "var(--info)20", color: "var(--info)" }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
                     </svg>
@@ -418,7 +445,7 @@ export default function ChatRoomPage() {
                   Document
                 </button>
                 <button className="attach-opt" onClick={() => { fileRef.current!.accept = ".mp3,.wav,.ogg,.m4a"; fileRef.current!.click(); }}>
-                  <div className="attach-icon" style={{ background: "#34d39920", color: "#34d399" }}>
+                  <div className="attach-icon" style={{ background: "var(--success)20", color: "var(--success)" }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                       <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
                     </svg>
@@ -441,7 +468,7 @@ export default function ChatRoomPage() {
             <textarea
               ref={inputRef}
               className="room-textarea"
-              placeholder="Message…"
+              placeholder="Message..."
               value={input}
               onChange={handleInput}
               onKeyDown={handleKeyDown}
@@ -455,14 +482,17 @@ export default function ChatRoomPage() {
               disabled={!input.trim()}
               aria-label="Envoyer"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#080C14" strokeWidth="2.5" strokeLinecap="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--bg-base)" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="22" y1="2" x2="11" y2="13"/>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"/>
               </svg>
             </button>
           </div>
-          <div className="input-hint">Entrée pour envoyer · Shift+Entrée pour sauter une ligne · Max 50 Mo par fichier</div>
+          <div className="input-hint">Entree pour envoyer  -  Shift+Entree pour sauter une ligne  -  Max 50 Mo par fichier</div>
         </div>
       </div>
   )
 }
+
+
+

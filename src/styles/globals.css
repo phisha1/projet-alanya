@@ -1,0 +1,297 @@
+/* ═══════════════════════════════════════════════════════════════════
+   globals.css — Alanya Design System
+   Importer dans app/layout.tsx : import "@/styles/globals.css"
+   ═══════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+/* ── Reset ────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+img, video { display: block; max-width: 100%; }
+button { cursor: pointer; font-family: inherit; }
+
+/* ══════════════════════════════════════════════════════════════════
+   THÈME SOMBRE (défaut)
+   ══════════════════════════════════════════════════════════════════ */
+:root,
+[data-theme="dark"] {
+
+  /* ── Fonds ── */
+  --bg-base:       #080C14;   /* fond principal de l'app */
+  --bg-surface:    #0D1118;   /* cartes, sidebars, panels */
+  --bg-elevated:   #10151F;   /* éléments élevés (dropdowns, tooltips) */
+  --bg-hover:      #161C28;   /* hover sur les items de liste */
+  --bg-input:      #0D1118;   /* fond des champs */
+  --bg-muted:      #1A2030;   /* bulles de messages "them" */
+
+  /* ── Bordures ── */
+  --border-subtle:  #1E2736;  /* bordures discrètes */
+  --border-default: #2a3444;  /* bordures normales */
+  --border-strong:  #374151;  /* bordures accentuées */
+
+  /* ── Textes ── */
+  --text-primary:   #E2E8F0;  /* texte principal */
+  --text-secondary: #9CA3AF;  /* texte secondaire */
+  --text-muted:     #4B5563;  /* texte désactivé/hints */
+  --text-faint:     #374151;  /* très discret */
+  --text-ghost:     #2d3748;  /* timestamps, labels */
+
+  /* ── Accent (or Alanya) ── */
+  --accent:         #E8B84B;
+  --accent-dim:     #E8B84B20;
+  --accent-border:  #E8B84B40;
+  --accent-text:    #080C14;   /* texte SUR fond accent */
+
+  /* ── États sémantiques ── */
+  --success:        #4ade80;
+  --success-dim:    #4ade8020;
+  --success-border: #4ade8040;
+  --danger:         #ef4444;
+  --danger-dim:     #ef444415;
+  --danger-border:  #ef444430;
+  --warning:        #fbbf24;
+  --warning-dim:    #fbbf2415;
+  --info:           #60a5fa;
+  --info-dim:       #60a5fa15;
+
+  /* ── Messages entrants ── */
+  --bubble-them-bg:     #1A2030;
+  --bubble-them-text:   #E2E8F0;
+  --bubble-them-border: #1E2736;
+  --bubble-me-bg:       #E8B84B;
+  --bubble-me-text:     #080C14;
+
+  /* ── Couleurs avatar (ordre) ── */
+  --av-0-bg: #E8B84B22; --av-0-fg: #E8B84B;
+  --av-1-bg: #60a5fa22; --av-1-fg: #60a5fa;
+  --av-2-bg: #a78bfa22; --av-2-fg: #a78bfa;
+  --av-3-bg: #34d39922; --av-3-fg: #34d399;
+  --av-4-bg: #fb718522; --av-4-fg: #fb7185;
+
+  /* ── Scrollbar ── */
+  --scrollbar-thumb: #1E2736;
+  --scrollbar-track: transparent;
+
+  /* ── Skeleton ── */
+  --skeleton-base:  #1E2736;
+  --skeleton-shine: #2a3444;
+
+  /* ── Overlay ── */
+  --overlay: #00000080;
+
+  /* ── Grille de fond (pattern de points) ── */
+  --dot-color: #ffffff06;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   THÈME CLAIR
+   ══════════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+
+  /* ── Fonds ── */
+  --bg-base:       #F5F5F0;   /* fond principal — ivoire chaud, pas blanc pur */
+  --bg-surface:    #FFFFFF;   /* cartes, panels */
+  --bg-elevated:   #FAFAF8;   /* dropdowns */
+  --bg-hover:      #F0EFE9;   /* hover liste */
+  --bg-input:      #FFFFFF;   /* champs */
+  --bg-muted:      #EFF0EC;   /* bulles "them" */
+
+  /* ── Bordures ── */
+  --border-subtle:  #E5E3DC;
+  --border-default: #D5D3CB;
+  --border-strong:  #B8B5AB;
+
+  /* ── Textes ── */
+  --text-primary:   #1A1A18;
+  --text-secondary: #4A4A45;
+  --text-muted:     #7A7970;
+  --text-faint:     #9A9990;
+  --text-ghost:     #B0AFA8;
+
+  /* ── Accent — légèrement plus foncé en mode clair pour contraste ── */
+  --accent:         #C9973A;
+  --accent-dim:     #C9973A18;
+  --accent-border:  #C9973A40;
+  --accent-text:    #FFFFFF;
+
+  /* ── États sémantiques ── */
+  --success:        #16a34a;
+  --success-dim:    #16a34a15;
+  --success-border: #16a34a35;
+  --danger:         #dc2626;
+  --danger-dim:     #dc262615;
+  --danger-border:  #dc262630;
+  --warning:        #d97706;
+  --warning-dim:    #d9770615;
+  --info:           #2563eb;
+  --info-dim:       #2563eb15;
+
+  /* ── Messages ── */
+  --bubble-them-bg:     #EFF0EC;
+  --bubble-them-text:   #1A1A18;
+  --bubble-them-border: #E5E3DC;
+  --bubble-me-bg:       #C9973A;
+  --bubble-me-text:     #FFFFFF;
+
+  /* ── Avatars ── */
+  --av-0-bg: #C9973A18; --av-0-fg: #9A6E1F;
+  --av-1-bg: #2563eb15; --av-1-fg: #1d4ed8;
+  --av-2-bg: #7c3aed15; --av-2-fg: #6d28d9;
+  --av-3-bg: #16a34a15; --av-3-fg: #15803d;
+  --av-4-bg: #e1113115; --av-4-fg: #be123c;
+
+  /* ── Scrollbar ── */
+  --scrollbar-thumb: #D5D3CB;
+  --scrollbar-track: transparent;
+
+  /* ── Skeleton ── */
+  --skeleton-base:  #E5E3DC;
+  --skeleton-shine: #F0EFE9;
+
+  /* ── Overlay ── */
+  --overlay: #00000050;
+
+  /* ── Dots ── */
+  --dot-color: #00000008;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   STYLES GLOBAUX — utilisent les variables
+   ══════════════════════════════════════════════════════════════════ */
+
+body {
+  background:  var(--bg-base);
+  color:       var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size:   15px;
+  line-height: 1.6;
+  transition:  background .25s ease, color .25s ease;
+}
+
+/* ── Scrollbars globales ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+*::-webkit-scrollbar       { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+*::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+
+/* ── Sélection de texte ── */
+::selection { background: var(--accent-dim); color: var(--accent); }
+
+/* ── Focus visible ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* ── Transitions thème sur les éléments clés ── */
+.theme-transition,
+.theme-transition * {
+  transition:
+    background-color .25s ease,
+    border-color     .25s ease,
+    color            .25s ease,
+    box-shadow       .25s ease !important;
+}
+
+/* ── Grille de points en fond ── */
+.dot-grid::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Police d'affichage ── */
+.display { font-family: 'Bricolage Grotesque', sans-serif; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   UTILITAIRES — classes qui utilisent les variables
+   Permettent d'écrire className="bg-surface" au lieu de style={{}}
+   ══════════════════════════════════════════════════════════════════ */
+
+.bg-base     { background: var(--bg-base); }
+.bg-surface  { background: var(--bg-surface); }
+.bg-elevated { background: var(--bg-elevated); }
+.bg-muted    { background: var(--bg-muted); }
+
+.border-subtle  { border-color: var(--border-subtle); }
+.border-default { border-color: var(--border-default); }
+
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted     { color: var(--text-muted); }
+.text-ghost     { color: var(--text-ghost); }
+.text-accent    { color: var(--accent); }
+
+.accent-bg { background: var(--accent); color: var(--accent-text); }
+
+/* ── Sidebar ── */
+.sidebar-bg {
+  background: var(--bg-base);
+  border-right: 1px solid var(--border-subtle);
+}
+
+/* ── Card ── */
+.card {
+  background:    var(--bg-surface);
+  border:        1px solid var(--border-subtle);
+  border-radius: 14px;
+}
+
+/* ── Input ── */
+.input-base {
+  background:    var(--bg-input);
+  border:        1px solid var(--border-subtle);
+  color:         var(--text-primary);
+  border-radius: 10px;
+  font-family:   'DM Sans', sans-serif;
+  transition:    border-color .2s;
+}
+.input-base::placeholder { color: var(--text-ghost); }
+.input-base:focus        { border-color: var(--accent-border); outline: none; }
+
+/* ── Bulle de message ── */
+.bubble-them {
+  background:   var(--bubble-them-bg);
+  color:        var(--bubble-them-text);
+  border:       1px solid var(--bubble-them-border);
+}
+.bubble-me {
+  background: var(--bubble-me-bg);
+  color:      var(--bubble-me-text);
+}
+
+/* ── Skeleton ── */
+.skeleton {
+  background: var(--skeleton-base);
+  position: relative; overflow: hidden;
+}
+.skeleton::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent);
+  animation: skelPulse 1.4s ease-in-out infinite;
+}
+@keyframes skelPulse {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── Animations globales ── */
+@keyframes fadeIn    { from { opacity: 0; }                      to { opacity: 1; } }
+@keyframes slideUp   { from { opacity: 0; transform: translateY(6px); }  to { opacity: 1; transform: none; } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes spin      { to { transform: rotate(360deg); } }
+@keyframes pulse     { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+@keyframes scaleIn   { from { opacity:0; transform:scale(.95); } to { opacity:1; transform:scale(1); } }
