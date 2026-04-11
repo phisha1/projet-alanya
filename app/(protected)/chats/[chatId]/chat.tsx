@@ -6,15 +6,13 @@ import {
   MOCK_CHAT_MESSAGES,
   type ChatInfoMock,
   type ChatMessageMock,
-  type ChatMessageStatus,
-  type ChatMessageType,
+  type MessageStatus,
+  type MessageType,
 } from "../../../../src/mocks/chat-data"
 import { loadContacts } from "../../../../src/data/contacts"
 import "./chat-room-page.css"
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-type MessageStatus = ChatMessageStatus
-type MessageType = ChatMessageType
 type Message = ChatMessageMock
 type ChatInfo = ChatInfoMock
 

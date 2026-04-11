@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { MOCK_CONVERSATIONS } from "../../../src/mocks/chat-data"
 import { loadSessionUser, toInitials } from "../../../src/data/session-user"
 import "./dashboard-page.css"
@@ -10,6 +10,7 @@ import "./dashboard-page.css"
 
 interface Call {
   id:        string
+  contactId: string
   name:      string
   initials:  string
   type:      "audio" | "video"
@@ -49,10 +50,10 @@ const MOCK_USER = {
 }
 
 const MOCK_CALLS: Call[] = [
-  { id: "1", name: "Kevin Manga",  initials: "KM", type: "video", direction: "out",    duration: "14 min", time: "Hier 20:30"  },
-  { id: "2", name: "Laure Ateba", initials: "LA", type: "audio", direction: "missed",  duration: "-",      time: "Hier 18:05"  },
-  { id: "3", name: "Paul Essomba",initials: "PE", type: "audio", direction: "in",      duration: "3 min",  time: "Lun. 11:20" },
-  { id: "4", name: "Kevin Manga", initials: "KM", type: "audio", direction: "out",     duration: "8 min",  time: "Dim. 16:44" },
+  { id: "1", contactId: "1", name: "Kevin Manga",  initials: "KM", type: "video", direction: "out",    duration: "14 min", time: "Hier 20:30"  },
+  { id: "2", contactId: "4", name: "Laure Ateba", initials: "LA", type: "audio", direction: "missed",  duration: "-",      time: "Hier 18:05"  },
+  { id: "3", contactId: "5", name: "Paul Essomba",initials: "PE", type: "audio", direction: "in",      duration: "3 min",  time: "Lun. 11:20" },
+  { id: "4", contactId: "1", name: "Kevin Manga", initials: "KM", type: "audio", direction: "out",     duration: "8 min",  time: "Dim. 16:44" },
 ]
 
 const MOCK_CONTACTS: Contact[] = [
@@ -139,6 +140,7 @@ function CallDirectionIcon({ direction }: { direction: Call["direction"] }) {
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export default function DashboardPage() {
+  const navigate = useNavigate()
   const sessionUser = loadSessionUser()
   const currentUser = {
     ...MOCK_USER,
@@ -262,7 +264,7 @@ export default function DashboardPage() {
             <span className="profile-row-val">{MOCK_CONTACTS.length} contacts</span>
           </div>
 
-          <button className="profile-edit">Modifier le profil</button>
+          <button className="profile-edit" onClick={() => navigate("/settings")}>Modifier le profil</button>
         </div>
 
       </div>
@@ -304,12 +306,16 @@ export default function DashboardPage() {
 
                 <div className="call-right">
                   <div className="call-time">{call.time}</div>
-                  <div className="call-btn" title="Rappeler">
+                  <button
+                    className="call-btn"
+                    title="Rappeler"
+                    onClick={() => navigate(`/calls/new?contact=${call.contactId}&type=${call.type}&returnTo=${encodeURIComponent("/dashboard")}`)}
+                  >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                       stroke="var(--accent)" strokeWidth="2" strokeLinecap="round">
                       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
                     </svg>
-                  </div>
+                  </button>
                 </div>
               </div>
             )

@@ -1,6 +1,5 @@
-export type ConversationMessageType = "text" | "file" | "audio" | "image"
-export type ChatMessageStatus = "sending" | "sent" | "delivered" | "read"
-export type ChatMessageType = "text" | "file" | "image" | "audio"
+export type MessageStatus = "sending" | "sent" | "delivered" | "read"
+export type MessageType = "text" | "file" | "image" | "audio"
 
 export interface ConversationMock {
   id: string
@@ -8,7 +7,7 @@ export interface ConversationMock {
   initials: string
   colorIdx: number
   lastMessage: string
-  lastMessageType: ConversationMessageType
+  lastMessageType: MessageType
   time: string
   unread: number
   online: boolean
@@ -32,8 +31,8 @@ export interface ChatMessageMock {
   id: string
   senderId: string
   content: string
-  type: ChatMessageType
-  status: ChatMessageStatus
+  type: MessageType
+  status: MessageStatus
   timestamp: Date
   fileName?: string
   fileSize?: string

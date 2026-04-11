@@ -1,6 +1,7 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useMemo, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
+import { MOCK_CHAT_INFOS, CHAT_COLORS } from "../../../../src/mocks/chat-data"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Member {
@@ -271,13 +272,13 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
                 </div>
                 <span className="ca-label">Message</span>
               </button>
-              <button className="ca-btn" onClick={() => navigate(`/calls/new?contact=${conv.id}&type=audio`)} aria-label="Audio">
+              <button className="ca-btn" onClick={() => navigate(`/calls/new?contact=${conv.id}&type=audio&returnTo=${encodeURIComponent(`/chats/${conv.id}/info`)}`)} aria-label="Audio">
                 <div className="ca-icon">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
                 </div>
                 <span className="ca-label">Audio</span>
               </button>
-              <button className="ca-btn" onClick={() => navigate(`/calls/new?contact=${conv.id}&type=video`)} aria-label="Vidéo">
+              <button className="ca-btn" onClick={() => navigate(`/calls/new?contact=${conv.id}&type=video&returnTo=${encodeURIComponent(`/chats/${conv.id}/info`)}`)} aria-label="Vidéo">
                 <div className="ca-icon">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
                 </div>
@@ -458,12 +459,65 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
   )
 }
 
+// ─── Helper pour convertir ChatInfoMock → ConvInfo ────────────────────────────
+function buildConvInfoFromMock(chatId: string): ConvInfo | null {
+  const chat = MOCK_CHAT_INFOS[chatId]
+  if (!chat) return null
+
+  const color = CHAT_COLORS[chat.colorIdx % CHAT_COLORS.length]
+  const colorNames = ["amber", "blue", "violet", "teal", "rose"] as const
+  const colorName = colorNames[chat.colorIdx % colorNames.length]
+
+  return {
+    id: chat.id,
+    name: chat.name,
+    initials: chat.initials,
+    color: colorName,
+    isGroup: chat.isGroup,
+    online: chat.online,
+    statusMsg: chat.online ? "En ligne" : "Hors ligne",
+    members: chat.isGroup
+      ? (chat.members?.map((m, i) => ({
+          id: String(i),
+          name: `Membre ${m}`,
+          initials: m,
+          color: colorNames[i % colorNames.length],
+          role: i === 0 ? "admin" : "member",
+          online: Math.random() > 0.5,
+        })) ?? [])
+      : [{ id: chat.id, name: chat.name, initials: chat.initials, color: colorName, role: "member", online: chat.online }],
+    files: [],
+    createdAt: "Date inconnue",
+  }
+}
+
 // ─── Page route directe /chats/[chatId]/info ─────────────────────────────────
 export default function ConvInfoPage() {
   const navigate = useNavigate()
+  const { chatId } = useParams<{ chatId: string }>()
+
+  const convInfo = useMemo(() => {
+    if (!chatId) return null
+    return buildConvInfoFromMock(chatId)
+  }, [chatId])
+
+  if (!convInfo) {
+    return (
+      <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-base)", justifyContent: "center", alignItems: "center" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>❓</div>
+          <div>Conversation introuvable</div>
+          <button onClick={() => navigate("/chats")} style={{ marginTop: 16, padding: "8px 16px" }}>
+            Retour aux chats
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div style={{ display:"flex", minHeight:"100vh", background:"var(--bg-base,var(--bg-base))", justifyContent:"center" }}>
-      <ConvInfoPanel onClose={() => navigate(-1)} />
+    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-base)", justifyContent: "center" }}>
+      <ConvInfoPanel info={convInfo} onClose={() => navigate(-1)} />
     </div>
   )
 }

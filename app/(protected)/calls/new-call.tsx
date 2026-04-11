@@ -11,6 +11,7 @@ export default function NewCallPage() {
 
   const presetContact = searchParams.get("contact")
   const presetType = searchParams.get("type") === "video" ? "video" : "audio"
+  const returnTo = searchParams.get("returnTo") || "/calls"
 
   const [query, setQuery] = useState("")
   const [selectedId, setSelectedId] = useState<string | null>(presetContact)
@@ -29,13 +30,13 @@ export default function NewCallPage() {
     if (!contactExists) return
 
     const callId = `n${Date.now()}`
-    navigate(`/calls/${callId}?contact=${presetContact}&type=${presetType}`, { replace: true })
-  }, [contacts, navigate, presetContact, presetType])
+    navigate(`/calls/${callId}?contact=${presetContact}&type=${presetType}&returnTo=${encodeURIComponent(returnTo)}`, { replace: true })
+  }, [contacts, navigate, presetContact, presetType, returnTo])
 
   const startCall = () => {
     if (!selectedId) return
     const callId = `n${Date.now()}`
-    navigate(`/calls/${callId}?contact=${selectedId}&type=${type}`)
+    navigate(`/calls/${callId}?contact=${selectedId}&type=${type}&returnTo=${encodeURIComponent(returnTo)}`)
   }
 
   return (
