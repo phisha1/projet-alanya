@@ -45,3 +45,8 @@ export function saveSessionUser(user: SessionUser) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
 }
 
+export function clearSessionUser() {
+  if (!hasStorage()) return
+  window.localStorage.removeItem(STORAGE_KEY)
+}
+

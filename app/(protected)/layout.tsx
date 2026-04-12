@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useAuth } from "../../src/components/auth-provider"
 import { ThemeToggle } from "../../src/components/theme-toggle"
 import IncomingCallOverlay from "../../src/components/incoming-call-overlay"
-import { loadSessionUser, toInitials } from "../../src/data/session-user"
+import { toInitials } from "../../src/data/session-user"
 import "./layout.css"
 
 
@@ -95,10 +96,10 @@ interface SidebarProps {
 function Sidebar({ onClose }: SidebarProps) {
   const location = useLocation()
   const navigate = useNavigate()
+  const { logout, user: sessionUser } = useAuth()
   const pathname = location.pathname
 
   // Donnees utilisateur fictives â€” seront remplacees par GET /api/users/me
-  const sessionUser = loadSessionUser()
   const user = {
     name:     sessionUser?.name ?? "Utilisateur Alanya",
     email:    sessionUser?.email ?? "",
@@ -107,9 +108,8 @@ function Sidebar({ onClose }: SidebarProps) {
   }
 
   async function handleLogout() {
-    // POST /api/auth/logout revoque le refresh token cote serveur
-    await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" })
-    navigate("/login")
+    await logout()
+    navigate("/login", { replace: true })
   }
 
   return (

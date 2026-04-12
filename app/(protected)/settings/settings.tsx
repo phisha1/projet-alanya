@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../../../src/components/auth-provider"
 import { useToast } from "../../../src/components/toast"
 import { ThemeSelector } from "../../../src/components/theme-toggle"
-import { loadSessionUser, saveSessionUser } from "../../../src/data/session-user"
+import { type SessionUser } from "../../../src/data/session-user"
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type SettingsSection =
@@ -28,8 +29,7 @@ interface SecurityForm {
 }
 
 // â”€â”€â”€ Mock data â€” TODO : GET /api/users/me â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function getInitialProfile(): Profile {
-  const sessionUser = loadSessionUser()
+function getInitialProfile(sessionUser: SessionUser | null): Profile {
   return {
     name:      sessionUser?.name ?? "Utilisateur Alanya",
     email:     sessionUser?.email ?? "",
@@ -250,12 +250,13 @@ function DangerZoneItem({ label, description, buttonLabel, onClick, destructive 
 // â”€â”€â”€ Page principale â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function SettingsPage() {
   const navigate = useNavigate()
+  const { deleteAccount: removeAccount, logoutEverywhere, updateUser, user } = useAuth()
   const { success, error: toastError, info, warning } = useToast()
 
   const [section, setSection] = useState<SettingsSection>("profile")
   const [saving, setSaving]   = useState(false)
-  const [profile, setProfile] = useState<Profile>(() => getInitialProfile())
-  const [draft, setDraft]     = useState<Profile>(() => getInitialProfile())
+  const [profile, setProfile] = useState<Profile>(() => getInitialProfile(user))
+  const [draft, setDraft]     = useState<Profile>(() => getInitialProfile(user))
   const [security, setSecurity] = useState<SecurityForm>({ currentPwd:"", newPwd:"", confirmPwd:"" })
 
   // Notifications
@@ -289,7 +290,7 @@ export default function SettingsPage() {
       // TODO : PATCH /api/users/me
       await new Promise(r => setTimeout(r, 900))
       setProfile(draft)
-      saveSessionUser({
+      updateUser({
         name: draft.name.trim(),
         phone: draft.phone,
         email: draft.email,
@@ -340,18 +341,17 @@ export default function SettingsPage() {
   // â”€â”€ Deconnexion de tous les appareils â”€â”€
   const logoutAll = async () => {
     if (!confirm("Deconnecter tous vos appareils ?")) return
-    // TODO : POST /api/auth/logout-all (revoque tous les refresh tokens)
-    await fetch("/api/auth/logout-all", { method:"POST", credentials:"same-origin" })
-    navigate("/login")
+    await logoutEverywhere()
+    navigate("/login", { replace: true })
   }
 
   // â”€â”€ Supprimer le compte â”€â”€
-  const deleteAccount = () => {
+  const deleteAccount = async () => {
     const confirm1 = window.prompt('Tapez "SUPPRIMER" pour confirmer la suppression definitive de votre compte.')
     if (confirm1 !== "SUPPRIMER") return toastError("Suppression annulee")
-    // TODO : DELETE /api/users/me
+    await removeAccount()
     warning("Compte supprime", "Vos donnees seront effacees dans 30 jours.")
-    setTimeout(() => navigate("/welcome"), 2000)
+    navigate("/welcome", { replace: true })
   }
 
   // â”€â”€â”€ Navigation sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

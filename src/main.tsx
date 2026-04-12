@@ -1,6 +1,8 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { AuthProvider } from "./components/auth-provider"
+import { ProtectedRoute } from "./components/route-guards"
 import { ThemeProvider } from "./components/theme-provider"
 import { ToastProvider } from "./components/toast"
 import "./styles/globals.css"
@@ -24,25 +26,27 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ThemeProvider>
       <ToastProvider>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/welcome" replace />} />
-            <Route path="/welcome" element={<WelcomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/sign-in" element={<SignInPage />} />
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<WelcomePage />} />
+              <Route path="/welcome" element={<WelcomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/sign-in" element={<SignInPage />} />
 
-            <Route path="/dashboard" element={<ProtectedLayout><DashboardPage /></ProtectedLayout>} />
-            <Route path="/chats" element={<ProtectedLayout><ChatsPage /></ProtectedLayout>} />
-            <Route path="/chats/new" element={<ProtectedLayout><NewChatPage /></ProtectedLayout>} />
-            <Route path="/chats/:chatId" element={<ProtectedLayout><ChatRoomPage /></ProtectedLayout>} />
-            <Route path="/chats/:chatId/info" element={<ProtectedLayout><ConvInfoPage /></ProtectedLayout>} />
+              <Route path="/dashboard" element={<ProtectedRoute><ProtectedLayout><DashboardPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route path="/chats" element={<ProtectedRoute><ProtectedLayout><ChatsPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route path="/chats/new" element={<ProtectedRoute><ProtectedLayout><NewChatPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route path="/chats/:chatId" element={<ProtectedRoute><ProtectedLayout><ChatRoomPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route path="/chats/:chatId/info" element={<ProtectedRoute><ProtectedLayout><ConvInfoPage /></ProtectedLayout></ProtectedRoute>} />
 
-            <Route path="/calls" element={<ProtectedLayout><CallsPage /></ProtectedLayout>} />
-            <Route path="/calls/new" element={<ProtectedLayout><NewCallPage /></ProtectedLayout>} />
-            <Route path="/calls/:callId" element={<ProtectedLayout><CallRoomPage /></ProtectedLayout>} />
+              <Route path="/calls" element={<ProtectedRoute><ProtectedLayout><CallsPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route path="/calls/new" element={<ProtectedRoute><ProtectedLayout><NewCallPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route path="/calls/:callId" element={<ProtectedRoute><ProtectedLayout><CallRoomPage /></ProtectedLayout></ProtectedRoute>} />
 
-            <Route path="/settings" element={<ProtectedLayout><SettingsPage /></ProtectedLayout>} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+              <Route path="/settings" element={<ProtectedRoute><ProtectedLayout><SettingsPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </ToastProvider>
     </ThemeProvider>

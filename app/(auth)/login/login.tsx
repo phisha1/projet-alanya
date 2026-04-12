@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { loadSessionUser, normalizePhoneNumber, saveSessionUser } from "../../../src/data/session-user"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useAuth } from "../../../src/components/auth-provider"
 import "./login-page.css"
 
 function normalizePhone(phone: string) {
@@ -9,10 +9,13 @@ function normalizePhone(phone: string) {
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { login } = useAuth()
   const [showPwd, setShowPwd] = useState(false)
   const [phone, setPhone] = useState("")
   const [pwd, setPwd] = useState("")
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const canSubmit = useMemo(() => {
     const normalized = normalizePhone(phone)
@@ -23,21 +26,20 @@ export default function LoginPage() {
     e.preventDefault()
     if (!canSubmit) return
 
+    const redirectTo =
+      (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? "/dashboard"
+
+    setError("")
     setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 700))
-    const normalizedPhone = normalizePhoneNumber(phone)
-    const existing = loadSessionUser()
-    if (!existing || normalizePhoneNumber(existing.phone) !== normalizedPhone) {
-      saveSessionUser({
-        name: existing?.name ?? "Utilisateur Alanya",
-        phone: normalizedPhone,
-        email: existing?.email ?? "",
-        statusMsg: existing?.statusMsg ?? "Disponible",
-        avatar: existing?.avatar ?? null,
-      })
+
+    try {
+      await login({ phone, password: pwd })
+      navigate(redirectTo, { replace: true })
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Connexion impossible.")
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-    navigate("/dashboard")
   }
 
   return (
@@ -77,6 +79,20 @@ export default function LoginPage() {
           <div className="form-pretitle">Connexion</div>
           <h2 className="form-title">Bon retour.</h2>
           <p className="form-subtitle">Entrez vos identifiants pour acceder a votre compte.</p>
+
+          {error ? (
+            <div style={{
+              marginBottom: 16,
+              border: "1px solid var(--danger-border, #ef444430)",
+              background: "var(--danger-dim, #ef444415)",
+              color: "var(--danger, #ef4444)",
+              borderRadius: 10,
+              padding: "10px 12px",
+              fontSize: 12,
+            }}>
+              {error}
+            </div>
+          ) : null}
 
           <div className="field">
             <input

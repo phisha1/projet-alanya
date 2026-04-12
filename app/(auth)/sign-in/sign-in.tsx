@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { saveSessionUser } from "../../../src/data/session-user"
+import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../../../src/components/auth-provider"
+import { requestRegistrationOtp } from "../../../src/services/auth-api"
 import "./sign-in-page.css"
 
 type Step = 1 | 2 | 3
@@ -92,6 +93,7 @@ function OtpInput({ value, onChange }: { value: string[]; onChange: (value: stri
 
 export default function SignInPage() {
   const navigate = useNavigate()
+  const { register } = useAuth()
 
   const [step, setStep] = useState<Step>(1)
   const [error, setError] = useState("")
@@ -109,7 +111,7 @@ export default function SignInPage() {
   const [showConfirm, setShowConfirm] = useState(false)
 
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LEN).fill(""))
-  const [demoOtp, setDemoOtp] = useState("000000")
+  const [demoOtp, setDemoOtp] = useState("")
   const [countdown, setCountdown] = useState(0)
 
   const strength = useMemo(() => passwordStrength(form.password), [form.password])
@@ -145,14 +147,24 @@ export default function SignInPage() {
     if (!match) return setError("Les mots de passe ne correspondent pas.")
 
     setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 700))
 
-    const randomOtp = String(Math.floor(100000 + Math.random() * 900000))
-    setDemoOtp(randomOtp)
-    setOtpDigits(Array(OTP_LEN).fill(""))
-    setCountdown(60)
-    setLoading(false)
-    setStep(3)
+    try {
+      const response = await requestRegistrationOtp({
+        name: form.name.trim(),
+        phone: normalizePhone(form.phone),
+        email: form.email.trim().toLowerCase(),
+        password: form.password,
+      })
+
+      setDemoOtp(response.debugOtp ?? "")
+      setOtpDigits(Array(OTP_LEN).fill(""))
+      setCountdown(60)
+      setStep(3)
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Impossible d'envoyer le code OTP.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const submitStep3 = async () => {
@@ -160,23 +172,28 @@ export default function SignInPage() {
     if (entered.length !== OTP_LEN) return
 
     setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 450))
 
-    if (entered !== demoOtp) {
+    if (demoOtp && entered !== demoOtp) {
       setLoading(false)
       setError("Code incorrect. Reessayez.")
       setOtpDigits(Array(OTP_LEN).fill(""))
       return
     }
 
-    saveSessionUser({
-      name: form.name.trim(),
-      phone: normalizePhone(form.phone),
-      email: form.email.trim().toLowerCase(),
-      statusMsg: "Disponible",
-      avatar: null,
-    })
-    navigate("/dashboard")
+    try {
+      await register({
+        name: form.name.trim(),
+        phone: normalizePhone(form.phone),
+        email: form.email.trim().toLowerCase(),
+        password: form.password,
+      }, entered)
+      navigate("/dashboard", { replace: true })
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Verification impossible.")
+      setOtpDigits(Array(OTP_LEN).fill(""))
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -243,7 +260,7 @@ export default function SignInPage() {
               </div>
 
               <button type="submit" className="btn-submit" disabled={!form.name.trim() || !validPhone(form.phone) || !validEmail(form.email)}>Continuer -&gt;</button>
-              <div className="login-link">Deja un compte ? <a href="/login">Se connecter</a></div>
+              <div className="login-link">Deja un compte ? <Link to="/login">Se connecter</Link></div>
             </form>
           )}
 
@@ -283,12 +300,35 @@ export default function SignInPage() {
 
               <div className="otp-wrap">
                 <OtpInput value={otpDigits} onChange={setOtpDigits} />
-                <div className="resend-row">Code fictif (prototype): <strong className="countdown-accent">{demoOtp}</strong></div>
+                <div className="resend-row">
+                  {demoOtp
+                    ? <>Code fictif (prototype): <strong className="countdown-accent">{demoOtp}</strong></>
+                    : <>Code envoye via la couche API de test.</>}
+                </div>
                 <div className="resend-row">
                   {countdown > 0 ? (
                     <span>Renvoyer dans <strong className="countdown-accent">{countdown}s</strong></span>
                   ) : (
-                    <button className="resend-btn" onClick={() => { const next = String(Math.floor(100000 + Math.random() * 900000)); setDemoOtp(next); setOtpDigits(Array(OTP_LEN).fill("")); setCountdown(60) }}>Generer un nouveau code</button>
+                    <button
+                      className="resend-btn"
+                      onClick={async () => {
+                        try {
+                          const response = await requestRegistrationOtp({
+                            name: form.name.trim(),
+                            phone: normalizePhone(form.phone),
+                            email: form.email.trim().toLowerCase(),
+                            password: form.password,
+                          })
+                          setDemoOtp(response.debugOtp ?? "")
+                          setOtpDigits(Array(OTP_LEN).fill(""))
+                          setCountdown(60)
+                        } catch (submitError) {
+                          setError(submitError instanceof Error ? submitError.message : "Impossible de regenerer le code.")
+                        }
+                      }}
+                    >
+                      Generer un nouveau code
+                    </button>
                   )}
                 </div>
               </div>
