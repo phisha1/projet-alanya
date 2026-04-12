@@ -6,10 +6,25 @@ export interface SessionUser {
   avatar?: string | null
 }
 
-const STORAGE_KEY = "alanya-session-user-v1"
+const STORAGE_KEY = "alanya-session-user-v2"
+const LEGACY_STORAGE_KEYS = [
+  "alanya-session-user-v1",
+]
+const MIGRATION_KEY = "alanya-auth-storage-migrated-v2"
 
 function hasStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined"
+}
+
+function runStorageMigration() {
+  if (!hasStorage()) return
+  if (window.localStorage.getItem(MIGRATION_KEY)) return
+
+  for (const key of LEGACY_STORAGE_KEYS) {
+    window.localStorage.removeItem(key)
+  }
+
+  window.localStorage.setItem(MIGRATION_KEY, "true")
 }
 
 export function normalizePhoneNumber(phone: string) {
@@ -28,6 +43,7 @@ export function toInitials(name: string) {
 
 export function loadSessionUser(): SessionUser | null {
   if (!hasStorage()) return null
+  runStorageMigration()
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
@@ -42,11 +58,13 @@ export function loadSessionUser(): SessionUser | null {
 
 export function saveSessionUser(user: SessionUser) {
   if (!hasStorage()) return
+  runStorageMigration()
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
 }
 
 export function clearSessionUser() {
   if (!hasStorage()) return
+  runStorageMigration()
   window.localStorage.removeItem(STORAGE_KEY)
 }
 

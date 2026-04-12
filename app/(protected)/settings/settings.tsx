@@ -682,7 +682,7 @@ export default function SettingsPage() {
                 {draft.email ? (
                   <Field label="Adresse email" value={draft.email} disabled helper="Contactez le support pour modifier votre email." />
                 ) : (
-                  <Field label="Adresse email" value="Aucun email renseigne" disabled helper="Ajoutez un email a la creation du compte si vous le souhaitez." />
+                  <Field label="Adresse email" value="Aucun email renseigne" disabled helper="Les nouveaux comptes exigent maintenant une adresse email verifiee." />
                 )}
                 <Field label="Telephone" value={draft.phone} disabled helper="Le numero est lie a votre compte et ne peut pas etre change." />
               </div>

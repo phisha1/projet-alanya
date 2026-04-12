@@ -25,7 +25,6 @@ function validPhone(phone: string) {
 }
 
 function validEmail(email: string) {
-  if (!email.trim()) return true
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
 }
 
@@ -128,6 +127,7 @@ export default function SignInPage() {
     setError("")
     if (!form.name.trim()) return setError("Le nom est requis.")
     if (!validPhone(form.phone)) return setError("Numero de telephone invalide.")
+    if (!form.email.trim()) return setError("L'adresse email est requise.")
     if (!validEmail(form.email)) return setError("Adresse email invalide.")
 
     setForm((prev) => ({
@@ -230,7 +230,7 @@ export default function SignInPage() {
 
         <div className="sec-promises">
           <div className="sec-title">Authentification</div>
-          <div className="sec-item"><div className="sec-icon">1</div><div className="sec-txt">Inscription par numero de telephone.</div></div>
+          <div className="sec-item"><div className="sec-icon">1</div><div className="sec-txt">Email obligatoire et lie a un seul numero.</div></div>
           <div className="sec-item"><div className="sec-icon">2</div><div className="sec-txt">Mot de passe fort requis.</div></div>
           <div className="sec-item"><div className="sec-icon">3</div><div className="sec-txt">Code OTP fictif pour le prototype.</div></div>
         </div>
@@ -242,7 +242,7 @@ export default function SignInPage() {
 
           {step === 1 && (
             <form onSubmit={submitStep1} noValidate>
-              <StepHeader step={1} title="Creer un compte." subtitle="Nom et numero de telephone." />
+              <StepHeader step={1} title="Creer un compte." subtitle="Nom, numero de telephone et email." />
 
               <div className="field">
                 <input id="name" type="text" placeholder=" " value={form.name} onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))} required />
@@ -255,11 +255,11 @@ export default function SignInPage() {
               </div>
 
               <div className="field">
-                <input id="email" type="email" placeholder=" " value={form.email} onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))} autoComplete="email" />
-                <label htmlFor="email">Email (facultatif)</label>
+                <input id="email" type="email" placeholder=" " value={form.email} onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))} autoComplete="email" required />
+                <label htmlFor="email">Adresse email</label>
               </div>
 
-              <button type="submit" className="btn-submit" disabled={!form.name.trim() || !validPhone(form.phone) || !validEmail(form.email)}>Continuer -&gt;</button>
+              <button type="submit" className="btn-submit" disabled={!form.name.trim() || !validPhone(form.phone) || !form.email.trim() || !validEmail(form.email)}>Continuer -&gt;</button>
               <div className="login-link">Deja un compte ? <Link to="/login">Se connecter</Link></div>
             </form>
           )}
@@ -296,14 +296,14 @@ export default function SignInPage() {
 
           {step === 3 && (
             <div>
-              <StepHeader step={3} title="Verification." subtitle={`Code envoye a ${normalizePhone(form.phone)}`} />
+              <StepHeader step={3} title="Verification." subtitle={`Code envoye a ${form.email.trim().toLowerCase()}`} />
 
               <div className="otp-wrap">
                 <OtpInput value={otpDigits} onChange={setOtpDigits} />
                 <div className="resend-row">
                   {demoOtp
                     ? <>Code fictif (prototype): <strong className="countdown-accent">{demoOtp}</strong></>
-                    : <>Code envoye via la couche API de test.</>}
+                    : <>Code genere par la couche de prototype.</>}
                 </div>
                 <div className="resend-row">
                   {countdown > 0 ? (

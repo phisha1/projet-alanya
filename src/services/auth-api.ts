@@ -3,9 +3,12 @@ import {
   normalizePhoneNumber,
   type SessionUser,
 } from "../data/session-user"
+import { clearSessionToken, saveSessionToken } from "../data/session-auth"
 import {
   findPrototypeAccount,
+  findPrototypeAccountByEmail,
   loginPrototypeAccount,
+  migrateLegacyPrototypeAccounts,
   registerPrototypeAccount,
   restorePrototypeSession,
 } from "../data/prototype-auth"
@@ -24,8 +27,13 @@ export interface RegistrationDraft {
 }
 
 export interface RegistrationOtpResponse {
-  delivery: "debug" | "sms"
+  delivery: "debug" | "email"
   debugOtp?: string
+}
+
+interface AuthSession {
+  user: SessionUser
+  token?: string
 }
 
 interface AuthUserResponse {
@@ -35,6 +43,7 @@ interface AuthUserResponse {
   email?: string
   statusMsg?: string
   avatar?: string | null
+  token?: string
 }
 
 function shouldUsePrototypeFallback(error: unknown) {
@@ -76,10 +85,15 @@ export async function loginWithPassword(payload: LoginPayload) {
       },
     })
 
-    return toSessionUser(response.user ?? response, fallbackUser)
+    return {
+      user: toSessionUser(response.user ?? response, fallbackUser),
+      token: response.token,
+    } satisfies AuthSession
   } catch (error) {
     if (!shouldUsePrototypeFallback(error)) throw error
-    return loginPrototypeAccount(fallbackUser.phone, payload.password)
+    return {
+      user: await loginPrototypeAccount(fallbackUser.phone, payload.password),
+    } satisfies AuthSession
   }
 }
 
@@ -99,18 +113,22 @@ export async function restoreAuthenticatedUser() {
       return existing
     }
 
+    void migrateLegacyPrototypeAccounts()
     return restorePrototypeSession(existing.phone)
   }
 }
 
 export async function requestRegistrationOtp(draft: RegistrationDraft) {
+  const normalizedPhone = normalizePhoneNumber(draft.phone)
+  const normalizedEmail = draft.email.trim().toLowerCase()
+
   try {
     const response = await apiRequest<RegistrationOtpResponse>("/api/auth/register/request-otp", {
       method: "POST",
       body: {
         ...draft,
-        phone: normalizePhoneNumber(draft.phone),
-        email: draft.email.trim().toLowerCase(),
+        phone: normalizedPhone,
+        email: normalizedEmail,
       },
     })
 
@@ -118,8 +136,16 @@ export async function requestRegistrationOtp(draft: RegistrationDraft) {
   } catch (error) {
     if (!shouldUsePrototypeFallback(error)) throw error
 
-    if (findPrototypeAccount(draft.phone)) {
-      throw new Error("Un compte existe deja avec ce numero. Connectez-vous a la place.")
+    if (!normalizedEmail) {
+      throw new Error("Une adresse email est requise pour creer un compte.")
+    }
+
+    if (findPrototypeAccount(normalizedPhone)) {
+      throw new Error("Ce numero de telephone est deja lie a un compte. Connectez-vous a la place.")
+    }
+
+    if (findPrototypeAccountByEmail(normalizedEmail)) {
+      throw new Error("Cette adresse email est deja liee a un compte. Connectez-vous a la place.")
     }
 
     return {
@@ -142,17 +168,21 @@ export async function completeRegistration(draft: RegistrationDraft, otp: string
     const response = await apiRequest<AuthUserResponse>("/api/auth/register/verify", {
       method: "POST",
       body: {
-        ...draft,
         phone: normalizePhoneNumber(draft.phone),
         email: draft.email.trim().toLowerCase(),
         otp,
       },
     })
 
-    return toSessionUser(response.user ?? response, fallbackUser)
+    return {
+      user: toSessionUser(response.user ?? response, fallbackUser),
+      token: response.token,
+    } satisfies AuthSession
   } catch (error) {
     if (!shouldUsePrototypeFallback(error)) throw error
-    return registerPrototypeAccount(fallbackUser, draft.password)
+    return {
+      user: await registerPrototypeAccount(fallbackUser, draft.password),
+    } satisfies AuthSession
   }
 }
 
@@ -161,6 +191,8 @@ export async function logoutCurrentSession() {
     await apiRequest<void>("/api/auth/logout", { method: "POST" })
   } catch (error) {
     if (!shouldUsePrototypeFallback(error)) throw error
+  } finally {
+    clearSessionToken()
   }
 }
 
@@ -169,6 +201,8 @@ export async function logoutAllSessions() {
     await apiRequest<void>("/api/auth/logout-all", { method: "POST" })
   } catch (error) {
     if (!shouldUsePrototypeFallback(error)) throw error
+  } finally {
+    clearSessionToken()
   }
 }
 
@@ -177,5 +211,17 @@ export async function deleteCurrentAccount() {
     await apiRequest<void>("/api/users/me", { method: "DELETE" })
   } catch (error) {
     if (!shouldUsePrototypeFallback(error)) throw error
+  } finally {
+    clearSessionToken()
   }
+}
+
+export function storeAuthenticatedSession(session: AuthSession) {
+  if (session.token) {
+    saveSessionToken(session.token)
+  } else {
+    clearSessionToken()
+  }
+
+  return session.user
 }

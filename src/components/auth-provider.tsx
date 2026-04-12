@@ -13,8 +13,10 @@ import {
   saveSessionUser,
   type SessionUser,
 } from "../data/session-user"
+import { clearSessionToken } from "../data/session-auth"
 import {
   deletePrototypeAccount,
+  migrateLegacyPrototypeAccounts,
   updatePrototypeAccountProfile,
 } from "../data/prototype-auth"
 import {
@@ -26,6 +28,7 @@ import {
   type LoginPayload,
   type RegistrationDraft,
   restoreAuthenticatedUser,
+  storeAuthenticatedSession,
 } from "../services/auth-api"
 
 interface AuthContextValue {
@@ -50,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let isMounted = true
 
     async function hydrateSession() {
+      await migrateLegacyPrototypeAccounts()
       const cachedUser = loadSessionUser()
 
       if (!cachedUser) {
@@ -68,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         saveSessionUser(restoredUser)
         setUser(restoredUser)
       } else {
+        clearSessionToken()
         clearSessionUser()
         setUser(null)
       }
@@ -83,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = useCallback(async (payload: LoginPayload) => {
-    const nextUser = await loginWithPassword(payload)
+    const nextUser = storeAuthenticatedSession(await loginWithPassword(payload))
     saveSessionUser(nextUser)
     setUser(nextUser)
     setIsReady(true)
@@ -91,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const register = useCallback(async (draft: RegistrationDraft, otp: string) => {
-    const nextUser = await completeRegistration(draft, otp)
+    const nextUser = storeAuthenticatedSession(await completeRegistration(draft, otp))
     saveSessionUser(nextUser)
     setUser(nextUser)
     setIsReady(true)

@@ -1,3 +1,5 @@
+import { loadSessionToken } from "../data/session-auth"
+
 export class ApiError extends Error {
   status: number
   payload?: unknown
@@ -42,10 +44,15 @@ function inferMessage(payload: unknown, fallback: string) {
 
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}) {
   const headers = new Headers(options.headers)
+  const sessionToken = loadSessionToken()
   const body =
     options.body && typeof options.body === "object" && !(options.body instanceof FormData)
       ? JSON.stringify(options.body)
       : (options.body ?? undefined)
+
+  if (sessionToken && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${sessionToken}`)
+  }
 
   if (body && !headers.has("Content-Type") && !(body instanceof FormData)) {
     headers.set("Content-Type", "application/json")

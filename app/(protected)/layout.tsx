@@ -239,7 +239,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       </div>
 
       {/* Overlay d'appel entrant (demo) */}
-      <IncomingCallDemo />
     </div>
   )
 }
