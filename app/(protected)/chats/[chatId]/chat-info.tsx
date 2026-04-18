@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
+import { findLocalGroup } from "../../../../src/data/local-groups"
+import { loadContacts } from "../../../../src/data/contacts"
 import { MOCK_CHAT_INFOS, CHAT_COLORS } from "../../../../src/mocks/chat-data"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -491,6 +493,61 @@ function buildConvInfoFromMock(chatId: string): ConvInfo | null {
   }
 }
 
+function buildConvInfoFromLocalData(chatId: string): ConvInfo | null {
+  const group = findLocalGroup(chatId)
+
+  if (group) {
+    const colorNames = ["amber", "blue", "violet", "teal", "rose"] as const
+    return {
+      id: group.id,
+      name: group.name,
+      initials: group.initials,
+      color: colorNames[group.name.length % colorNames.length],
+      isGroup: true,
+      members: group.memberIds.map((memberId, index) => ({
+        id: memberId,
+        name: `Membre ${index + 1}`,
+        initials: memberId.slice(0, 2).toUpperCase(),
+        color: colorNames[index % colorNames.length],
+        role: index === 0 ? "admin" : "member",
+        online: false,
+      })),
+      files: [],
+      createdAt: new Date(group.createdAt).toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+      description: `${group.memberIds.length} membres`,
+    }
+  }
+
+  const contact = loadContacts().find((entry) => entry.id === chatId)
+  if (!contact) return null
+
+  return {
+    id: contact.id,
+    name: contact.name,
+    initials: contact.initials,
+    color: contact.color,
+    isGroup: false,
+    online: contact.online,
+    statusMsg: contact.online ? "En ligne" : "Hors ligne",
+    members: [
+      {
+        id: contact.id,
+        name: contact.name,
+        initials: contact.initials,
+        color: contact.color,
+        role: "member",
+        online: contact.online,
+      },
+    ],
+    files: [],
+    createdAt: "Date inconnue",
+  }
+}
+
 // ─── Page route directe /chats/[chatId]/info ─────────────────────────────────
 export default function ConvInfoPage() {
   const navigate = useNavigate()
@@ -498,7 +555,7 @@ export default function ConvInfoPage() {
 
   const convInfo = useMemo(() => {
     if (!chatId) return null
-    return buildConvInfoFromMock(chatId)
+    return buildConvInfoFromMock(chatId) ?? buildConvInfoFromLocalData(chatId)
   }, [chatId])
 
   if (!convInfo) {

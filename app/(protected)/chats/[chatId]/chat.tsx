@@ -10,6 +10,7 @@ import {
   type MessageType,
 } from "../../../../src/mocks/chat-data"
 import { loadContacts } from "../../../../src/data/contacts"
+import { findLocalGroup, toChatInfoMock } from "../../../../src/data/local-groups"
 import "./chat-room-page.css"
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -146,9 +147,11 @@ export default function ChatRoomPage() {
     () => contacts.find((contact) => contact.id === chatId),
     [contacts, chatId],
   )
+  const fallbackGroup = useMemo(() => findLocalGroup(chatId), [chatId])
   const chat = useMemo(
     () =>
       MOCK_CHAT_INFOS[chatId] ??
+      (fallbackGroup ? toChatInfoMock(fallbackGroup) : undefined) ??
       (fallbackContact
         ? {
             id: fallbackContact.id,
@@ -159,7 +162,7 @@ export default function ChatRoomPage() {
             isGroup: false,
           }
         : undefined),
-    [chatId, fallbackContact],
+    [chatId, fallbackContact, fallbackGroup],
   )
 
   const [messages, setMessages] = useState<Message[]>(

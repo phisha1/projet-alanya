@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
 import { CONTACT_COLORS, findDirectoryAccountByPhone, normalizePhone, toInitials } from "../../../../src/data/contacts"
+import { createLocalGroup } from "../../../../src/data/local-groups"
 import { useContacts } from "../../../../src/hooks/use-contacts"
 
 type Mode = "chat" | "group"
@@ -29,8 +30,6 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
     })
   }, [contacts, query])
 
-  const selectedContacts = contacts.filter((contact) => selected.has(contact.id))
-
   const toggleSelection = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev)
@@ -52,9 +51,10 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
 
     setLoading(true)
     await new Promise((resolve) => setTimeout(resolve, 700))
+    const group = createLocalGroup(groupName, Array.from(selected))
     success("Groupe cree", `${selected.size} membres ajoutes.`)
     setLoading(false)
-    navigate("/chats/2")
+    navigate(`/chats/${group.id}`)
   }
 
   const createContact = () => {

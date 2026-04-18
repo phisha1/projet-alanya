@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { loadLocalGroups, toConversationMock } from "../../../src/data/local-groups"
 import { CHAT_COLORS, MOCK_CONVERSATIONS, type ConversationMock } from "../../../src/mocks/chat-data"
 import "./chats-page.css"
 
@@ -19,15 +20,20 @@ export default function ChatsPage() {
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<"all" | "unread" | "groups">("all")
 
+  const conversations = useMemo(
+    () => [...loadLocalGroups().map(toConversationMock), ...MOCK_CONVERSATIONS],
+    [],
+  )
+
   const filtered = useMemo(() => {
-    return MOCK_CONVERSATIONS
+    return conversations
       .filter(c => {
         if (filter === "unread") return c.unread > 0
         if (filter === "groups") return c.isGroup
         return true
       })
       .filter(c => c.name.toLowerCase().includes(query.toLowerCase()))
-  }, [query, filter])
+  }, [conversations, query, filter])
 
   const pinned  = filtered.filter(c => c.isPinned)
   const regular = filtered.filter(c => !c.isPinned)
@@ -68,7 +74,7 @@ export default function ChatsPage() {
                 className={`filter-btn ${filter === f ? "active" : ""}`}
                 onClick={() => setFilter(f)}
               >
-                {f === "all" ? "Tous" : f === "unread" ? `Non lus (${MOCK_CONVERSATIONS.reduce((a, c) => a + (c.unread > 0 ? 1 : 0), 0)})` : "Groupes"}
+                {f === "all" ? "Tous" : f === "unread" ? `Non lus (${conversations.reduce((a, c) => a + (c.unread > 0 ? 1 : 0), 0)})` : "Groupes"}
               </button>
             ))}
           </div>
