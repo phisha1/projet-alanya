@@ -38,9 +38,9 @@ button { cursor: pointer; font-family: inherit; }
   --text-ghost:     #334055;  /* timestamps, labels */
 
   /* ── Accent (or Alanya) ── */
-  --accent:         #FF7A00;
-  --accent-dim:     #FF7A0020;
-  --accent-border:  #FF7A0040;
+  --accent:         #D08A3A;
+  --accent-dim:     #D08A3A20;
+  --accent-border:  #D08A3A40;
   --accent-text:    #05070D;   /* texte SUR fond accent */
 
   /* ── États sémantiques ── */
@@ -50,8 +50,8 @@ button { cursor: pointer; font-family: inherit; }
   --danger:         #ef4444;
   --danger-dim:     #ef444415;
   --danger-border:  #ef444430;
-  --warning:        #F59E0B;
-  --warning-dim:    #F59E0B15;
+  --warning:        #C98231;
+  --warning-dim:    #C9823115;
   --info:           #60a5fa;
   --info-dim:       #60a5fa15;
 
@@ -59,11 +59,11 @@ button { cursor: pointer; font-family: inherit; }
   --bubble-them-bg:     #151D2E;
   --bubble-them-text:   #F8FAFC;
   --bubble-them-border: #1C2638;
-  --bubble-me-bg:       #FF7A00;
+  --bubble-me-bg:       #D08A3A;
   --bubble-me-text:     #05070D;
 
   /* ── Couleurs avatar (ordre) ── */
-  --av-0-bg: #FF7A0022; --av-0-fg: #FF7A00;
+  --av-0-bg: #D08A3A22; --av-0-fg: #D08A3A;
   --av-1-bg: #60a5fa22; --av-1-fg: #60a5fa;
   --av-2-bg: #a78bfa22; --av-2-fg: #a78bfa;
   --av-3-bg: #34d39922; --av-3-fg: #34d399;
@@ -81,7 +81,7 @@ button { cursor: pointer; font-family: inherit; }
   --overlay: #00000080;
 
   /* ── Grille de fond (pattern de points) ── */
-  --dot-color: #FF7A000A;
+  --dot-color: #D08A3A0A;
 }
 
 
@@ -91,17 +91,17 @@ button { cursor: pointer; font-family: inherit; }
 [data-theme="light"] {
 
   /* ── Fonds ── */
-  --bg-base:       #FFF8F1;   /* fond principal — ivoire chaud, pas blanc pur */
+  --bg-base:       #FBF7F2;   /* fond principal — ivoire chaud, pas blanc pur */
   --bg-surface:    #FFFFFF;   /* cartes, panels */
   --bg-elevated:   #FFFDF9;   /* dropdowns */
-  --bg-hover:      #FFF0DF;   /* hover liste */
+  --bg-hover:      #F7ECE1;   /* hover liste */
   --bg-input:      #FFFFFF;   /* champs */
   --bg-muted:      #F3F5F8;   /* bulles "them" */
 
   /* ── Bordures ── */
-  --border-subtle:  #F1D7BE;
-  --border-default: #E7B987;
-  --border-strong:  #D98A3D;
+  --border-subtle:  #E8D6C4;
+  --border-default: #D7B394;
+  --border-strong:  #B86A2A;
 
   /* ── Textes ── */
   --text-primary:   #121826;
@@ -111,9 +111,9 @@ button { cursor: pointer; font-family: inherit; }
   --text-ghost:     #B6C0CE;
 
   /* ── Accent — légèrement plus foncé en mode clair pour contraste ── */
-  --accent:         #E86F00;
-  --accent-dim:     #E86F0018;
-  --accent-border:  #E86F0040;
+  --accent:         #B86A2A;
+  --accent-dim:     #B86A2A18;
+  --accent-border:  #B86A2A40;
   --accent-text:    #FFFFFF;
 
   /* ── États sémantiques ── */
@@ -123,38 +123,38 @@ button { cursor: pointer; font-family: inherit; }
   --danger:         #dc2626;
   --danger-dim:     #dc262615;
   --danger-border:  #dc262630;
-  --warning:        #B45309;
-  --warning-dim:    #B4530915;
+  --warning:        #8F4F1F;
+  --warning-dim:    #8F4F1F15;
   --info:           #2563eb;
   --info-dim:       #2563eb15;
 
   /* ── Messages ── */
   --bubble-them-bg:     #F3F5F8;
   --bubble-them-text:   #121826;
-  --bubble-them-border: #F1D7BE;
-  --bubble-me-bg:       #E86F00;
+  --bubble-them-border: #E8D6C4;
+  --bubble-me-bg:       #B86A2A;
   --bubble-me-text:     #FFFFFF;
 
   /* ── Avatars ── */
-  --av-0-bg: #E86F0018; --av-0-fg: #B45309;
+  --av-0-bg: #B86A2A18; --av-0-fg: #8F4F1F;
   --av-1-bg: #2563eb15; --av-1-fg: #1d4ed8;
   --av-2-bg: #7c3aed15; --av-2-fg: #6d28d9;
   --av-3-bg: #16a34a15; --av-3-fg: #15803d;
   --av-4-bg: #e1113115; --av-4-fg: #be123c;
 
   /* ── Scrollbar ── */
-  --scrollbar-thumb: #E7B987;
+  --scrollbar-thumb: #D7B394;
   --scrollbar-track: transparent;
 
   /* ── Skeleton ── */
-  --skeleton-base:  #F1D7BE;
-  --skeleton-shine: #FFF0DF;
+  --skeleton-base:  #E8D6C4;
+  --skeleton-shine: #F7ECE1;
 
   /* ── Overlay ── */
   --overlay: #00000050;
 
   /* ── Dots ── */
-  --dot-color: #E86F000B;
+  --dot-color: #B86A2A0B;
 }
 
 
