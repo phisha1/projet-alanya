@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
 import { requestRegistrationOtp } from "../../../src/services/auth-api"
+import polytechLogo from "../../(public)/polytech.png"
 import "./sign-in-page.css"
 
 type Step = 1 | 2 | 3
@@ -206,7 +207,7 @@ export default function SignInPage() {
     <div className="si-root">
       <aside className="si-left">
         <div className="logo">
-          <div className="hex" />
+          <img src={polytechLogo} alt="Logo Polytech Yaounde" className="auth-school-logo" />
           <span className="logo-txt">Alanya</span>
         </div>
 

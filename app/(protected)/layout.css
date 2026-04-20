@@ -79,11 +79,13 @@
   border-bottom: 1px solid var(--bg-border);
 }
 
-.sb-hex {
-  width:       26px;
-  height:      26px;
-  background:  var(--gold);
-  clip-path:   polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+.sb-school-logo {
+  width:       32px;
+  height:      32px;
+  object-fit:  contain;
+  border-radius: 50%;
+  background:  color-mix(in srgb, var(--bg-card) 82%, transparent);
+  box-shadow:  0 0 0 1px color-mix(in srgb, var(--gold) 30%, transparent);
   flex-shrink: 0;
 }
 
@@ -304,6 +306,24 @@
   color:      var(--text-dim);
   padding:    4px;
   display:    flex;
+}
+
+.topbar-brand {
+  display:     flex;
+  align-items: center;
+  gap:         9px;
+  flex:        1;
+  min-width:   0;
+}
+
+.topbar-school-logo {
+  width:       30px;
+  height:      30px;
+  object-fit:  contain;
+  border-radius: 50%;
+  background:  color-mix(in srgb, var(--bg-card) 82%, transparent);
+  box-shadow:  0 0 0 1px color-mix(in srgb, var(--gold) 30%, transparent);
+  flex-shrink: 0;
 }
 
 .topbar-title {

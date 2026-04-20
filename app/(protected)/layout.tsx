@@ -4,6 +4,7 @@ import { useAuth } from "../../src/components/auth-provider"
 import { ThemeToggle } from "../../src/components/theme-toggle"
 import IncomingCallOverlay from "../../src/components/incoming-call-overlay"
 import { toInitials } from "../../src/data/session-user"
+import polytechLogo from "../(public)/polytech.png"
 import "./layout.css"
 
 
@@ -117,7 +118,7 @@ function Sidebar({ onClose }: SidebarProps) {
 
       {/* Logo + bouton fermeture (mobile) */}
       <div className="sb-logo">
-        <div className="sb-hex" />
+        <img src={polytechLogo} alt="Logo Polytech Yaounde" className="sb-school-logo" />
         <span className="sb-logo-txt">Alanya</span>
         {onClose && (
           <button className="sb-close" onClick={onClose} aria-label="Fermer le menu">
@@ -231,7 +232,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
           >
             <Icons.Menu />
           </button>
-          <span className="topbar-title">Alanya</span>
+          <div className="topbar-brand">
+            <img src={polytechLogo} alt="Logo Polytech Yaounde" className="topbar-school-logo" />
+            <span className="topbar-title">Alanya</span>
+          </div>
           <ThemeToggle />
         </header>
 

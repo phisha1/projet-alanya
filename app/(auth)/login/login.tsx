@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
+import polytechLogo from "../../(public)/polytech.png"
 import "./login-page.css"
 
 function normalizePhone(phone: string) {
@@ -46,7 +47,7 @@ export default function LoginPage() {
     <div className="login-root">
       <div className="left-panel">
         <div className="logo">
-          <div className="hex" />
+          <img src={polytechLogo} alt="Logo Polytech Yaounde" className="auth-school-logo" />
           <span className="logo-name">Alanya</span>
         </div>
 

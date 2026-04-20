@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { ThemeToggle } from "../../../src/components/theme-toggle"
+import polytechLogo from "../polytech.png"
 import "./welcome-page.css"
 
 export default function WelcomePage() {
@@ -9,7 +10,7 @@ export default function WelcomePage() {
         {/* Navbar */}
         <nav className="nav">
           <div className="nav-logo">
-            <div className="hex" />
+            <img src={polytechLogo} alt="Logo Polytech Yaounde" className="school-logo" />
             <span className="display-font" style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Alanya</span>
           </div>
           <div className="nav-links">
