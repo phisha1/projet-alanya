@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { ThemeToggle } from "../../../src/components/theme-toggle"
 import "./welcome-page.css"
 
 export default function WelcomePage() {
@@ -12,6 +13,10 @@ export default function WelcomePage() {
             <span className="display-font" style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Alanya</span>
           </div>
           <div className="nav-links">
+            <div className="welcome-theme-row">
+              <span className="welcome-theme-label">Theme</span>
+              <ThemeToggle className="welcome-theme-toggle" />
+            </div>
             <a href="#features">Fonctionnalités</a>
             <a href="#about">À propos</a>
             <Link to="/login" className="btn-nav">Se connecter</Link>
@@ -23,7 +28,7 @@ export default function WelcomePage() {
           <div className="hero-left">
             <div className="badge">
               <div className="badge-dot" />
-              <span>2 847 utilisateurs en ligne maintenant</span>
+              <span>2 746 utilisateurs en ligne maintenant</span>
             </div>
 
             <h1 className="headline">

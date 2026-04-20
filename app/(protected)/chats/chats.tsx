@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { loadLocalConversations } from "../../../src/data/local-conversations"
 import { loadLocalGroups, toConversationMock } from "../../../src/data/local-groups"
 import { CHAT_COLORS, MOCK_CONVERSATIONS, type ConversationMock } from "../../../src/mocks/chat-data"
 import "./chats-page.css"
@@ -20,10 +21,18 @@ export default function ChatsPage() {
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<"all" | "unread" | "groups">("all")
 
-  const conversations = useMemo(
-    () => [...loadLocalGroups().map(toConversationMock), ...MOCK_CONVERSATIONS],
-    [],
-  )
+  const conversations = useMemo(() => {
+    const localConversations = loadLocalConversations()
+    const groupFallbacks = loadLocalGroups()
+      .map(toConversationMock)
+      .filter((conversation) => !localConversations.some((localConversation) => localConversation.id === conversation.id))
+    const mockFallbacks = MOCK_CONVERSATIONS.filter((conversation) => (
+      !localConversations.some((localConversation) => localConversation.id === conversation.id)
+      && !groupFallbacks.some((groupConversation) => groupConversation.id === conversation.id)
+    ))
+
+    return [...localConversations, ...groupFallbacks, ...mockFallbacks]
+  }, [])
 
   const filtered = useMemo(() => {
     return conversations

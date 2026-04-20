@@ -36,18 +36,46 @@
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 .nav-links { display: flex; align-items: center; gap: 32px; }
+.welcome-theme-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+.welcome-theme-label { line-height: 1; }
+.welcome-theme-toggle {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 8px !important;
+}
 .nav-links a {
   color: #666; font-size: 14px; text-decoration: none;
   transition: color 0.2s;
 }
 .nav-links a:hover { color: var(--accent); }
 .btn-nav {
-  background: var(--accent); color: var(--bg-base);
-  padding: 10px 22px; border-radius: 8px;
-  font-weight: 600; font-size: 14px;
-  text-decoration: none; transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--bg-base);
+  padding: 11px 22px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 72%, white);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent), 0 10px 24px color-mix(in srgb, var(--accent) 18%, transparent);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: transform 0.18s, box-shadow 0.18s, filter 0.18s;
 }
-.btn-nav:hover { opacity: 0.88; }
+.btn-nav:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 32%, transparent), 0 14px 30px color-mix(in srgb, var(--accent) 24%, transparent);
+}
 
 /* --- hero layout --- */
 .hero {
@@ -240,7 +268,8 @@
   .alanya-root { overflow-x: hidden; overflow-y: auto; }
   .nav-links { gap: 14px; }
   .nav-links a { font-size: 13px; }
-  .btn-nav { padding: 8px 14px; font-size: 13px; }
+  .welcome-theme-label { display: none; }
+  .btn-nav { padding: 9px 15px; font-size: 13px; }
   .headline {
     font-size: clamp(34px, 11vw, 48px);
     letter-spacing: -1px;
@@ -274,6 +303,10 @@
 @media (max-width: 520px) {
   .nav { padding: 14px 14px; }
   .nav-links a:not(.btn-nav) { display: none; }
+  .welcome-theme-toggle {
+    width: 32px !important;
+    height: 32px !important;
+  }
   .nav-logo .display-font { font-size: 18px !important; }
   .hex { width: 28px; height: 28px; }
   .hero-left { padding: 28px 14px 14px; }

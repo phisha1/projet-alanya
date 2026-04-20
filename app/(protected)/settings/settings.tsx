@@ -28,6 +28,14 @@ interface SecurityForm {
   confirmPwd: string
 }
 
+interface ConfirmState {
+  title: string
+  description: string
+  confirmLabel: string
+  tone?: "warning" | "danger"
+  onConfirm: () => Promise<void> | void
+}
+
 // â”€â”€â”€ Mock data â€” TODO : GET /api/users/me â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getInitialProfile(sessionUser: SessionUser | null): Profile {
   return {
@@ -247,6 +255,89 @@ function DangerZoneItem({ label, description, buttonLabel, onClick, destructive 
   )
 }
 
+function ConfirmDialog({
+  state,
+  onCancel,
+}: {
+  state: ConfirmState
+  onCancel: () => void
+}) {
+  return (
+    <div
+      onClick={onCancel}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "var(--overlay)",
+        backdropFilter: "blur(6px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
+        zIndex: 9500,
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        onClick={(event) => event.stopPropagation()}
+        style={{
+          width: "min(380px, 100%)",
+          borderRadius: 16,
+          border: "1px solid var(--border-subtle)",
+          background: "var(--bg-surface)",
+          boxShadow: "0 24px 64px #00000080",
+          padding: 20,
+        }}
+      >
+        <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 20, fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>
+          {state.title}
+        </div>
+        <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6 }}>
+          {state.description}
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 18 }}>
+          <button
+            onClick={onCancel}
+            style={{
+              border: "1px solid var(--border-subtle)",
+              background: "var(--bg-elevated)",
+              color: "var(--text-secondary)",
+              borderRadius: 9,
+              padding: "10px 14px",
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            Annuler
+          </button>
+          <button
+            onClick={() => {
+              void state.onConfirm()
+              onCancel()
+            }}
+            style={{
+              border: "1px solid transparent",
+              background: state.tone === "warning" ? "var(--warning, #fbbf24)" : "var(--danger)",
+              color: "var(--bg-base)",
+              borderRadius: 9,
+              padding: "10px 14px",
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            {state.confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // â”€â”€â”€ Page principale â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function SettingsPage() {
   const navigate = useNavigate()
@@ -258,6 +349,7 @@ export default function SettingsPage() {
   const [profile, setProfile] = useState<Profile>(() => getInitialProfile(user))
   const [draft, setDraft]     = useState<Profile>(() => getInitialProfile(user))
   const [security, setSecurity] = useState<SecurityForm>({ currentPwd:"", newPwd:"", confirmPwd:"" })
+  const [confirmState, setConfirmState] = useState<ConfirmState | null>(null)
 
   // Notifications
   const [notifMessages, setNotifMessages]   = useState(true)
@@ -340,9 +432,16 @@ export default function SettingsPage() {
 
   // â”€â”€ Deconnexion de tous les appareils â”€â”€
   const logoutAll = async () => {
-    if (!confirm("Deconnecter tous vos appareils ?")) return
-    await logoutEverywhere()
-    navigate("/login", { replace: true })
+    setConfirmState({
+      title: "Deconnecter tous vos appareils ?",
+      description: "Toutes vos sessions actives seront fermees et vous devrez vous reconnecter.",
+      confirmLabel: "Tout deconnecter",
+      tone: "warning",
+      onConfirm: async () => {
+        await logoutEverywhere()
+        navigate("/login", { replace: true })
+      },
+    })
   }
 
   // â”€â”€ Supprimer le compte â”€â”€
@@ -366,6 +465,9 @@ export default function SettingsPage() {
 
   return (
     <>
+      {confirmState && (
+        <ConfirmDialog state={confirmState} onCancel={() => setConfirmState(null)} />
+      )}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;600&display=swap');
 

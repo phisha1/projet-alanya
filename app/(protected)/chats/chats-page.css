@@ -19,7 +19,7 @@
 
 /* search */
 .search-wrap { position: relative; margin-bottom: 14px; }
-.search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-faint); pointer-events: none; }
+.search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--accent); pointer-events: none; }
 .search-input {
   width: 100%; background: var(--bg-elevated); border: 1px solid var(--border-subtle);
   border-radius: 10px; padding: 11px 14px 11px 38px;

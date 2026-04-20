@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
 import { CONTACT_COLORS, findDirectoryAccountByPhone, normalizePhone, toInitials } from "../../../../src/data/contacts"
+import { ensureDirectConversation, ensureGroupConversation } from "../../../../src/data/local-conversations"
 import { createLocalGroup } from "../../../../src/data/local-groups"
 import { useContacts } from "../../../../src/hooks/use-contacts"
 
@@ -40,6 +41,10 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
   }
 
   const startDirectChat = (contactId: string) => {
+    const contact = contacts.find((entry) => entry.id === contactId)
+    if (contact) {
+      ensureDirectConversation(contact)
+    }
     navigate(`/chats/${contactId}`)
   }
 
@@ -52,6 +57,7 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
     setLoading(true)
     await new Promise((resolve) => setTimeout(resolve, 700))
     const group = createLocalGroup(groupName, Array.from(selected))
+    ensureGroupConversation(group)
     success("Groupe cree", `${selected.size} membres ajoutes.`)
     setLoading(false)
     navigate(`/chats/${group.id}`)
@@ -77,8 +83,19 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
       return
     }
 
+    const contactId = `c-${Date.now()}`
+
     addContact({
-      id: `c-${Date.now()}`,
+      id: contactId,
+      name: account.name,
+      initials: toInitials(account.name),
+      color: account.color,
+      online: account.online,
+      email: account.email,
+      phone,
+    })
+    ensureDirectConversation({
+      id: contactId,
       name: account.name,
       initials: toInitials(account.name),
       color: account.color,

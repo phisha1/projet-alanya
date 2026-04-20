@@ -4,18 +4,23 @@ import {
   CHAT_COLORS,
   MOCK_CHAT_INFOS,
   MOCK_CHAT_MESSAGES,
-  type ChatInfoMock,
   type ChatMessageMock,
   type MessageStatus,
-  type MessageType,
 } from "../../../../src/mocks/chat-data"
 import { loadContacts } from "../../../../src/data/contacts"
+import {
+  ensureDirectConversation,
+  ensureGroupConversation,
+  loadLocalMessages,
+  seedLocalMessages,
+  syncConversationFromMessages,
+} from "../../../../src/data/local-conversations"
 import { findLocalGroup, toChatInfoMock } from "../../../../src/data/local-groups"
+import { useToast } from "../../../../src/components/toast"
 import "./chat-room-page.css"
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type Message = ChatMessageMock
-type ChatInfo = ChatInfoMock
 
 // â”€â”€â”€ Mock data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ 
 // TODO : GET /api/chats/:id  +  GET /api/chats/:id/messages?page=1&limit=50
@@ -141,6 +146,7 @@ export default function ChatRoomPage() {
   const navigate = useNavigate()
   const chatId   = params.chatId as string
   const returnTo = `/chats/${chatId}`
+  const { error } = useToast()
 
   const contacts = useMemo(() => loadContacts(), [])
   const fallbackContact = useMemo(
@@ -165,9 +171,7 @@ export default function ChatRoomPage() {
     [chatId, fallbackContact, fallbackGroup],
   )
 
-  const [messages, setMessages] = useState<Message[]>(
-    chat && MOCK_CHAT_INFOS[chatId] ? MOCK_CHAT_MESSAGES : [],
-  )
+  const [messages, setMessages] = useState<Message[]>(chat ? loadLocalMessages(chatId) : [])
   const [input, setInput]       = useState("")
   const [replyTo, setReplyTo]   = useState<Message | null>(null)
   const [isTyping, setIsTyping] = useState(false)   // typing de l'interlocuteur
@@ -180,8 +184,36 @@ export default function ChatRoomPage() {
   const typingTimer = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
-    setMessages(chat && MOCK_CHAT_INFOS[chatId] ? MOCK_CHAT_MESSAGES : [])
-  }, [chatId])
+    if (!chat) return
+
+    if (fallbackContact) {
+      ensureDirectConversation(fallbackContact)
+    }
+
+    if (fallbackGroup) {
+      ensureGroupConversation(fallbackGroup)
+    }
+
+    if (MOCK_CHAT_INFOS[chatId]) {
+      seedLocalMessages(chatId, MOCK_CHAT_MESSAGES)
+    }
+
+    setMessages(loadLocalMessages(chatId))
+  }, [chat, chatId, fallbackContact, fallbackGroup])
+
+  useEffect(() => {
+    if (!chat || messages.length === 0) return
+
+    syncConversationFromMessages({
+      id: chat.id,
+      name: chat.name,
+      initials: chat.initials,
+      colorIdx: chat.colorIdx,
+      online: chat.online,
+      isGroup: chat.isGroup,
+      members: chat.members,
+    }, messages)
+  }, [chat, messages])
 
   // Scroll en bas a chaque nouveau message
   useEffect(() => {
@@ -213,7 +245,7 @@ export default function ChatRoomPage() {
   }, [chatId])
 
   // Envoi d'un message
-  const sendMessage = useCallback(async () => {
+  const sendMessage = useCallback(() => {
     const text = input.trim()
     if (!text || sending) return
 
@@ -276,7 +308,8 @@ export default function ChatRoomPage() {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > 50 * 1024 * 1024) {
-      alert("Fichier trop volumineux. Maximum 50 Mo.")
+      error("Fichier trop volumineux", "Maximum 50 Mo par fichier.")
+      e.target.value = ""
       return
     }
     const isImage = file.type.startsWith("image/")
