@@ -78,12 +78,16 @@
   transition: color 0.2s;
 }
 .nav-links a:hover { color: var(--accent); }
+.nav-links a.btn-nav,
+.nav-links a.btn-nav:hover {
+  color: var(--accent-text);
+}
 .btn-nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--accent);
-  color: var(--bg-base);
+  color: var(--accent-text);
   padding: 11px 22px;
   border-radius: 10px;
   border: 1px solid color-mix(in srgb, var(--accent) 72%, white);
@@ -152,7 +156,7 @@
 .cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--accent); color: var(--bg-base);
+  background: var(--accent); color: var(--accent-text);
   padding: 15px 28px; border-radius: 10px;
   font-weight: 700; font-size: 15px; text-decoration: none;
   transition: transform 0.15s, opacity 0.15s;
@@ -219,7 +223,7 @@
   width: 32px; height: 32px; border-radius: 50%;
   background: var(--accent); display: flex; align-items: center;
   justify-content: center; font-size: 12px; font-weight: 700;
-  color: var(--bg-base); flex-shrink: 0;
+  color: var(--accent-text); flex-shrink: 0;
 }
 .phone-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
 .phone-status { font-size: 11px; color: var(--success); }
@@ -235,7 +239,7 @@
   border-bottom-left-radius: 4px; align-self: flex-start;
 }
 .bubble.me {
-  background: var(--accent); color: var(--bg-base); font-weight: 500;
+  background: var(--accent); color: var(--accent-text); font-weight: 500;
   border-bottom-right-radius: 4px; align-self: flex-end;
 }
 .meta { font-size: 10px; opacity: 0.5; margin-top: 4px; }
