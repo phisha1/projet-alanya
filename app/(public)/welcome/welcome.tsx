@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom"
 import "./welcome-page.css"
+import { ThemeToggle } from "/home/steve/Documents/react next.js/projet/projet-alanya/src/components/theme-toggle"
+import "/home/steve/Documents/react next.js/projet/projet-alanya/app/(protected)/layout.css"
 
 export default function WelcomePage() {
   return (
@@ -12,8 +14,11 @@ export default function WelcomePage() {
             <span className="display-font" style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Alanya</span>
           </div>
           <div className="nav-links">
+            <div className="sb-theme-row">
+              <span className="sb-theme-label">Theme</span>
+              <ThemeToggle />
+            </div>
             <a href="#features">Fonctionnalités</a>
-            <a href="#about">À propos</a>
             <Link to="/login" className="btn-nav">Se connecter</Link>
           </div>
         </nav>
@@ -42,8 +47,8 @@ export default function WelcomePage() {
                 Commencer gratuitement
                 <span style={{ fontSize: 18 }}>→</span>
               </Link>
-              <Link to="/sign-in" className="btn-ghost">
-                Voir une démo
+              <Link to="/chats" className="btn-ghost">
+                Mode deconnecter
                 <span style={{ fontSize: 14 }}>↗</span>
               </Link>
             </div>
