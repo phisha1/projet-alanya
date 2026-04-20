@@ -18,7 +18,6 @@ export default function WelcomePage() {
               <ThemeToggle className="welcome-theme-toggle" />
             </div>
             <a href="#features">Fonctionnalités</a>
-            <a href="#about">À propos</a>
             <Link to="/login" className="btn-nav">Se connecter</Link>
           </div>
         </nav>
@@ -47,8 +46,8 @@ export default function WelcomePage() {
                 Commencer gratuitement
                 <span style={{ fontSize: 18 }}>→</span>
               </Link>
-              <Link to="/sign-in" className="btn-ghost">
-                Voir une démo
+              <Link to="/chats" className="btn-ghost">
+                Mode deconnecter
                 <span style={{ fontSize: 14 }}>↗</span>
               </Link>
             </div>
