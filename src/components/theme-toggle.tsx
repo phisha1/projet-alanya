@@ -1,15 +1,38 @@
+import { useEffect, useRef } from "react"
 import { useTheme } from "./theme-provider"
 
 // ─── Bouton toggle compact (pour la sidebar) ───────────────────────────────
 export function ThemeToggle({ className }: { className?: string }) {
-  const { resolvedTheme, toggle } = useTheme()
+  const { palette, resolvedTheme, toggle, togglePalette } = useTheme()
+  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isDark = resolvedTheme === "dark"
+  const isSoftPalette = palette === "soft"
+
+  useEffect(() => {
+    return () => {
+      if (clickTimer.current) clearTimeout(clickTimer.current)
+    }
+  }, [])
+
+  const handlePress = () => {
+    if (clickTimer.current) {
+      clearTimeout(clickTimer.current)
+      clickTimer.current = null
+      togglePalette()
+      return
+    }
+
+    clickTimer.current = setTimeout(() => {
+      clickTimer.current = null
+      toggle()
+    }, 240)
+  }
 
   return (
     <button
-      onClick={toggle}
+      onClick={handlePress}
       aria-label={isDark ? "Passer en mode clair" : "Passer en mode sombre"}
-      title={isDark ? "Mode clair" : "Mode sombre"}
+      title={`${isDark ? "Mode clair" : "Mode sombre"} - double tap: ${isSoftPalette ? "theme standard" : "theme creme"}`}
       className={className}
       style={{
         width:          36,

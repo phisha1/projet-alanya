@@ -157,6 +157,83 @@ button { cursor: pointer; font-family: inherit; }
   --dot-color: #B86A2A0B;
 }
 
+/* Palette technique : double tap sur le bouton de theme */
+[data-palette="soft"][data-theme="dark"] {
+  --bg-base:       #070B14;
+  --bg-surface:    #0F172A;
+  --bg-elevated:   #111C31;
+  --bg-hover:      #17243B;
+  --bg-input:      #0F172A;
+  --bg-muted:      #18243A;
+
+  --border-subtle:  #1E2D47;
+  --border-default: #2B3D5F;
+  --border-strong:  #3D5A80;
+
+  --text-primary:   #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted:     #94A3B8;
+  --text-faint:     #64748B;
+  --text-ghost:     #475569;
+
+  --accent:         #38BDF8;
+  --accent-dim:     #38BDF820;
+  --accent-border:  #38BDF848;
+  --accent-text:    #07111F;
+  --warning:        #FACC15;
+  --warning-dim:    #FACC1518;
+
+  --bubble-them-bg:     #18243A;
+  --bubble-them-text:   #F8FAFC;
+  --bubble-them-border: #1E2D47;
+  --bubble-me-bg:       #38BDF8;
+  --bubble-me-text:     #07111F;
+
+  --av-0-bg: #38BDF822; --av-0-fg: #38BDF8;
+  --scrollbar-thumb: #1E2D47;
+  --skeleton-base:  #1E2D47;
+  --skeleton-shine: #2B3D5F;
+  --dot-color: #38BDF80B;
+}
+
+[data-palette="soft"][data-theme="light"] {
+  --bg-base:       #F8FAFC;
+  --bg-surface:    #FFFFFF;
+  --bg-elevated:   #F3F7FC;
+  --bg-hover:      #EAF2FB;
+  --bg-input:      #FFFFFF;
+  --bg-muted:      #EEF4FA;
+
+  --border-subtle:  #D9E2EC;
+  --border-default: #BCCCDC;
+  --border-strong:  #829AB1;
+
+  --text-primary:   #0F172A;
+  --text-secondary: #334E68;
+  --text-muted:     #627D98;
+  --text-faint:     #829AB1;
+  --text-ghost:     #9FB3C8;
+
+  --accent:         #0F4C81;
+  --accent-dim:     #0F4C8118;
+  --accent-border:  #0F4C8140;
+  --accent-text:    #FFFFFF;
+  --warning:        #B7791F;
+  --warning-dim:    #B7791F15;
+
+  --bubble-them-bg:     #EEF4FA;
+  --bubble-them-text:   #0F172A;
+  --bubble-them-border: #D9E2EC;
+  --bubble-me-bg:       #0F4C81;
+  --bubble-me-text:     #FFFFFF;
+
+  --av-0-bg: #0F4C8118; --av-0-fg: #0F4C81;
+  --scrollbar-thumb: #BCCCDC;
+  --skeleton-base:  #D9E2EC;
+  --skeleton-shine: #F3F7FC;
+  --dot-color: #0F4C810B;
+}
+
 
 /* ══════════════════════════════════════════════════════════════════
    STYLES GLOBAUX — utilisent les variables
