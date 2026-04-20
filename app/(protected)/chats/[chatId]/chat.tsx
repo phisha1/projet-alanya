@@ -228,7 +228,7 @@ export default function ChatRoomPage() {
       setIsTyping(false)
       const replies = [
         "Super, je regarde ca !",
-        "OK merci ðŸ‘",
+        "OK merci.",
         "Recu, je te reponds des que possible.",
         "Nickel, on en parle a la prochaine reunion.",
       ]

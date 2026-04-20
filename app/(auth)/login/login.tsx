@@ -135,7 +135,7 @@ export default function LoginPage() {
           </div>
 
           <div className="forgot-row">
-            <Link to="/sign-in" className="forgot-link">Mot de passe oublie ?</Link>
+            <Link to="/forgot-password" className="forgot-link">Mot de passe oublie ?</Link>
           </div>
 
           <button type="submit" className="btn-submit" disabled={loading || !canSubmit}>
@@ -143,7 +143,7 @@ export default function LoginPage() {
           </button>
 
           <p className="signup-txt">
-            Pas encore de compte ? <Link to="/sign-in" className="signup-link">Creer un compte</Link>
+            Pas encore de compte ? <Link to="/signup" className="signup-link">Creer un compte</Link>
           </p>
         </form>
       </div>

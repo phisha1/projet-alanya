@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
 import { requestRegistrationOtp } from "../../../src/services/auth-api"
 import polytechLogo from "../../(public)/polytech.png"
-import "./sign-in-page.css"
+import "./signup-page.css"
 
 type Step = 1 | 2 | 3
 
@@ -91,7 +91,7 @@ function OtpInput({ value, onChange }: { value: string[]; onChange: (value: stri
   )
 }
 
-export default function SignInPage() {
+export default function SignUpPage() {
   const navigate = useNavigate()
   const { register } = useAuth()
 

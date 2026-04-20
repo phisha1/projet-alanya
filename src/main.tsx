@@ -1,8 +1,8 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { AuthProvider } from "./components/auth-provider"
-import { ProtectedRoute } from "./components/route-guards"
+import { ProtectedRoute, PublicOnlyRoute } from "./components/route-guards"
 import { ThemeProvider } from "./components/theme-provider"
 import { ToastProvider } from "./components/toast"
 import "./styles/globals.css"
@@ -14,7 +14,8 @@ import CallsPage from "../app/(protected)/calls/calls"
 import NewCallPage from "../app/(protected)/calls/new-call"
 import ProtectedLayout from "../app/(protected)/layout"
 import DashboardPage from "../app/(protected)/dashboard/dashboard"
-import SignInPage from "../app/(auth)/sign-in/sign-in"
+import ForgotPasswordPage from "../app/(auth)/forgot-password/forgot-password"
+import SignUpPage from "../app/(auth)/signup/signup"
 import WelcomePage from "../app/(public)/welcome/welcome"
 import NotFoundPage from "../app/(public)/not-found/not-found"
 import SettingsPage from "../app/(protected)/settings/settings"
@@ -30,8 +31,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Routes>
               <Route path="/" element={<WelcomePage />} />
               <Route path="/welcome" element={<WelcomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/sign-in" element={<SignInPage />} />
+              <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+              <Route path="/signup" element={<PublicOnlyRoute><SignUpPage /></PublicOnlyRoute>} />
+              <Route path="/sign-in" element={<PublicOnlyRoute><Navigate to="/signup" replace /></PublicOnlyRoute>} />
+              <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPage /></PublicOnlyRoute>} />
 
               <Route path="/dashboard" element={<ProtectedRoute><ProtectedLayout><DashboardPage /></ProtectedLayout></ProtectedRoute>} />
               <Route path="/chats" element={<ProtectedRoute><ProtectedLayout><ChatsPage /></ProtectedLayout></ProtectedRoute>} />

@@ -21,7 +21,7 @@ export default function WelcomePage() {
               <span className="welcome-theme-label">Theme</span>
               <ThemeToggle className="welcome-theme-toggle" />
             </div>
-            <a href="#features">Fonctionnalités</a>
+            <a href="#features">Fonctionnalites</a>
             <Link to="/login" className="btn-nav">Se connecter</Link>
           </div>
         </nav>
@@ -41,18 +41,18 @@ export default function WelcomePage() {
             </h1>
 
             <p className="subline">
-              La messagerie pensée pour les ingénieurs de demain.
-              Sécurisée, rapide, et taillée pour les esprits brillants de l'ENSPY.
+              La messagerie pensee pour les ingenieurs de demain.
+              Securisee, rapide, et taillee pour les esprits brillants de l'ENSPY.
             </p>
 
             <div className="cta-row">
-              <Link to="/sign-in" className="btn-primary">
+              <Link to="/signup" className="btn-primary">
                 Commencer gratuitement
-                <span style={{ fontSize: 18 }}>→</span>
+                <span style={{ fontSize: 18 }}>-&gt;</span>
               </Link>
               <a href="#features" className="btn-ghost">
                 Voir les fonctionnalites
-                <span style={{ fontSize: 14 }}>↗</span>
+                <span style={{ fontSize: 14 }}>-&gt;</span>
               </a>
             </div>
 
@@ -63,11 +63,11 @@ export default function WelcomePage() {
               </div>
               <div className="feat">
                 <div className="feat-label">Fichiers</div>
-                <div className="feat-val">Jusqu'à <strong>50 Mo</strong></div>
+                <div className="feat-val">Jusqu'a <strong>50 Mo</strong></div>
               </div>
               <div className="feat">
                 <div className="feat-label">Appels</div>
-                <div className="feat-val">Audio <strong>&amp;</strong> Vidéo</div>
+                <div className="feat-val">Audio <strong>&amp;</strong> Video</div>
               </div>
             </div>
           </div>
@@ -84,15 +84,15 @@ export default function WelcomePage() {
               </div>
               <div className="chat-body">
                 <div>
-                  <div className="bubble them">T'as envoyé le TP de BD ?</div>
+                  <div className="bubble them">T'as envoye le TP de BD ?</div>
                   <div className="meta">10:42</div>
                 </div>
                 <div>
-                  <div className="bubble me">Oui, je viens de l'uploader 📎</div>
-                  <div className="meta right">10:43 ✓✓</div>
+                  <div className="bubble me">Oui, je viens de l'uploader.</div>
+                  <div className="meta right">10:43 lu</div>
                 </div>
                 <div>
-                  <div className="bubble them">Merci frère, tu gères vraiment</div>
+                  <div className="bubble them">Merci frere, tu geres vraiment</div>
                   <div className="meta">10:43</div>
                 </div>
                 <div className="typing">
@@ -102,7 +102,7 @@ export default function WelcomePage() {
                 </div>
               </div>
               <div className="phone-input">
-                <div className="phone-input-field">Message…</div>
+                <div className="phone-input-field">Message...</div>
                 <div className="send-btn">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--bg-base)">
                     <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="var(--bg-base)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>

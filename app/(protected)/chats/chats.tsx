@@ -9,9 +9,9 @@ import "./chats-page.css"
 // TODO : GET /api/chats?page=1&limit=20
 
 function lastMsgIcon(type: ConversationMock["lastMessageType"]) {
-  if (type === "file")  return "📎 "
-  if (type === "audio") return "🎵 "
-  if (type === "image") return "📷 "
+  if (type === "file")  return "[fichier] "
+  if (type === "audio") return "[audio] "
+  if (type === "image") return "[image] "
   return ""
 }
 
@@ -68,7 +68,7 @@ export default function ChatsPage() {
             <input
               className="search-input"
               type="search"
-              placeholder="Rechercher une conversation…"
+              placeholder="Rechercher une conversation..."
               value={query}
               onChange={e => setQuery(e.target.value)}
               autoComplete="off"
@@ -93,20 +93,20 @@ export default function ChatsPage() {
         <div className="ch-list">
           {filtered.length === 0 ? (
             <div className="empty">
-              <div className="empty-icon">💬</div>
-              <div className="empty-txt">Aucune conversation trouvée<br/>pour « {query} »</div>
+              <div className="empty-icon">...</div>
+              <div className="empty-txt">Aucune conversation trouvee<br/>pour "{query}"</div>
             </div>
           ) : (
             <>
               {pinned.length > 0 && (
                 <>
-                  <div className="section-label">📌 Épinglés</div>
+                  <div className="section-label">Epinglees</div>
                   {pinned.map(conv => <ConvItem key={conv.id} conv={conv} />)}
                 </>
               )}
               {regular.length > 0 && (
                 <>
-                  {pinned.length > 0 && <div className="section-label">Récents</div>}
+                  {pinned.length > 0 && <div className="section-label">Recents</div>}
                   {regular.map(conv => <ConvItem key={conv.id} conv={conv} />)}
                 </>
               )}
@@ -131,7 +131,7 @@ function ConvItem({ conv }: { conv: ConversationMock }) {
       <div className="conv-meta">
         <div className="conv-name">
           {conv.name}
-          {conv.isPinned && <span className="pin-icon">📌</span>}
+          {conv.isPinned && <span className="pin-icon">epingle</span>}
           {conv.isGroup && (
             <span style={{ fontSize: 9, background: "var(--border-subtle)", color: "var(--text-muted)", padding: "1px 5px", borderRadius: 3, fontWeight: 500 }}>groupe</span>
           )}

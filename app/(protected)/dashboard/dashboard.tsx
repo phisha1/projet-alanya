@@ -45,7 +45,7 @@ const MOCK_USER = {
   name:        "Arsene Nguemo",
   initials:    "AN",
   email:       "a.nguemo@enspy.cm",
-  statusMsg:   "Ingenieur en formation ðŸš€",
+  statusMsg:   "Ingenieur en formation",
   memberSince: "Avril 2026",
 }
 
@@ -58,7 +58,7 @@ const MOCK_CALLS: Call[] = [
 
 const MOCK_CONTACTS: Contact[] = [
   { id: "1", name: "Kevin Manga",  initials: "KM", status: "En train de coder",    online: true  },
-  { id: "2", name: "Laure Ateba", initials: "LA", status: "Revisions en cours ðŸ“š", online: true  },
+  { id: "2", name: "Laure Ateba", initials: "LA", status: "Revisions en cours", online: true  },
   { id: "3", name: "Paul Essomba",initials: "PE", status: "Disponible",            online: false },
   { id: "4", name: "Nina Fouda",  initials: "NF", status: "En reunion",           online: false },
 ]
