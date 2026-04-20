@@ -208,7 +208,10 @@ export default function SignInPage() {
       <aside className="si-left">
         <div className="logo">
           <img src={polytechLogo} alt="Logo Polytech Yaounde" className="auth-school-logo" />
-          <span className="logo-txt">Alanya</span>
+          <div className="auth-brand-copy">
+            <span className="logo-txt">Alanya</span>
+            <span className="auth-brand-subtitle">Messagerie ENSPY</span>
+          </div>
         </div>
 
         <div className="stepper">

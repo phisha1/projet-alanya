@@ -119,7 +119,10 @@ function Sidebar({ onClose }: SidebarProps) {
       {/* Logo + bouton fermeture (mobile) */}
       <div className="sb-logo">
         <img src={polytechLogo} alt="Logo Polytech Yaounde" className="sb-school-logo" />
-        <span className="sb-logo-txt">Alanya</span>
+        <div className="sb-brand-copy">
+          <span className="sb-logo-txt">Alanya</span>
+          <span className="sb-logo-subtitle">Messagerie ENSPY</span>
+        </div>
         {onClose && (
           <button className="sb-close" onClick={onClose} aria-label="Fermer le menu">
             <Icons.Close />
@@ -234,7 +237,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
           </button>
           <div className="topbar-brand">
             <img src={polytechLogo} alt="Logo Polytech Yaounde" className="topbar-school-logo" />
-            <span className="topbar-title">Alanya</span>
+            <div className="topbar-brand-copy">
+              <span className="topbar-title">Alanya</span>
+              <span className="topbar-subtitle">Messagerie ENSPY</span>
+            </div>
           </div>
           <ThemeToggle />
         </header>

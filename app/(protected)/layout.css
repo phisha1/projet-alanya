@@ -89,12 +89,29 @@
   flex-shrink: 0;
 }
 
+.sb-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 .sb-logo-txt {
   font-family:    var(--font-display);
   font-size:      18px;
   font-weight:    800;
   color:          var(--gold);
   letter-spacing: -0.5px;
+  line-height:    1;
+}
+
+.sb-logo-subtitle {
+  color:          var(--text-muted);
+  font-size:      9px;
+  font-weight:    700;
+  letter-spacing: 0.08em;
+  line-height:    1;
+  text-transform: uppercase;
 }
 
 /* Bouton de fermeture — visible uniquement sur mobile */
@@ -326,12 +343,29 @@
   flex-shrink: 0;
 }
 
+.topbar-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 .topbar-title {
   font-family:    var(--font-display);
   font-size:      17px;
   font-weight:    800;
   color:          var(--gold);
   letter-spacing: -0.4px;
+  line-height:    1;
+}
+
+.topbar-subtitle {
+  color:          var(--text-muted);
+  font-size:      9px;
+  font-weight:    700;
+  letter-spacing: 0.08em;
+  line-height:    1;
+  text-transform: uppercase;
 }
 
 

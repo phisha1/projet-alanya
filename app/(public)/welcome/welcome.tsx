@@ -11,7 +11,10 @@ export default function WelcomePage() {
         <nav className="nav">
           <div className="nav-logo">
             <img src={polytechLogo} alt="Logo Polytech Yaounde" className="school-logo" />
-            <span className="display-font" style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.5 }}>Alanya</span>
+            <div className="brand-copy">
+              <span className="display-font brand-name">Alanya</span>
+              <span className="brand-subtitle">Messagerie ENSPY</span>
+            </div>
           </div>
           <div className="nav-links">
             <div className="welcome-theme-row">
@@ -47,10 +50,10 @@ export default function WelcomePage() {
                 Commencer gratuitement
                 <span style={{ fontSize: 18 }}>→</span>
               </Link>
-              <Link to="/chats" className="btn-ghost">
-                Mode deconnecter
+              <a href="#features" className="btn-ghost">
+                Voir les fonctionnalites
                 <span style={{ fontSize: 14 }}>↗</span>
-              </Link>
+              </a>
             </div>
 
             <div id="features" className="features">

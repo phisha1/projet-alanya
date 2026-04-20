@@ -131,12 +131,28 @@
   flex-shrink: 0;
 }
 
+.si-root .auth-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .si-root .logo-txt {
   font-family:    var(--font-display);
   font-size:      19px;
   font-weight:    800;
   color:          var(--gold);
   letter-spacing: -0.5px;
+  line-height:    1;
+}
+
+.si-root .auth-brand-subtitle {
+  color:          var(--text-muted);
+  font-size:      10px;
+  font-weight:    700;
+  letter-spacing: 0.08em;
+  line-height:    1;
+  text-transform: uppercase;
 }
 
 /* --- Stepper (indicateur d'Ã©tapes) --- */

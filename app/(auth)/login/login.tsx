@@ -48,7 +48,10 @@ export default function LoginPage() {
       <div className="left-panel">
         <div className="logo">
           <img src={polytechLogo} alt="Logo Polytech Yaounde" className="auth-school-logo" />
-          <span className="logo-name">Alanya</span>
+          <div className="auth-brand-copy">
+            <span className="logo-name">Alanya</span>
+            <span className="auth-brand-subtitle">Messagerie ENSPY</span>
+          </div>
         </div>
 
         <div className="left-body">
