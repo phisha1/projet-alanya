@@ -36,7 +36,9 @@
   content: '';
   position: absolute;
   width: 420px; height: 420px;
-  background: var(--accent-dim);
+  background:
+    linear-gradient(135deg, var(--accent-dim), transparent 68%),
+    color-mix(in srgb, var(--accent) 10%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   bottom: -120px; left: -80px;
   pointer-events: none;

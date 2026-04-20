@@ -18,30 +18,30 @@ button { cursor: pointer; font-family: inherit; }
 [data-theme="dark"] {
 
   /* ── Fonds ── */
-  --bg-base:       #080C14;   /* fond principal de l'app */
-  --bg-surface:    #0D1118;   /* cartes, sidebars, panels */
-  --bg-elevated:   #10151F;   /* éléments élevés (dropdowns, tooltips) */
-  --bg-hover:      #161C28;   /* hover sur les items de liste */
-  --bg-input:      #0D1118;   /* fond des champs */
-  --bg-muted:      #1A2030;   /* bulles de messages "them" */
+  --bg-base:       #05070D;   /* fond principal de l'app */
+  --bg-surface:    #0A0F1A;   /* cartes, sidebars, panels */
+  --bg-elevated:   #111827;   /* éléments élevés (dropdowns, tooltips) */
+  --bg-hover:      #172033;   /* hover sur les items de liste */
+  --bg-input:      #0A0F1A;   /* fond des champs */
+  --bg-muted:      #151D2E;   /* bulles de messages "them" */
 
   /* ── Bordures ── */
-  --border-subtle:  #1E2736;  /* bordures discrètes */
-  --border-default: #2a3444;  /* bordures normales */
-  --border-strong:  #374151;  /* bordures accentuées */
+  --border-subtle:  #1C2638;  /* bordures discrètes */
+  --border-default: #2A3548;  /* bordures normales */
+  --border-strong:  #3F4F68;  /* bordures accentuées */
 
   /* ── Textes ── */
-  --text-primary:   #E2E8F0;  /* texte principal */
-  --text-secondary: #9CA3AF;  /* texte secondaire */
-  --text-muted:     #4B5563;  /* texte désactivé/hints */
-  --text-faint:     #374151;  /* très discret */
-  --text-ghost:     #2d3748;  /* timestamps, labels */
+  --text-primary:   #F8FAFC;  /* texte principal */
+  --text-secondary: #B7C0D1;  /* texte secondaire */
+  --text-muted:     #7E8AA0;  /* texte désactivé/hints */
+  --text-faint:     #3F4F68;  /* très discret */
+  --text-ghost:     #334055;  /* timestamps, labels */
 
   /* ── Accent (or Alanya) ── */
-  --accent:         #E8B84B;
-  --accent-dim:     #E8B84B20;
-  --accent-border:  #E8B84B40;
-  --accent-text:    #080C14;   /* texte SUR fond accent */
+  --accent:         #FF7A00;
+  --accent-dim:     #FF7A0020;
+  --accent-border:  #FF7A0040;
+  --accent-text:    #05070D;   /* texte SUR fond accent */
 
   /* ── États sémantiques ── */
   --success:        #4ade80;
@@ -50,38 +50,38 @@ button { cursor: pointer; font-family: inherit; }
   --danger:         #ef4444;
   --danger-dim:     #ef444415;
   --danger-border:  #ef444430;
-  --warning:        #fbbf24;
-  --warning-dim:    #fbbf2415;
+  --warning:        #F59E0B;
+  --warning-dim:    #F59E0B15;
   --info:           #60a5fa;
   --info-dim:       #60a5fa15;
 
   /* ── Messages entrants ── */
-  --bubble-them-bg:     #1A2030;
-  --bubble-them-text:   #E2E8F0;
-  --bubble-them-border: #1E2736;
-  --bubble-me-bg:       #E8B84B;
-  --bubble-me-text:     #080C14;
+  --bubble-them-bg:     #151D2E;
+  --bubble-them-text:   #F8FAFC;
+  --bubble-them-border: #1C2638;
+  --bubble-me-bg:       #FF7A00;
+  --bubble-me-text:     #05070D;
 
   /* ── Couleurs avatar (ordre) ── */
-  --av-0-bg: #E8B84B22; --av-0-fg: #E8B84B;
+  --av-0-bg: #FF7A0022; --av-0-fg: #FF7A00;
   --av-1-bg: #60a5fa22; --av-1-fg: #60a5fa;
   --av-2-bg: #a78bfa22; --av-2-fg: #a78bfa;
   --av-3-bg: #34d39922; --av-3-fg: #34d399;
   --av-4-bg: #fb718522; --av-4-fg: #fb7185;
 
   /* ── Scrollbar ── */
-  --scrollbar-thumb: #1E2736;
+  --scrollbar-thumb: #1C2638;
   --scrollbar-track: transparent;
 
   /* ── Skeleton ── */
-  --skeleton-base:  #1E2736;
-  --skeleton-shine: #2a3444;
+  --skeleton-base:  #1C2638;
+  --skeleton-shine: #2A3548;
 
   /* ── Overlay ── */
   --overlay: #00000080;
 
   /* ── Grille de fond (pattern de points) ── */
-  --dot-color: #ffffff06;
+  --dot-color: #FF7A000A;
 }
 
 
@@ -91,29 +91,29 @@ button { cursor: pointer; font-family: inherit; }
 [data-theme="light"] {
 
   /* ── Fonds ── */
-  --bg-base:       #F5F5F0;   /* fond principal — ivoire chaud, pas blanc pur */
+  --bg-base:       #FFF8F1;   /* fond principal — ivoire chaud, pas blanc pur */
   --bg-surface:    #FFFFFF;   /* cartes, panels */
-  --bg-elevated:   #FAFAF8;   /* dropdowns */
-  --bg-hover:      #F0EFE9;   /* hover liste */
+  --bg-elevated:   #FFFDF9;   /* dropdowns */
+  --bg-hover:      #FFF0DF;   /* hover liste */
   --bg-input:      #FFFFFF;   /* champs */
-  --bg-muted:      #EFF0EC;   /* bulles "them" */
+  --bg-muted:      #F3F5F8;   /* bulles "them" */
 
   /* ── Bordures ── */
-  --border-subtle:  #E5E3DC;
-  --border-default: #D5D3CB;
-  --border-strong:  #B8B5AB;
+  --border-subtle:  #F1D7BE;
+  --border-default: #E7B987;
+  --border-strong:  #D98A3D;
 
   /* ── Textes ── */
-  --text-primary:   #1A1A18;
-  --text-secondary: #4A4A45;
-  --text-muted:     #7A7970;
-  --text-faint:     #9A9990;
-  --text-ghost:     #B0AFA8;
+  --text-primary:   #121826;
+  --text-secondary: #4A5568;
+  --text-muted:     #718096;
+  --text-faint:     #9AA4B2;
+  --text-ghost:     #B6C0CE;
 
   /* ── Accent — légèrement plus foncé en mode clair pour contraste ── */
-  --accent:         #C9973A;
-  --accent-dim:     #C9973A18;
-  --accent-border:  #C9973A40;
+  --accent:         #E86F00;
+  --accent-dim:     #E86F0018;
+  --accent-border:  #E86F0040;
   --accent-text:    #FFFFFF;
 
   /* ── États sémantiques ── */
@@ -123,38 +123,38 @@ button { cursor: pointer; font-family: inherit; }
   --danger:         #dc2626;
   --danger-dim:     #dc262615;
   --danger-border:  #dc262630;
-  --warning:        #d97706;
-  --warning-dim:    #d9770615;
+  --warning:        #B45309;
+  --warning-dim:    #B4530915;
   --info:           #2563eb;
   --info-dim:       #2563eb15;
 
   /* ── Messages ── */
-  --bubble-them-bg:     #EFF0EC;
-  --bubble-them-text:   #1A1A18;
-  --bubble-them-border: #E5E3DC;
-  --bubble-me-bg:       #C9973A;
+  --bubble-them-bg:     #F3F5F8;
+  --bubble-them-text:   #121826;
+  --bubble-them-border: #F1D7BE;
+  --bubble-me-bg:       #E86F00;
   --bubble-me-text:     #FFFFFF;
 
   /* ── Avatars ── */
-  --av-0-bg: #C9973A18; --av-0-fg: #9A6E1F;
+  --av-0-bg: #E86F0018; --av-0-fg: #B45309;
   --av-1-bg: #2563eb15; --av-1-fg: #1d4ed8;
   --av-2-bg: #7c3aed15; --av-2-fg: #6d28d9;
   --av-3-bg: #16a34a15; --av-3-fg: #15803d;
   --av-4-bg: #e1113115; --av-4-fg: #be123c;
 
   /* ── Scrollbar ── */
-  --scrollbar-thumb: #D5D3CB;
+  --scrollbar-thumb: #E7B987;
   --scrollbar-track: transparent;
 
   /* ── Skeleton ── */
-  --skeleton-base:  #E5E3DC;
-  --skeleton-shine: #F0EFE9;
+  --skeleton-base:  #F1D7BE;
+  --skeleton-shine: #FFF0DF;
 
   /* ── Overlay ── */
   --overlay: #00000050;
 
   /* ── Dots ── */
-  --dot-color: #00000008;
+  --dot-color: #E86F000B;
 }
 
 

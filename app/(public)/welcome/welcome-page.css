@@ -74,7 +74,7 @@
   border-radius: 8px !important;
 }
 .nav-links a {
-  color: #666; font-size: 14px; text-decoration: none;
+  color: var(--text-secondary); font-size: 14px; text-decoration: none;
   transition: color 0.2s;
 }
 .nav-links a:hover { color: var(--accent); }
