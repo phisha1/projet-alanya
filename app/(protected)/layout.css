@@ -1,14 +1,6 @@
-/* ─────────────────────────────────────────────────────────────────────────────
-   layout.css
-   Layout protégé : sidebar fixe desktop + topbar mobile + overlay.
-   ───────────────────────────────────────────────────────────────────────────── */
+﻿
 
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500&display=swap');
-
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   DESIGN TOKENS
-   ══════════════════════════════════════════════════════════════════════════════ */
 
 :root {
   --gold:          var(--accent);
@@ -31,30 +23,18 @@
   --sidebar-width: 240px;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   LAYOUT GLOBAL
-   Sidebar fixe à gauche + zone de contenu qui prend le reste.
-   ══════════════════════════════════════════════════════════════════════════════ */
-
 .layout-root {
   display:    flex;
   min-height: 100vh;
   background: var(--bg-deep);
 }
 
-/* Zone de contenu — flex: 1 pour occuper tout l'espace restant */
 .layout-main {
   flex:           1;
-  min-width:      0; /* évite le débordement avec flex */
+  min-width:      0;
   display:        flex;
   flex-direction: column;
 }
-
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   SIDEBAR
-   ══════════════════════════════════════════════════════════════════════════════ */
 
 .sidebar {
   width:          var(--sidebar-width);
@@ -114,7 +94,6 @@
   text-transform: uppercase;
 }
 
-/* Bouton de fermeture — visible uniquement sur mobile */
 .sb-close {
   margin-left: auto;
   background:  none;
@@ -256,7 +235,6 @@
   color:     var(--color-online);
 }
 
-/* Bouton déconnexion */
 .sb-logout {
   background:    none;
   border:        none;
@@ -270,13 +248,6 @@
 }
 .sb-logout:hover { color: var(--color-error); background: var(--danger-dim); }
 
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   OVERLAY + SIDEBAR MOBILE
-   Sur mobile, la sidebar slide depuis la gauche par-dessus le contenu.
-   ══════════════════════════════════════════════════════════════════════════════ */
-
-/* Fond semi-transparent derrière la sidebar mobile */
 .mobile-overlay {
   display:    none;
   position:   fixed;
@@ -286,7 +257,6 @@
 }
 .mobile-overlay.open { display: block; }
 
-/* Wrapper de la sidebar mobile — glisse depuis la gauche */
 .sidebar-mobile-wrap {
   position:   fixed;
   top:        0;
@@ -298,14 +268,8 @@
 }
 .sidebar-mobile-wrap.open { transform: translateX(0); }
 
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   TOPBAR MOBILE
-   Visible uniquement sur mobile à la place de la sidebar.
-   ══════════════════════════════════════════════════════════════════════════════ */
-
 .topbar {
-  display:       none; /* caché sur desktop */
+  display:       none;
   align-items:   center;
   gap:           12px;
   padding:       14px 20px;
@@ -368,11 +332,6 @@
   text-transform: uppercase;
 }
 
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   RESPONSIVE
-   ══════════════════════════════════════════════════════════════════════════════ */
-
 @media (max-width: 860px) {
   /* On cache la sidebar statique et on affiche la topbar */
   .layout-sidebar-static { display: none; }
@@ -384,9 +343,4 @@
   .sidebar-mobile-wrap   { display: none; }
   .mobile-overlay        { display: none !important; }
 }
-
-
-
-
-
 

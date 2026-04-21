@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@300;400;500&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@300;400;500&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -31,7 +31,6 @@
   pointer-events: none;
 }
 
-/* hexagone géant décoratif */
 .left-panel::after {
   content: '';
   position: absolute;
@@ -88,7 +87,6 @@
   line-height: 1.8; max-width: 320px;
 }
 
-/* stats en bas à gauche */
 .stat-row {
   display: flex; gap: 32px;
   position: relative; z-index: 1;
@@ -230,5 +228,4 @@
   .left-panel { display: none; }
   .right-panel { padding: 40px 24px; }
 }
-
 

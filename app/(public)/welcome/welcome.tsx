@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+﻿import { Link } from "react-router-dom"
 import { ThemeToggle } from "../../../src/components/theme-toggle"
 import polytechLogo from "../polytech.png"
 import "./welcome-page.css"
@@ -116,5 +116,4 @@ export default function WelcomePage() {
     </>
   )
 }
-
 

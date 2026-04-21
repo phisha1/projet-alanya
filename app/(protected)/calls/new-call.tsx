@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { CONTACT_COLORS } from "../../../src/data/contacts"
 import { useContacts } from "../../../src/hooks/use-contacts"
@@ -103,5 +103,4 @@ export default function NewCallPage() {
     </div>
   )
 }
-
 

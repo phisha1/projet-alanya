@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
 import { requestRegistrationOtp } from "../../../src/services/auth-api"
@@ -345,5 +345,4 @@ export default function SignUpPage() {
     </div>
   )
 }
-
 

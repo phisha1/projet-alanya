@@ -1,11 +1,9 @@
-import { useState, useMemo } from "react"
+﻿import { useState, useMemo } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { loadLocalConversations } from "../../../src/data/local-conversations"
-import { loadLocalGroups, toConversationMock } from "../../../src/data/local-groups"
-import { CHAT_COLORS, MOCK_CONVERSATIONS, type ConversationMock } from "../../../src/mocks/chat-data"
+import { CHAT_COLORS, type ConversationMock } from "../../../src/mocks/chat-data"
+import { getChatConversations } from "../../../src/services/chats-service"
 import "./chats-page.css"
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 // TODO : GET /api/chats?page=1&limit=20
 
 function lastMsgIcon(type: ConversationMock["lastMessageType"]) {
@@ -15,23 +13,13 @@ function lastMsgIcon(type: ConversationMock["lastMessageType"]) {
   return ""
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ChatsPage() {
   const navigate = useNavigate()
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<"all" | "unread" | "groups">("all")
 
   const conversations = useMemo(() => {
-    const localConversations = loadLocalConversations()
-    const groupFallbacks = loadLocalGroups()
-      .map(toConversationMock)
-      .filter((conversation) => !localConversations.some((localConversation) => localConversation.id === conversation.id))
-    const mockFallbacks = MOCK_CONVERSATIONS.filter((conversation) => (
-      !localConversations.some((localConversation) => localConversation.id === conversation.id)
-      && !groupFallbacks.some((groupConversation) => groupConversation.id === conversation.id)
-    ))
-
-    return [...localConversations, ...groupFallbacks, ...mockFallbacks]
+    return getChatConversations()
   }, [])
 
   const filtered = useMemo(() => {
@@ -147,5 +135,4 @@ function ConvItem({ conv }: { conv: ConversationMock }) {
     </Link>
   )
 }
-
 

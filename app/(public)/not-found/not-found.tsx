@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+﻿import { Link } from "react-router-dom"
 
 export default function NotFound() {
   return (
@@ -79,8 +79,8 @@ export default function NotFound() {
         <div className="hex" />
         <h1 className="title">Page introuvable</h1>
         <p className="sub">
-          Cette page n'existe pas ou a été déplacée.<br />
-          Vérifiez l'URL ou retournez à l'accueil.
+          Cette page n'existe pas ou a ete deplacee.<br />
+          Verifiez l'URL ou retournez a l'accueil.
         </p>
         <div className="actions">
           <Link to="/dashboard" className="btn-primary">
@@ -100,6 +100,4 @@ export default function NotFound() {
     </>
   )
 }
-
-
 

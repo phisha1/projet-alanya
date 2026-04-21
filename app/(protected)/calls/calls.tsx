@@ -1,45 +1,8 @@
 ﻿import { useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { CALL_COLORS as COLORS, getCallsHistory, type CallDirection, type CallRecord } from "../../../src/services/calls-service"
 import "./calls-page.css"
-type CallDirection = "in" | "out" | "missed"
-type CallType = "audio" | "video"
-type CallStatus = "ended" | "declined" | "no_answer"
 type FilterType = "all" | "missed" | "audio" | "video"
-
-interface CallRecord {
-  id: string
-  contactId: string
-  contactName: string
-  contactInitials: string
-  contactColor: keyof typeof COLORS
-  direction: CallDirection
-  type: CallType
-  status: CallStatus
-  duration?: string
-  ts: Date
-  isGroup?: boolean
-}
-
-const MOCK_CALLS: CallRecord[] = [
-  { id: "c1", contactId: "1", contactName: "Kevin Manga", contactInitials: "KM", contactColor: "amber", direction: "out", type: "video", status: "ended", duration: "14:23", ts: new Date(Date.now() - 86400000 * 0.3) },
-  { id: "c2", contactId: "4", contactName: "Laure Ateba", contactInitials: "LA", contactColor: "teal", direction: "missed", type: "audio", status: "no_answer", ts: new Date(Date.now() - 86400000 * 0.5) },
-  { id: "c3", contactId: "5", contactName: "Paul Essomba", contactInitials: "PE", contactColor: "rose", direction: "in", type: "audio", status: "ended", duration: "3:07", ts: new Date(Date.now() - 86400000 * 1.2) },
-  { id: "c4", contactId: "1", contactName: "Kevin Manga", contactInitials: "KM", contactColor: "amber", direction: "out", type: "audio", status: "ended", duration: "8:44", ts: new Date(Date.now() - 86400000 * 2.1) },
-  { id: "c5", contactId: "2", contactName: "Groupe Alanya II", contactInitials: "GA", contactColor: "blue", direction: "in", type: "video", status: "ended", duration: "42:11", ts: new Date(Date.now() - 86400000 * 2.8), isGroup: true },
-  { id: "c6", contactId: "6", contactName: "Nina Fouda", contactInitials: "NF", contactColor: "amber", direction: "missed", type: "video", status: "no_answer", ts: new Date(Date.now() - 86400000 * 3.5) },
-  { id: "c7", contactId: "5", contactName: "Paul Essomba", contactInitials: "PE", contactColor: "rose", direction: "out", type: "audio", status: "declined", ts: new Date(Date.now() - 86400000 * 4.0) },
-  { id: "c8", contactId: "3", contactName: "Dr. NANA BINKEU", contactInitials: "NB", contactColor: "violet", direction: "in", type: "audio", status: "ended", duration: "6:58", ts: new Date(Date.now() - 86400000 * 5.2) },
-  { id: "c9", contactId: "1", contactName: "Kevin Manga", contactInitials: "KM", contactColor: "amber", direction: "in", type: "video", status: "ended", duration: "22:05", ts: new Date(Date.now() - 86400000 * 6.9) },
-  { id: "c10", contactId: "4", contactName: "Laure Ateba", contactInitials: "LA", contactColor: "teal", direction: "out", type: "audio", status: "ended", duration: "1:44", ts: new Date(Date.now() - 86400000 * 8.1) },
-]
-
-const COLORS = {
-  amber: { bg: "#E8B84B22", fg: "#E8B84B" },
-  blue: { bg: "#60a5fa22", fg: "#60a5fa" },
-  violet: { bg: "#a78bfa22", fg: "#a78bfa" },
-  teal: { bg: "#34d39922", fg: "#34d399" },
-  rose: { bg: "#fb718522", fg: "#fb7185" },
-}
 
 function formatItemTime(date: Date): string {
   const now = new Date()
@@ -82,11 +45,12 @@ export default function CallsPage() {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<FilterType>("all")
   const [search, setSearch] = useState("")
+  const callsHistory = useMemo(() => getCallsHistory(), [])
 
-  const missedCount = useMemo(() => MOCK_CALLS.filter((call) => call.direction === "missed").length, [])
+  const missedCount = useMemo(() => callsHistory.filter((call) => call.direction === "missed").length, [callsHistory])
 
   const filtered = useMemo(() => {
-    return MOCK_CALLS
+    return callsHistory
       .filter((call) => {
         if (filter === "missed") return call.direction === "missed"
         if (filter === "audio") return call.type === "audio"
@@ -94,7 +58,7 @@ export default function CallsPage() {
         return true
       })
       .filter((call) => call.contactName.toLowerCase().includes(search.toLowerCase()))
-  }, [filter, search])
+  }, [callsHistory, filter, search])
 
   const grouped = useMemo(() => {
     return filtered.reduce<Array<{ header: string; calls: CallRecord[] }>>((acc, call) => {
@@ -131,7 +95,7 @@ export default function CallsPage() {
                   </svg>
                 ),
                 iconBg: "#E8B84B15",
-                val: MOCK_CALLS.length,
+                val: callsHistory.length,
                 lbl: "Total appels",
               },
               {
@@ -153,7 +117,7 @@ export default function CallsPage() {
                   </svg>
                 ),
                 iconBg: "#60a5fa15",
-                val: MOCK_CALLS.filter((call) => call.type === "video").length,
+                val: callsHistory.filter((call) => call.type === "video").length,
                 lbl: "Appels video",
               },
             ].map((chip) => (
@@ -304,6 +268,4 @@ export default function CallsPage() {
     </>
   )
 }
-
-
 

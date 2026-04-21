@@ -1,9 +1,8 @@
-import {
+﻿import {
   createContext, useContext, useState, useCallback,
   useRef, useEffect, type ReactNode,
 } from "react"
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 type ToastType = "success" | "error" | "warning" | "info"
 
 interface Toast {
@@ -11,7 +10,7 @@ interface Toast {
   type: ToastType
   title: string
   message?: string
-  duration?: number   // ms, défaut 4000
+  duration?: number   // ms, defaut 4000
 }
 
 interface ToastContextValue {
@@ -22,7 +21,6 @@ interface ToastContextValue {
   info:    (title: string, message?: string) => void
 }
 
-// ─── Context ──────────────────────────────────────────────────────────────────
 const ToastContext = createContext<ToastContextValue | null>(null)
 
 export function useToast(): ToastContextValue {
@@ -31,7 +29,6 @@ export function useToast(): ToastContextValue {
   return ctx
 }
 
-// ─── Icônes ───────────────────────────────────────────────────────────────────
 const ICONS: Record<ToastType, React.ReactNode> = {
   success: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -64,7 +61,6 @@ const STYLES: Record<ToastType, { icon: string; bar: string; bg: string; border:
   info:    { icon:"#60a5fa", bar:"#60a5fa", bg:"#0D1118",   border:"#60a5fa40" },
 }
 
-// ─── Composant toast individuel ────────────────────────────────────────────────
 function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
   const [visible, setVisible] = useState(false)
   const [exiting, setExiting] = useState(false)
@@ -73,7 +69,6 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   const duration = toast.duration ?? 4000
 
   useEffect(() => {
-    // Entrée avec delay minimal pour déclencher la transition CSS
     const t = setTimeout(() => setVisible(true), 10)
     return () => clearTimeout(t)
   }, [])
@@ -104,7 +99,6 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
         overflow: "hidden",
         cursor: "pointer",
         fontFamily: "'DM Sans', sans-serif",
-        // Animation entrée/sortie
         opacity:    visible && !exiting ? 1 : 0,
         transform:  visible && !exiting ? "translateX(0) scale(1)" : "translateX(20px) scale(.97)",
         transition: "opacity .28s ease, transform .28s ease",
@@ -122,7 +116,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
         animation: `toastProgress ${duration}ms linear forwards`,
       }} />
 
-      {/* Icône */}
+
       <div style={{
         width: 28, height: 28, borderRadius: 8, flexShrink: 0,
         background: s.icon + "20",
@@ -164,7 +158,6 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   )
 }
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
 
@@ -190,7 +183,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ toast, success, error, warning, info }}>
       {children}
 
-      {/* Portal de toasts — coin bas-droite */}
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
         @keyframes toastProgress {

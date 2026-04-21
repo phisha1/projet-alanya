@@ -1,72 +1,15 @@
-import { Link, useNavigate } from "react-router-dom"
-import { MOCK_CONVERSATIONS } from "../../../src/mocks/chat-data"
-import { loadSessionUser, toInitials } from "../../../src/data/session-user"
+﻿import { Link, useNavigate } from "react-router-dom"
+import { getDashboardData, type DashboardCall } from "../../../src/services/dashboard-service"
 import "./dashboard-page.css"
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TYPES
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-interface Call {
-  id:        string
-  contactId: string
-  name:      string
-  initials:  string
-  type:      "audio" | "video"
-  direction: "in" | "out" | "missed"
-  duration:  string
-  time:      string
-}
-
-interface Contact {
-  id:       string
-  name:     string
-  initials: string
-  status:   string
-  online:   boolean
-}
-
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CONSTANTES
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 // Palette de couleurs cyclique pour les avatars (un par contact)
 const AVATAR_COLORS = ["var(--accent)", "var(--info)", "#a78bfa", "var(--success)", "var(--danger)"]
 
-// TODO : remplacer par les appels API reels
-// GET /api/users/me
-// GET /api/chats?limit=5
-// GET /api/calls?limit=5
-// GET /api/contacts
-
-const MOCK_USER = {
-  name:        "Arsene Nguemo",
-  initials:    "AN",
-  email:       "a.nguemo@enspy.cm",
-  statusMsg:   "Ingenieur en formation",
-  memberSince: "Avril 2026",
-}
-
-const MOCK_CALLS: Call[] = [
-  { id: "1", contactId: "1", name: "Kevin Manga",  initials: "KM", type: "video", direction: "out",    duration: "14 min", time: "Hier 20:30"  },
-  { id: "2", contactId: "4", name: "Laure Ateba", initials: "LA", type: "audio", direction: "missed",  duration: "-",      time: "Hier 18:05"  },
-  { id: "3", contactId: "5", name: "Paul Essomba",initials: "PE", type: "audio", direction: "in",      duration: "3 min",  time: "Lun. 11:20" },
-  { id: "4", contactId: "1", name: "Kevin Manga", initials: "KM", type: "audio", direction: "out",     duration: "8 min",  time: "Dim. 16:44" },
-]
-
-const MOCK_CONTACTS: Contact[] = [
-  { id: "1", name: "Kevin Manga",  initials: "KM", status: "En train de coder",    online: true  },
-  { id: "2", name: "Laure Ateba", initials: "LA", status: "Revisions en cours", online: true  },
-  { id: "3", name: "Paul Essomba",initials: "PE", status: "Disponible",            online: false },
-  { id: "4", name: "Nina Fouda",  initials: "NF", status: "En reunion",           online: false },
-]
-
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // HELPERS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /** Retourne la couleur d'avatar correspondant a la position dans la liste. */
 function avatarColor(index: number): string {
@@ -90,10 +33,7 @@ function getTodayLabel(): string {
   })
 }
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SOUS-COMPOSANTS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 /**
  * Carte de statistique rapide.
@@ -118,7 +58,7 @@ function StatCard({ label, value, sub, accent = false }: {
  * Icone de direction d'appel (entrant / sortant / manque).
  * La couleur et la rotation sont gerees par des classes CSS (.call-icon--*).
  */
-function CallDirectionIcon({ direction }: { direction: Call["direction"] }) {
+function CallDirectionIcon({ direction }: { direction: DashboardCall["direction"] }) {
   return (
     <svg
       width="12" height="12"
@@ -134,30 +74,19 @@ function CallDirectionIcon({ direction }: { direction: Call["direction"] }) {
   )
 }
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PAGE PRINCIPALE
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export default function DashboardPage() {
   const navigate = useNavigate()
-  const sessionUser = loadSessionUser()
-  const currentUser = {
-    ...MOCK_USER,
-    name: sessionUser?.name ?? MOCK_USER.name,
-    email: sessionUser?.email ?? "",
-    initials: toInitials(sessionUser?.name ?? MOCK_USER.name),
-    statusMsg: sessionUser?.statusMsg ?? MOCK_USER.statusMsg,
-  }
-  const recentChats = MOCK_CONVERSATIONS.slice(0, 5)
-  const totalUnread   = recentChats.reduce((acc, chat) => acc + chat.unread, 0)
-  const onlineCount   = MOCK_CONTACTS.filter(c => c.online).length
-  const firstName     = currentUser.name.split(" ")[0]
+  const { currentUser, recentChats, recentCalls, contacts } = getDashboardData()
+  const totalUnread = recentChats.reduce((acc, chat) => acc + chat.unread, 0)
+  const onlineCount = contacts.filter((contact) => contact.online).length
+  const firstName = currentUser.name.split(" ")[0]
 
   return (
     <main className="dash">
 
-      {/* â”€â”€ En-tete : salutation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+
       <div className="dash-header">
         <div className="greeting">{getTodayLabel()}</div>
         <h1 className="dash-title">
@@ -165,7 +94,7 @@ export default function DashboardPage() {
         </h1>
       </div>
 
-      {/* â”€â”€ Statistiques rapides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+
       <div className="stats-grid">
         <StatCard
           label="Messages non lus"
@@ -180,17 +109,17 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Appels recents"
-          value={String(MOCK_CALLS.length)}
+          value={String(recentCalls.length)}
           sub="les 7 derniers jours"
         />
         <StatCard
           label="Contacts"
-          value={String(MOCK_CONTACTS.length)}
+          value={String(contacts.length)}
           sub="dans votre reseau"
         />
       </div>
 
-      {/* â”€â”€ Conversations recentes + Profil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+
       <div className="dash-grid">
 
         {/* Conversations */}
@@ -261,7 +190,7 @@ export default function DashboardPage() {
           </div>
           <div className="profile-row">
             <span className="profile-row-label">Contacts</span>
-            <span className="profile-row-val">{MOCK_CONTACTS.length} contacts</span>
+            <span className="profile-row-val">{contacts.length} contacts</span>
           </div>
 
           <button className="profile-edit" onClick={() => navigate("/settings")}>Modifier le profil</button>
@@ -269,7 +198,7 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* â”€â”€ Appels recents + Contacts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+
       <div className="dash-grid-3">
 
         {/* Appels recents */}
@@ -279,7 +208,7 @@ export default function DashboardPage() {
             <Link to="/calls" className="card-link">Tout voir</Link>
           </div>
 
-          {MOCK_CALLS.map((call, i) => {
+          {recentCalls.map((call, i) => {
             const color = avatarColor(i)
             return (
               <div className="call-item" key={call.id}>
@@ -329,7 +258,7 @@ export default function DashboardPage() {
             <span className="contacts-online">{onlineCount} en ligne</span>
           </div>
 
-          {MOCK_CONTACTS.map((contact, i) => {
+          {contacts.map((contact, i) => {
             const color = avatarColor(i)
             return (
               <div className="contact-item" key={contact.id}>
@@ -358,5 +287,4 @@ export default function DashboardPage() {
     </main>
   )
 }
-
 

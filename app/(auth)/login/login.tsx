@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+﻿import { useMemo, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
 import polytechLogo from "../../(public)/polytech.png"
@@ -150,5 +150,4 @@ export default function LoginPage() {
     </div>
   )
 }
-
 

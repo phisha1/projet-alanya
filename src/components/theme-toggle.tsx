@@ -1,7 +1,6 @@
-import { useEffect, useRef } from "react"
+﻿import { useEffect, useRef } from "react"
 import { useTheme } from "./theme-provider"
 
-// ─── Bouton toggle compact (pour la sidebar) ───────────────────────────────
 export function ThemeToggle({ className }: { className?: string }) {
   const { palette, resolvedTheme, toggle, togglePalette } = useTheme()
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -60,13 +59,11 @@ export function ThemeToggle({ className }: { className?: string }) {
       }}
     >
       {isDark
-        // Soleil — mode clair
         ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
             <circle cx="12" cy="12" r="5"/>
             <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
           </svg>
-        // Lune — mode sombre
         : <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
             <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
@@ -76,7 +73,6 @@ export function ThemeToggle({ className }: { className?: string }) {
   )
 }
 
-// ─── Sélecteur 3 modes (pour la page Settings) ───────────────────────────────
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme()
 
@@ -91,7 +87,6 @@ export function ThemeSelector() {
           <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
         </svg>
       ),
-      // Miniature aperçu mode clair
       preview: (
         <div style={{ width:"100%", height:56, borderRadius:7, background:"#F5F5F0", border:"1px solid #E5E3DC", overflow:"hidden", marginBottom:10, display:"flex", flexDirection:"column" }}>
           <div style={{ height:14, background:"#FFFFFF", borderBottom:"1px solid #E5E3DC", display:"flex", alignItems:"center", paddingLeft:7, gap:4 }}>
@@ -137,7 +132,7 @@ export function ThemeSelector() {
     },
     {
       value: "system" as const,
-      label: "Système",
+      label: "Systeme",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -148,7 +143,7 @@ export function ThemeSelector() {
       ),
       preview: (
         <div style={{ width:"100%", height:56, borderRadius:7, border:"1px solid var(--border-subtle)", overflow:"hidden", marginBottom:10, display:"flex", flexDirection:"column" }}>
-          {/* Moitié gauche clair / moitié droite sombre */}
+
           <div style={{ flex:1, display:"flex" }}>
             <div style={{ flex:1, background:"#F5F5F0", display:"flex", alignItems:"center", justifyContent:"center" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9973A" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42"/></svg>
@@ -204,7 +199,7 @@ export function ThemeSelector() {
             {/* Miniature */}
             {opt.preview}
 
-            {/* Icône + label */}
+
             <div style={{ color: active ? "var(--accent)" : "var(--text-muted)", marginBottom:4 }}>
               {opt.icon}
             </div>

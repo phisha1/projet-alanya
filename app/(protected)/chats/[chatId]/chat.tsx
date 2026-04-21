@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react"
+﻿import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import {
   CHAT_COLORS,
@@ -19,14 +19,11 @@ import { findLocalGroup, toChatInfoMock } from "../../../../src/data/local-group
 import { useToast } from "../../../../src/components/toast"
 import "./chat-room-page.css"
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type Message = ChatMessageMock
 
-// â”€â”€â”€ Mock data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ 
 // TODO : GET /api/chats/:id  +  GET /api/chats/:id/messages?page=1&limit=50
 // TODO : WebSocket ws://.../chats/:id  (STOMP)
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function formatTime(d: Date) {
   return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
 }
@@ -45,7 +42,6 @@ function StatusIcon({ status }: { status: MessageStatus }) {
   return <span style={{ color: "var(--info)", fontSize: 11 }}>lu</span>
 }
 
-// â”€â”€â”€ Composant message â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function MessageBubble({
   msg, isMe, replyMsg, onReply, chatColor,
 }: {
@@ -140,7 +136,6 @@ function MessageBubble({
   )
 }
 
-// â”€â”€â”€ Page principale â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function ChatRoomPage() {
   const params   = useParams()
   const navigate = useNavigate()
@@ -349,7 +344,7 @@ export default function ChatRoomPage() {
 
   return (
     <div className="room-root">
-        {/* â”€â”€ Top bar â”€â”€ */}
+
         <div className="room-top">
           <button className="back-btn" onClick={() => navigate("/chats")} aria-label="Retour">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -395,7 +390,7 @@ export default function ChatRoomPage() {
           </div>
         </div>
 
-        {/* â”€â”€ Messages â”€â”€ */}
+
         <div className="room-body">
           {grouped.map(({ date, msgs }) => (
             <div key={date}>
@@ -435,7 +430,7 @@ export default function ChatRoomPage() {
           <div ref={bottomRef} />
         </div>
 
-        {/* â”€â”€ Barre de reponse â”€â”€ */}
+
         {replyTo && (
           <div className="reply-bar">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round">
@@ -453,7 +448,7 @@ export default function ChatRoomPage() {
           </div>
         )}
 
-        {/* â”€â”€ Zone de saisie â”€â”€ */}
+
         <div className="room-input-wrap">
           <input ref={fileRef} type="file" style={{ display: "none" }} onChange={handleFileSelect}
             accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.mp3,.mp4,.wav" />
@@ -527,6 +522,4 @@ export default function ChatRoomPage() {
       </div>
   )
 }
-
-
 

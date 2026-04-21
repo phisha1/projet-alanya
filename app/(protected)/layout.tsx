@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+﻿import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../src/components/auth-provider"
 import { ThemeToggle } from "../../src/components/theme-toggle"
@@ -7,10 +7,7 @@ import { toInitials } from "../../src/data/session-user"
 import polytechLogo from "../(public)/polytech.png"
 import "./layout.css"
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TYPES
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 interface NavItem {
   href:  string
@@ -18,11 +15,7 @@ interface NavItem {
   icon:  React.ReactNode
 }
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ICONES SVG
-// Aucune dependance externe â€” les SVG sont inlines et reutilisables.
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const Icons = {
   Dashboard: () => (
@@ -69,10 +62,7 @@ const Icons = {
   ),
 }
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // DONNEES DE NAVIGATION
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: <Icons.Dashboard /> },
@@ -80,15 +70,11 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/calls",     label: "Appels",    icon: <Icons.Call />      },
 ]
 
-// Nombre de messages non lus par section â€” sera alimente par WebSocket
 const UNREAD_COUNTS: Record<string, number> = {
   "/chats": 3,
 }
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // COMPOSANT Sidebar
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 interface SidebarProps {
   onClose?: () => void
@@ -100,7 +86,6 @@ function Sidebar({ onClose }: SidebarProps) {
   const { logout, user: sessionUser } = useAuth()
   const pathname = location.pathname
 
-  // Donnees utilisateur fictives â€” seront remplacees par GET /api/users/me
   const user = {
     name:     sessionUser?.name ?? "Utilisateur Alanya",
     email:    sessionUser?.email ?? "",
@@ -196,10 +181,7 @@ function Sidebar({ onClose }: SidebarProps) {
   )
 }
 
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // LAYOUT PROTEGE
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -207,18 +189,18 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   return (
     <div className="layout-root">
 
-      {/* Sidebar fixe â€” desktop uniquement */}
+
       <div className="layout-sidebar-static">
         <Sidebar />
       </div>
 
-      {/* Overlay semi-transparent â€” ferme la sidebar mobile au clic */}
+
       <div
         className={`mobile-overlay ${mobileOpen ? "open" : ""}`}
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* Sidebar mobile â€” slide depuis la gauche */}
+
       <div className={`sidebar-mobile-wrap ${mobileOpen ? "open" : ""}`}>
         <Sidebar onClose={() => setMobileOpen(false)} />
       </div>
@@ -259,9 +241,8 @@ function IncomingCallDemo() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Simuler un appel entrant après 10 secondes (pour la démo)
     const timer = setTimeout(() => {
-      setShowCall(true) 
+      setShowCall(true)
     }, 10000)
     return () => clearTimeout(timer)
   }, [])

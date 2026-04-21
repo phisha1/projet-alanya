@@ -1,21 +1,19 @@
-import {
+﻿import {
   createContext, useContext, useEffect, useState, type ReactNode,
 } from "react"
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 export type Theme = "dark" | "light" | "system"
 export type Palette = "default" | "soft"
 
 interface ThemeContextValue {
-  theme:         Theme          // préférence stockée ("dark" | "light" | "system")
-  resolvedTheme: "dark"|"light" // thème réellement appliqué (system résolu)
+  theme:         Theme          // preference stockee ("dark" | "light" | "system")
+  resolvedTheme: "dark"|"light" // theme reellement applique (system resolu)
   palette:       Palette
   setTheme:      (t: Theme) => void
   togglePalette: () => void
-  toggle:        () => void     // bascule dark ↔ light directement
+  toggle:        () => void     // bascule dark/light directement
 }
 
-// ─── Context ──────────────────────────────────────────────────────────────────
 const ThemeCtx = createContext<ThemeContextValue | null>(null)
 
 export function useTheme(): ThemeContextValue {
@@ -24,13 +22,11 @@ export function useTheme(): ThemeContextValue {
   return ctx
 }
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark")
   const [resolved, setResolved] = useState<"dark"|"light">("dark")
   const [palette, setPaletteState] = useState<Palette>("default")
 
-  // Lire la préférence stockée au montage
   useEffect(() => {
     const stored = (localStorage.getItem("alanya-theme") ?? "system") as Theme
     const storedPalette = (localStorage.getItem("alanya-palette") ?? "default") as Palette
@@ -39,7 +35,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyTheme(stored)
   }, [])
 
-  // Écouter les changements de préférence système
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)")
     const handler = () => { if (theme === "system") applyTheme("system") }
@@ -90,8 +85,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// ─── Script d'initialisation (évite le flash de thème) ────────────────────────
-// À insérer dans <head> AVANT tout autre script, dans app/layout.tsx :
 //
 //   <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
 //

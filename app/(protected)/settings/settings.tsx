@@ -1,11 +1,10 @@
-import { useState, useRef, useCallback } from "react"
+﻿import { useState, useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
 import { useToast } from "../../../src/components/toast"
 import { ThemeSelector } from "../../../src/components/theme-toggle"
 import { type SessionUser } from "../../../src/data/session-user"
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type SettingsSection =
   | "profile"
   | "security"
@@ -36,7 +35,6 @@ interface ConfirmState {
   onConfirm: () => Promise<void> | void
 }
 
-// â”€â”€â”€ Mock data â€” TODO : GET /api/users/me â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getInitialProfile(sessionUser: SessionUser | null): Profile {
   return {
     name:      sessionUser?.name ?? "Utilisateur Alanya",
@@ -47,7 +45,6 @@ function getInitialProfile(sessionUser: SessionUser | null): Profile {
   }
 }
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function analyzePassword(pwd: string): { score: number; label: string; color: string } {
   if (!pwd) return { score:0, label:"", color:"var(--border-subtle)" }
   let score = 0
@@ -66,8 +63,6 @@ function analyzePassword(pwd: string): { score: number; label: string; color: st
   ]
   return { score, ...levels[Math.min(5, score)] }
 }
-
-// â”€â”€â”€ Composants internes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SectionLink({
   id, label, icon, active, badge, onClick,
@@ -338,7 +333,6 @@ function ConfirmDialog({
   )
 }
 
-// â”€â”€â”€ Page principale â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function SettingsPage() {
   const navigate = useNavigate()
   const { deleteAccount: removeAccount, logoutEverywhere, updateUser, user } = useAuth()
@@ -373,7 +367,6 @@ export default function SettingsPage() {
 
   const setD = (k: keyof Profile) => (v: string) => setDraft(prev => ({ ...prev, [k]: v }))
 
-  // â”€â”€ Sauvegarder le profil â”€â”€
   const saveProfile = async () => {
     if (!draft.name.trim()) return toastError("Nom invalide", "Le nom ne peut pas etre vide.")
     if (draft.statusMsg.length > 100) return toastError("Message trop long", "Maximum 100 caracteres.")
@@ -389,7 +382,7 @@ export default function SettingsPage() {
         statusMsg: draft.statusMsg,
         avatar: draft.avatar,
       })
-      success("Profil mis à jour", "Vos informations ont bien été enregistrées.")
+      success("Profil mis a jour", "Vos informations ont bien ete enregistrees.")
     } catch {
       toastError("Erreur", "Impossible de sauvegarder. Reessayez.")
     } finally {
@@ -397,7 +390,6 @@ export default function SettingsPage() {
     }
   }
 
-  // â”€â”€ Upload avatar â”€â”€
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return
     if (file.size > 5 * 1024 * 1024) return toastError("Fichier trop volumineux", "L'avatar ne doit pas depasser 5 Mo.")
@@ -411,7 +403,6 @@ export default function SettingsPage() {
     e.target.value = ""
   }
 
-  // â”€â”€ Changer le mot de passe â”€â”€
   const changePassword = async () => {
     if (!security.currentPwd)     return toastError("Mot de passe actuel requis")
     if (pwdStrength.score < 2)    return toastError("Mot de passe trop faible", "Choisissez un mot de passe plus securise.")
@@ -430,7 +421,6 @@ export default function SettingsPage() {
     }
   }
 
-  // â”€â”€ Deconnexion de tous les appareils â”€â”€
   const logoutAll = async () => {
     setConfirmState({
       title: "Deconnecter tous vos appareils ?",
@@ -444,7 +434,6 @@ export default function SettingsPage() {
     })
   }
 
-  // â”€â”€ Supprimer le compte â”€â”€
   const deleteAccount = async () => {
     const confirm1 = window.prompt('Tapez "SUPPRIMER" pour confirmer la suppression definitive de votre compte.')
     if (confirm1 !== "SUPPRIMER") return toastError("Suppression annulee")
@@ -453,7 +442,6 @@ export default function SettingsPage() {
     navigate("/welcome", { replace: true })
   }
 
-  // â”€â”€â”€ Navigation sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const NAV: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
     { id:"profile", label:"Profil", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
     { id:"security", label:"Securite", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
@@ -481,7 +469,7 @@ export default function SettingsPage() {
           overflow-x: hidden;
         }
 
-        /* â”€â”€ Sidebar â”€â”€ */
+
         .s-sidebar {
           border-right: 1px solid var(--border-subtle);
           padding: 28px 14px;
@@ -503,7 +491,7 @@ export default function SettingsPage() {
           text-transform: uppercase; padding: 8px 12px 4px; font-weight: 500;
         }
 
-        /* â”€â”€ Main â”€â”€ */
+
         .s-main { padding: 36px 48px; max-width: 680px; width: 100%; min-width: 0; }
         .s-mobile-nav { display: none; }
 
@@ -514,7 +502,7 @@ export default function SettingsPage() {
         }
         .s-page-sub { font-size: 13px; color: var(--text-faint); margin-bottom: 32px; line-height: 1.6; }
 
-        /* â”€â”€ Section card â”€â”€ */
+
         .s-card {
           background: var(--bg-surface); border: 1px solid var(--border-subtle);
           border-radius: 14px; padding: 22px 24px; margin-bottom: 16px;
@@ -692,7 +680,7 @@ export default function SettingsPage() {
 
       <div className="settings-root">
 
-        {/* â”€â”€ Sidebar navigation â”€â”€ */}
+
         <aside className="s-sidebar">
           <button className="s-back" onClick={() => navigate(-1)}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -712,7 +700,7 @@ export default function SettingsPage() {
           ))}
         </aside>
 
-        {/* â”€â”€ Contenu principal â”€â”€ */}
+
         <main className="s-main">
           <div className="s-mobile-nav">
             {NAV.map(n => (
@@ -726,7 +714,7 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          {/* â•â• PROFIL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+
           {section === "profile" && (
             <>
               <div className="s-page-title">Mon profil</div>
@@ -791,7 +779,7 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* â•â• SECURITE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+
           {section === "security" && (
             <>
               <div className="s-page-title">Securite</div>
@@ -881,7 +869,7 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* â•â• NOTIFICATIONS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+
           {section === "notifications" && (
             <>
               <div className="s-page-title">Notifications</div>
@@ -896,7 +884,7 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* â•â• CONFIDENTIALITE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+
           {section === "privacy" && (
             <>
               <div className="s-page-title">Confidentialite</div>
@@ -911,7 +899,7 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* â•â• APPARENCE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+
           {section === "appearance" && (
             <>
               <div className="s-page-title">Apparence</div>
@@ -942,7 +930,7 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* â•â• A PROPOS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+
           {section === "about" && (
             <>
               <div className="s-page-title">A propos</div>
@@ -991,11 +979,4 @@ export default function SettingsPage() {
     </>
   )
 }
-
-
-
-
-
-
-
 

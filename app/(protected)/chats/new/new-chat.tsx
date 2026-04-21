@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react"
+﻿import { useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
 import { CONTACT_COLORS, findDirectoryAccountByPhone, normalizePhone, toInitials } from "../../../../src/data/contacts"
@@ -253,5 +253,4 @@ export default function NewChatPage() {
   const navigate = useNavigate()
   return <NewChatModal onClose={() => navigate("/chats")} />
 }
-
 

@@ -1,4 +1,4 @@
-.nf-root {
+﻿.nf-root {
   min-height: 100vh;
   display: grid;
   place-items: center;
@@ -56,5 +56,4 @@
   color: var(--text-secondary);
   border: 1px solid var(--border-default);
 }
-
 
