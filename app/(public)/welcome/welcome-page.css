@@ -234,7 +234,9 @@
   border-radius: 16px;
 }
 .bubble.them {
-  background: var(--border-subtle); color: #CBD5E1;
+  background: color-mix(in srgb, var(--bg-surface) 72%, var(--accent-dim));
+  color: var(--text-primary);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
   border-bottom-left-radius: 4px; align-self: flex-start;
 }
 .bubble.me {
@@ -247,12 +249,14 @@
 .typing {
   display: flex; align-items: center; gap: 4px;
   padding: 10px 14px;
-  background: var(--border-subtle); border-radius: 16px; border-bottom-left-radius: 4px;
+  background: color-mix(in srgb, var(--bg-surface) 72%, var(--accent-dim));
+  border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
+  border-radius: 16px; border-bottom-left-radius: 4px;
   align-self: flex-start; width: fit-content;
 }
 .typing-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--text-muted);
+  background: var(--text-secondary);
   animation: typing-bounce 1.2s ease-in-out infinite;
 }
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -268,9 +272,11 @@
   display: flex; align-items: center; gap: 10px;
 }
 .phone-input-field {
-  flex: 1; background: var(--border-subtle); border-radius: 20px;
-  padding: 8px 14px; font-size: 12px; color: var(--text-muted);
-  border: none;
+  flex: 1;
+  background: color-mix(in srgb, var(--bg-surface) 72%, var(--accent-dim));
+  border-radius: 20px;
+  padding: 8px 14px; font-size: 12px; color: var(--text-secondary);
+  border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
 }
 .send-btn {
   width: 30px; height: 30px; border-radius: 50%;
