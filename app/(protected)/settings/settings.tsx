@@ -5,25 +5,19 @@ import { useToast } from "../../../src/components/toast"
 import { ThemeSelector } from "../../../src/components/theme-toggle"
 import { type SessionUser } from "../../../src/data/session-user"
 
-type SettingsSection =
-  | "profile"
-  | "security"
-  | "notifications"
-  | "appearance"
-  | "privacy"
-  | "about"
+type SettingsSection = "profile" | "security" | "notifications" | "appearance" | "privacy" | "about"
 
 interface Profile {
-  name:      string
-  email:     string
-  phone:     string
+  name: string
+  email: string
+  phone: string
   statusMsg: string
-  avatar:    string | null   // base64 ou URL
+  avatar: string | null // base64 ou URL
 }
 
 interface SecurityForm {
   currentPwd: string
-  newPwd:     string
+  newPwd: string
   confirmPwd: string
 }
 
@@ -37,212 +31,378 @@ interface ConfirmState {
 
 function getInitialProfile(sessionUser: SessionUser | null): Profile {
   return {
-    name:      sessionUser?.name ?? "Utilisateur Alanya",
-    email:     sessionUser?.email ?? "",
-    phone:     sessionUser?.phone ?? "+237 6 90 00 00 00",
+    name: sessionUser?.name ?? "Utilisateur Alanya",
+    email: sessionUser?.email ?? "",
+    phone: sessionUser?.phone ?? "+237 6 90 00 00 00",
     statusMsg: sessionUser?.statusMsg ?? "Disponible",
-    avatar:    sessionUser?.avatar ?? null,
+    avatar: sessionUser?.avatar ?? null,
   }
 }
 
 function analyzePassword(pwd: string): { score: number; label: string; color: string } {
-  if (!pwd) return { score:0, label:"", color:"var(--border-subtle)" }
+  if (!pwd) return { score: 0, label: "", color: "var(--border-subtle)" }
   let score = 0
-  if (pwd.length >= 8)           score++
-  if (pwd.length >= 14)          score++
-  if (/[A-Z]/.test(pwd))         score++
-  if (/[0-9]/.test(pwd))         score++
-  if (/[^A-Za-z0-9]/.test(pwd))  score++
+  if (pwd.length >= 8) score++
+  if (pwd.length >= 14) score++
+  if (/[A-Z]/.test(pwd)) score++
+  if (/[0-9]/.test(pwd)) score++
+  if (/[^A-Za-z0-9]/.test(pwd)) score++
   const levels = [
-    { label:"Tres faible", color:"var(--danger)" },
-    { label:"Faible",      color:"#f97316" },
-    { label:"Moyen",       color:"#eab308" },
-    { label:"Bon",         color:"#84cc16" },
-    { label:"Fort",        color:"var(--success)" },
-    { label:"Tres fort",   color:"var(--accent)" },
+    { label: "Tres faible", color: "var(--danger)" },
+    { label: "Faible", color: "#f97316" },
+    { label: "Moyen", color: "#eab308" },
+    { label: "Bon", color: "#84cc16" },
+    { label: "Fort", color: "var(--success)" },
+    { label: "Tres fort", color: "var(--accent)" },
   ]
   return { score, ...levels[Math.min(5, score)] }
 }
 
 function SectionLink({
-  id, label, icon, active, badge, onClick,
+  id,
+  label,
+  icon,
+  active,
+  badge,
+  onClick,
 }: {
-  id: SettingsSection; label: string; icon: React.ReactNode
-  active: boolean; badge?: number; onClick: () => void
+  id: SettingsSection
+  label: string
+  icon: React.ReactNode
+  active: boolean
+  badge?: number
+  onClick: () => void
 }) {
   return (
     <button
       onClick={onClick}
       style={{
-        display:        "flex",
-        alignItems:     "center",
-        gap:            11,
-        width:          "100%",
-        padding:        "10px 12px",
-        borderRadius:   9,
-        background:     active ? "var(--accent-dim)" : "none",
-        border:         `1px solid ${active ? "var(--accent-border)" : "transparent"}`,
-        cursor:         "pointer",
-        color:          active ? "var(--accent)" : "var(--text-muted)",
-        fontSize:       13,
-        fontWeight:     500,
-        fontFamily:     "'DM Sans', sans-serif",
-        textAlign:      "left",
-        transition:     "all .15s",
-        position:       "relative",
+        display: "flex",
+        alignItems: "center",
+        gap: 11,
+        width: "100%",
+        padding: "10px 12px",
+        borderRadius: 9,
+        background: active ? "var(--accent-dim)" : "none",
+        border: `1px solid ${active ? "var(--accent-border)" : "transparent"}`,
+        cursor: "pointer",
+        color: active ? "var(--accent)" : "var(--text-muted)",
+        fontSize: 13,
+        fontWeight: 500,
+        fontFamily: "'DM Sans', sans-serif",
+        textAlign: "left",
+        transition: "all .15s",
+        position: "relative",
       }}
-      onMouseEnter={e => { if (!active) { e.currentTarget.style.background = "var(--bg-surface)"; e.currentTarget.style.color = "var(--text-secondary)" } }}
-      onMouseLeave={e => { if (!active) { e.currentTarget.style.background = "none";    e.currentTarget.style.color = "var(--text-muted)" } }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = "var(--bg-surface)"
+          e.currentTarget.style.color = "var(--text-secondary)"
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = "none"
+          e.currentTarget.style.color = "var(--text-muted)"
+        }
+      }}
     >
-      <span style={{ flexShrink:0 }}>{icon}</span>
-      <span style={{ flex:1 }}>{label}</span>
+      <span style={{ flexShrink: 0 }}>{icon}</span>
+      <span style={{ flex: 1 }}>{label}</span>
       {badge !== undefined && badge > 0 && (
-        <span style={{ background:"var(--danger)", color:"var(--text-primary)", fontSize:10, fontWeight:700, padding:"1px 6px", borderRadius:20 }}>
+        <span
+          style={{
+            background: "var(--danger)",
+            color: "var(--text-primary)",
+            fontSize: 10,
+            fontWeight: 700,
+            padding: "1px 6px",
+            borderRadius: 20,
+          }}
+        >
           {badge}
         </span>
       )}
       {active && (
-        <div style={{
-          position:"absolute", left:0, top:"20%", bottom:"20%",
-          width:3, borderRadius:"0 2px 2px 0", background:"var(--accent)",
-        }} />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            top: "20%",
+            bottom: "20%",
+            width: 3,
+            borderRadius: "0 2px 2px 0",
+            background: "var(--accent)",
+          }}
+        />
       )}
     </button>
   )
 }
 
 function Field({
-  label, value, onChange, type = "text", placeholder, maxLength, helper, error, disabled,
+  label,
+  value,
+  onChange,
+  type = "text",
+  placeholder,
+  maxLength,
+  helper,
+  error,
+  disabled,
 }: {
-  label: string; value: string; onChange?: (v: string) => void
-  type?: string; placeholder?: string; maxLength?: number
-  helper?: string; error?: string; disabled?: boolean
+  label: string
+  value: string
+  onChange?: (v: string) => void
+  type?: string
+  placeholder?: string
+  maxLength?: number
+  helper?: string
+  error?: string
+  disabled?: boolean
 }) {
   const [focused, setFocused] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
 
   return (
     <div style={{ marginBottom: 18 }}>
-      <label style={{ display:"block", fontSize:11, color:"var(--text-muted)", letterSpacing:".5px", textTransform:"uppercase", marginBottom:7, fontWeight:500 }}>
+      <label
+        style={{
+          display: "block",
+          fontSize: 11,
+          color: "var(--text-muted)",
+          letterSpacing: ".5px",
+          textTransform: "uppercase",
+          marginBottom: 7,
+          fontWeight: 500,
+        }}
+      >
         {label}
         {maxLength && value && (
-          <span style={{ float:"right", color: value.length > maxLength*0.9 ? "#fbbf24" : "var(--text-faint)" }}>
+          <span
+            style={{
+              float: "right",
+              color: value.length > maxLength * 0.9 ? "#fbbf24" : "var(--text-faint)",
+            }}
+          >
             {value.length}/{maxLength}
           </span>
         )}
       </label>
-      <div style={{ position:"relative" }}>
+      <div style={{ position: "relative" }}>
         <input
           type={type === "password" && showPwd ? "text" : type}
           value={value}
-          onChange={e => onChange?.(e.target.value)}
+          onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           style={{
-            width:       "100%",
-            background:  disabled ? "var(--bg-elevated)" : "var(--bg-surface)",
-            border:      `1px solid ${error ? "var(--danger-border)" : focused ? "var(--accent-border)" : "var(--border-subtle)"}`,
+            width: "100%",
+            background: disabled ? "var(--bg-elevated)" : "var(--bg-surface)",
+            border: `1px solid ${error ? "var(--danger-border)" : focused ? "var(--accent-border)" : "var(--border-subtle)"}`,
             borderRadius: 10,
-            padding:     type === "password" ? "12px 48px 12px 14px" : "12px 14px",
-            fontSize:    13, color: disabled ? "var(--text-faint)" : "var(--text-primary)",
-            fontFamily:  "'DM Sans', sans-serif",
-            outline:     "none",
-            transition:  "border-color .2s",
-            boxSizing:   "border-box",
-            cursor:      disabled ? "not-allowed" : "text",
+            padding: type === "password" ? "12px 48px 12px 14px" : "12px 14px",
+            fontSize: 13,
+            color: disabled ? "var(--text-faint)" : "var(--text-primary)",
+            fontFamily: "'DM Sans', sans-serif",
+            outline: "none",
+            transition: "border-color .2s",
+            boxSizing: "border-box",
+            cursor: disabled ? "not-allowed" : "text",
           }}
         />
         {type === "password" && (
           <button
             type="button"
-            onClick={() => setShowPwd(v => !v)}
+            onClick={() => setShowPwd((v) => !v)}
             style={{
-              position:"absolute", right:12, top:"50%", transform:"translateY(-50%)",
-              background:"none", border:"none", cursor:"pointer",
-              color:"var(--text-faint)", fontSize:11, fontFamily:"'DM Sans', sans-serif",
-              transition:"color .15s",
+              position: "absolute",
+              right: 12,
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "var(--text-faint)",
+              fontSize: 11,
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "color .15s",
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
-            onMouseLeave={e => (e.currentTarget.style.color = "var(--text-faint)")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-faint)")}
           >
             {showPwd ? "Masquer" : "Afficher"}
           </button>
         )}
       </div>
       {error && (
-        <p style={{ fontSize:11, color:"var(--danger)", marginTop:5, display:"flex", alignItems:"center", gap:5 }}>
-          <span>!</span>{error}
+        <p
+          style={{
+            fontSize: 11,
+            color: "var(--danger)",
+            marginTop: 5,
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+          }}
+        >
+          <span>!</span>
+          {error}
         </p>
       )}
       {helper && !error && (
-        <p style={{ fontSize:11, color:"var(--text-faint)", marginTop:5 }}>{helper}</p>
+        <p style={{ fontSize: 11, color: "var(--text-faint)", marginTop: 5 }}>{helper}</p>
       )}
     </div>
   )
 }
 
-function Toggle({ value, onChange, label, description }: {
-  value: boolean; onChange: (v: boolean) => void; label: string; description?: string
+function Toggle({
+  value,
+  onChange,
+  label,
+  description,
+}: {
+  value: boolean
+  onChange: (v: boolean) => void
+  label: string
+  description?: string
 }) {
   return (
-    <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 0", borderBottom:"1px solid var(--border-subtle)", flexWrap:"wrap", rowGap:10 }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "14px 0",
+        borderBottom: "1px solid var(--border-subtle)",
+        flexWrap: "wrap",
+        rowGap: 10,
+      }}
+    >
       <div>
-        <div style={{ fontSize:13, fontWeight:500, color:"var(--text-primary)", marginBottom:description?2:0 }}>{label}</div>
-        {description && <div style={{ fontSize:11, color:"var(--text-faint)", lineHeight:1.5 }}>{description}</div>}
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: "var(--text-primary)",
+            marginBottom: description ? 2 : 0,
+          }}
+        >
+          {label}
+        </div>
+        {description && (
+          <div style={{ fontSize: 11, color: "var(--text-faint)", lineHeight: 1.5 }}>
+            {description}
+          </div>
+        )}
       </div>
       <button
         role="switch"
         aria-checked={value}
         onClick={() => onChange(!value)}
         style={{
-          width:44, height:24, borderRadius:20, flexShrink:0,
-          background:  value ? "var(--accent)" : "var(--border-subtle)",
-          border:      "none", cursor:"pointer",
-          position:    "relative", transition:"background .2s",
+          width: 44,
+          height: 24,
+          borderRadius: 20,
+          flexShrink: 0,
+          background: value ? "var(--accent)" : "var(--border-subtle)",
+          border: "none",
+          cursor: "pointer",
+          position: "relative",
+          transition: "background .2s",
         }}
       >
-        <div style={{
-          position:   "absolute", top:3,
-          left:       value ? 23 : 3,
-          width:      18, height:18, borderRadius:"50%",
-          background: value ? "var(--bg-base)" : "var(--text-faint)",
-          transition: "left .2s",
-        }} />
+        <div
+          style={{
+            position: "absolute",
+            top: 3,
+            left: value ? 23 : 3,
+            width: 18,
+            height: 18,
+            borderRadius: "50%",
+            background: value ? "var(--bg-base)" : "var(--text-faint)",
+            transition: "left .2s",
+          }}
+        />
       </button>
     </div>
   )
 }
 
-function DangerZoneItem({ label, description, buttonLabel, onClick, destructive = false }: {
-  label: string; description: string; buttonLabel: string
-  onClick: () => void; destructive?: boolean
+function DangerZoneItem({
+  label,
+  description,
+  buttonLabel,
+  onClick,
+  destructive = false,
+}: {
+  label: string
+  description: string
+  buttonLabel: string
+  onClick: () => void
+  destructive?: boolean
 }) {
   return (
-    <div className="dz-item" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px 18px", background:"var(--bg-surface)", border:"1px solid var(--border-subtle)", borderRadius:10, marginBottom:10, flexWrap:"wrap", rowGap:10 }}>
-      <div style={{ flex:1, minWidth:0, marginRight:20 }}>
-        <div style={{ fontSize:13, fontWeight:500, color: destructive ? "var(--danger)" : "var(--text-primary)", marginBottom:3 }}>{label}</div>
-        <div style={{ fontSize:11, color:"var(--text-faint)", lineHeight:1.5 }}>{description}</div>
+    <div
+      className="dz-item"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "16px 18px",
+        background: "var(--bg-surface)",
+        border: "1px solid var(--border-subtle)",
+        borderRadius: 10,
+        marginBottom: 10,
+        flexWrap: "wrap",
+        rowGap: 10,
+      }}
+    >
+      <div style={{ flex: 1, minWidth: 0, marginRight: 20 }}>
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: destructive ? "var(--danger)" : "var(--text-primary)",
+            marginBottom: 3,
+          }}
+        >
+          {label}
+        </div>
+        <div style={{ fontSize: 11, color: "var(--text-faint)", lineHeight: 1.5 }}>
+          {description}
+        </div>
       </div>
       <button
         onClick={onClick}
         style={{
-          background:  destructive ? "var(--danger-dim)" : "var(--border-subtle)",
-          border:      `1px solid ${destructive ? "var(--danger-border)" : "var(--border-default)"}`,
+          background: destructive ? "var(--danger-dim)" : "var(--border-subtle)",
+          border: `1px solid ${destructive ? "var(--danger-border)" : "var(--border-default)"}`,
           borderRadius: 8,
-          padding:     "8px 14px",
-          fontSize:    12, fontWeight:600,
-          color:       destructive ? "var(--danger)" : "var(--text-secondary)",
-          cursor:      "pointer",
-          fontFamily:  "'DM Sans', sans-serif",
-          whiteSpace:  "nowrap",
-          transition:  "all .15s",
-          flexShrink:  0,
+          padding: "8px 14px",
+          fontSize: 12,
+          fontWeight: 600,
+          color: destructive ? "var(--danger)" : "var(--text-secondary)",
+          cursor: "pointer",
+          fontFamily: "'DM Sans', sans-serif",
+          whiteSpace: "nowrap",
+          transition: "all .15s",
+          flexShrink: 0,
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = destructive ? "var(--danger-dim)" : "var(--border-default)" }}
-        onMouseLeave={e => { e.currentTarget.style.background = destructive ? "var(--danger-dim)" : "var(--border-subtle)" }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = destructive
+            ? "var(--danger-dim)"
+            : "var(--border-default)"
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = destructive
+            ? "var(--danger-dim)"
+            : "var(--border-subtle)"
+        }}
       >
         {buttonLabel}
       </button>
@@ -250,13 +410,7 @@ function DangerZoneItem({ label, description, buttonLabel, onClick, destructive 
   )
 }
 
-function ConfirmDialog({
-  state,
-  onCancel,
-}: {
-  state: ConfirmState
-  onCancel: () => void
-}) {
+function ConfirmDialog({ state, onCancel }: { state: ConfirmState; onCancel: () => void }) {
   return (
     <div
       onClick={onCancel}
@@ -285,7 +439,15 @@ function ConfirmDialog({
           padding: 20,
         }}
       >
-        <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 20, fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>
+        <div
+          style={{
+            fontFamily: "'Bricolage Grotesque', sans-serif",
+            fontSize: 20,
+            fontWeight: 800,
+            color: "var(--text-primary)",
+            marginBottom: 8,
+          }}
+        >
           {state.title}
         </div>
         <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6 }}>
@@ -339,41 +501,46 @@ export default function SettingsPage() {
   const { success, error: toastError, info, warning } = useToast()
 
   const [section, setSection] = useState<SettingsSection>("profile")
-  const [saving, setSaving]   = useState(false)
+  const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<Profile>(() => getInitialProfile(user))
-  const [draft, setDraft]     = useState<Profile>(() => getInitialProfile(user))
-  const [security, setSecurity] = useState<SecurityForm>({ currentPwd:"", newPwd:"", confirmPwd:"" })
+  const [draft, setDraft] = useState<Profile>(() => getInitialProfile(user))
+  const [security, setSecurity] = useState<SecurityForm>({
+    currentPwd: "",
+    newPwd: "",
+    confirmPwd: "",
+  })
   const [confirmState, setConfirmState] = useState<ConfirmState | null>(null)
 
   // Notifications
-  const [notifMessages, setNotifMessages]   = useState(true)
-  const [notifCalls, setNotifCalls]         = useState(true)
-  const [notifSounds, setNotifSounds]       = useState(true)
-  const [notifPreview, setNotifPreview]     = useState(true)
+  const [notifMessages, setNotifMessages] = useState(true)
+  const [notifCalls, setNotifCalls] = useState(true)
+  const [notifSounds, setNotifSounds] = useState(true)
+  const [notifPreview, setNotifPreview] = useState(true)
 
   // Confidentialite
-  const [readReceipts, setReadReceipts]     = useState(true)
-  const [onlineStatus, setOnlineStatus]     = useState(true)
-  const [lastSeen, setLastSeen]             = useState(true)
+  const [readReceipts, setReadReceipts] = useState(true)
+  const [onlineStatus, setOnlineStatus] = useState(true)
+  const [lastSeen, setLastSeen] = useState(true)
   const [profileVisible, setProfileVisible] = useState(true)
 
   // Apparence
-  const [fontSize, setFontSize]             = useState<"small"|"medium"|"large">("medium")
-  const [language, setLanguage]             = useState("fr")
+  const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium")
+  const [language, setLanguage] = useState("fr")
 
   const fileRef = useRef<HTMLInputElement>(null)
   const isDirty = JSON.stringify(profile) !== JSON.stringify(draft)
   const pwdStrength = analyzePassword(security.newPwd)
 
-  const setD = (k: keyof Profile) => (v: string) => setDraft(prev => ({ ...prev, [k]: v }))
+  const setD = (k: keyof Profile) => (v: string) => setDraft((prev) => ({ ...prev, [k]: v }))
 
   const saveProfile = async () => {
     if (!draft.name.trim()) return toastError("Nom invalide", "Le nom ne peut pas etre vide.")
-    if (draft.statusMsg.length > 100) return toastError("Message trop long", "Maximum 100 caracteres.")
+    if (draft.statusMsg.length > 100)
+      return toastError("Message trop long", "Maximum 100 caracteres.")
     setSaving(true)
     try {
       // TODO : PATCH /api/users/me
-      await new Promise(r => setTimeout(r, 900))
+      await new Promise((r) => setTimeout(r, 900))
       setProfile(draft)
       updateUser({
         name: draft.name.trim(),
@@ -391,12 +558,15 @@ export default function SettingsPage() {
   }
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; if (!file) return
-    if (file.size > 5 * 1024 * 1024) return toastError("Fichier trop volumineux", "L'avatar ne doit pas depasser 5 Mo.")
-    if (!file.type.startsWith("image/")) return toastError("Format invalide", "Choisissez une image (JPEG, PNG, WebP).")
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024)
+      return toastError("Fichier trop volumineux", "L'avatar ne doit pas depasser 5 Mo.")
+    if (!file.type.startsWith("image/"))
+      return toastError("Format invalide", "Choisissez une image (JPEG, PNG, WebP).")
     const reader = new FileReader()
     reader.onload = () => {
-      setDraft(prev => ({ ...prev, avatar: reader.result as string }))
+      setDraft((prev) => ({ ...prev, avatar: reader.result as string }))
       info("Avatar selectionne", "Cliquez sur 'Sauvegarder' pour confirmer.")
     }
     reader.readAsDataURL(file)
@@ -404,15 +574,18 @@ export default function SettingsPage() {
   }
 
   const changePassword = async () => {
-    if (!security.currentPwd)     return toastError("Mot de passe actuel requis")
-    if (pwdStrength.score < 2)    return toastError("Mot de passe trop faible", "Choisissez un mot de passe plus securise.")
-    if (security.newPwd !== security.confirmPwd) return toastError("Les mots de passe ne correspondent pas")
-    if (security.newPwd === security.currentPwd) return toastError("Mot de passe identique", "Choisissez un mot de passe different.")
+    if (!security.currentPwd) return toastError("Mot de passe actuel requis")
+    if (pwdStrength.score < 2)
+      return toastError("Mot de passe trop faible", "Choisissez un mot de passe plus securise.")
+    if (security.newPwd !== security.confirmPwd)
+      return toastError("Les mots de passe ne correspondent pas")
+    if (security.newPwd === security.currentPwd)
+      return toastError("Mot de passe identique", "Choisissez un mot de passe different.")
     setSaving(true)
     try {
       // TODO : POST /api/auth/change-password
-      await new Promise(r => setTimeout(r, 1000))
-      setSecurity({ currentPwd:"", newPwd:"", confirmPwd:"" })
+      await new Promise((r) => setTimeout(r, 1000))
+      setSecurity({ currentPwd: "", newPwd: "", confirmPwd: "" })
       success("Mot de passe modifie", "Votre nouveau mot de passe est actif.")
     } catch {
       toastError("Erreur", "Mot de passe actuel incorrect.")
@@ -435,7 +608,9 @@ export default function SettingsPage() {
   }
 
   const deleteAccount = async () => {
-    const confirm1 = window.prompt('Tapez "SUPPRIMER" pour confirmer la suppression definitive de votre compte.')
+    const confirm1 = window.prompt(
+      'Tapez "SUPPRIMER" pour confirmer la suppression definitive de votre compte.'
+    )
     if (confirm1 !== "SUPPRIMER") return toastError("Suppression annulee")
     await removeAccount()
     warning("Compte supprime", "Vos donnees seront effacees dans 30 jours.")
@@ -443,12 +618,114 @@ export default function SettingsPage() {
   }
 
   const NAV: { id: SettingsSection; label: string; icon: React.ReactNode }[] = [
-    { id:"profile", label:"Profil", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
-    { id:"security", label:"Securite", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
-    { id:"notifications", label:"Notifications", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg> },
-    { id:"privacy", label:"Confidentialite", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> },
-    { id:"appearance", label:"Apparence", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> },
-    { id:"about", label:"A propos", icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> },
+    {
+      id: "profile",
+      label: "Profil",
+      icon: (
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        >
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      ),
+    },
+    {
+      id: "security",
+      label: "Securite",
+      icon: (
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      ),
+    },
+    {
+      id: "notifications",
+      label: "Notifications",
+      icon: (
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        >
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 01-3.46 0" />
+        </svg>
+      ),
+    },
+    {
+      id: "privacy",
+      label: "Confidentialite",
+      icon: (
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        >
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      ),
+    },
+    {
+      id: "appearance",
+      label: "Apparence",
+      icon: (
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        >
+          <circle cx="12" cy="12" r="5" />
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+        </svg>
+      ),
+    },
+    {
+      id: "about",
+      label: "A propos",
+      icon: (
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+      ),
+    },
   ]
 
   return (
@@ -676,34 +953,48 @@ export default function SettingsPage() {
         }
       `}</style>
 
-      <input ref={fileRef} type="file" style={{ display:"none" }} accept="image/*" onChange={handleAvatarUpload} />
+      <input
+        ref={fileRef}
+        type="file"
+        style={{ display: "none" }}
+        accept="image/*"
+        onChange={handleAvatarUpload}
+      />
 
       <div className="settings-root">
-
-
         <aside className="s-sidebar">
           <button className="s-back" onClick={() => navigate(-1)}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M19 12H5M12 5l-7 7 7 7"/>
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
             Retour
           </button>
 
           <div className="s-nav-title">Parametres</div>
 
-          {NAV.map(n => (
+          {NAV.map((n) => (
             <SectionLink
-              key={n.id} id={n.id} label={n.label} icon={n.icon}
+              key={n.id}
+              id={n.id}
+              label={n.label}
+              icon={n.icon}
               active={section === n.id}
               onClick={() => setSection(n.id)}
             />
           ))}
         </aside>
 
-
         <main className="s-main">
           <div className="s-mobile-nav">
-            {NAV.map(n => (
+            {NAV.map((n) => (
               <button
                 key={n.id}
                 className={`s-mobile-tab ${section === n.id ? "on" : ""}`}
@@ -714,20 +1005,34 @@ export default function SettingsPage() {
             ))}
           </div>
 
-
           {section === "profile" && (
             <>
               <div className="s-page-title">Mon profil</div>
-              <p className="s-page-sub">Ces informations sont visibles par vos contacts sur Alanya.</p>
+              <p className="s-page-sub">
+                Ces informations sont visibles par vos contacts sur Alanya.
+              </p>
 
               {/* Barre de sauvegarde */}
               {isDirty && (
                 <div className="save-bar">
                   <span className="save-bar-txt">Modifications non sauvegardees</span>
                   <div className="save-btns">
-                    <button className="btn-discard" onClick={() => setDraft(profile)}>Annuler</button>
+                    <button className="btn-discard" onClick={() => setDraft(profile)}>
+                      Annuler
+                    </button>
                     <button className="btn-save" onClick={saveProfile} disabled={saving}>
-                      {saving && <div style={{ width:12, height:12, border:"2px solid color-mix(in srgb, var(--bg-base) 70%, transparent)", borderTopColor:"var(--bg-base)", borderRadius:"50%", animation:"spin .65s linear infinite" }} />}
+                      {saving && (
+                        <div
+                          style={{
+                            width: 12,
+                            height: 12,
+                            border: "2px solid color-mix(in srgb, var(--bg-base) 70%, transparent)",
+                            borderTopColor: "var(--bg-base)",
+                            borderRadius: "50%",
+                            animation: "spin .65s linear infinite",
+                          }}
+                        />
+                      )}
                       {saving ? "Sauvegarde..." : "Sauvegarder"}
                     </button>
                   </div>
@@ -739,15 +1044,33 @@ export default function SettingsPage() {
                 <div className="avatar-section">
                   <div className="avatar-wrap" onClick={() => fileRef.current?.click()}>
                     <div className="avatar-circle">
-                      {draft.avatar
-                        ? <img src={draft.avatar} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-                        : draft.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
-                      }
+                      {draft.avatar ? (
+                        <img
+                          src={draft.avatar}
+                          alt="avatar"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      ) : (
+                        draft.name
+                          .split(" ")
+                          .map((w) => w[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()
+                      )}
                     </div>
                     <div className="avatar-edit-overlay">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round">
-                        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                        <circle cx="12" cy="13" r="4"/>
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="var(--text-primary)"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      >
+                        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                        <circle cx="12" cy="13" r="4" />
                       </svg>
                     </div>
                   </div>
@@ -755,30 +1078,68 @@ export default function SettingsPage() {
                     <div className="avatar-name">{profile.name}</div>
                     {profile.email ? <div className="avatar-email">{profile.email}</div> : null}
                     <button className="avatar-btn" onClick={() => fileRef.current?.click()}>
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      >
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                       </svg>
                       Changer la photo
                     </button>
                   </div>
                 </div>
 
-                <Field label="Nom complet"       value={draft.name}      onChange={setD("name")}      maxLength={60}  placeholder="Votre nom" />
-                <Field label="Message de statut"  value={draft.statusMsg} onChange={setD("statusMsg")} maxLength={100} placeholder="Ce que vous faites en ce moment..." helper="Visible par tous vos contacts." />
+                <Field
+                  label="Nom complet"
+                  value={draft.name}
+                  onChange={setD("name")}
+                  maxLength={60}
+                  placeholder="Votre nom"
+                />
+                <Field
+                  label="Message de statut"
+                  value={draft.statusMsg}
+                  onChange={setD("statusMsg")}
+                  maxLength={100}
+                  placeholder="Ce que vous faites en ce moment..."
+                  helper="Visible par tous vos contacts."
+                />
               </div>
 
               <div className="s-card">
-                <div className="s-card-title">Informations de contact <span className="s-card-title-badge">Non modifiables ici</span></div>
+                <div className="s-card-title">
+                  Informations de contact{" "}
+                  <span className="s-card-title-badge">Non modifiables ici</span>
+                </div>
                 {draft.email ? (
-                  <Field label="Adresse email" value={draft.email} disabled helper="Contactez le support pour modifier votre email." />
+                  <Field
+                    label="Adresse email"
+                    value={draft.email}
+                    disabled
+                    helper="Contactez le support pour modifier votre email."
+                  />
                 ) : (
-                  <Field label="Adresse email" value="Aucun email renseigne" disabled helper="Les nouveaux comptes exigent maintenant une adresse email verifiee." />
+                  <Field
+                    label="Adresse email"
+                    value="Aucun email renseigne"
+                    disabled
+                    helper="Les nouveaux comptes exigent maintenant une adresse email verifiee."
+                  />
                 )}
-                <Field label="Telephone" value={draft.phone} disabled helper="Le numero est lie a votre compte et ne peut pas etre change." />
+                <Field
+                  label="Telephone"
+                  value={draft.phone}
+                  disabled
+                  helper="Le numero est lie a votre compte et ne peut pas etre change."
+                />
               </div>
             </>
           )}
-
 
           {section === "security" && (
             <>
@@ -787,36 +1148,84 @@ export default function SettingsPage() {
 
               <div className="s-card">
                 <div className="s-card-title">Changer le mot de passe</div>
-                <Field label="Mot de passe actuel" value={security.currentPwd} onChange={v => setSecurity(p=>({...p,currentPwd:v}))} type="password" placeholder="********" />
-                <Field label="Nouveau mot de passe" value={security.newPwd}     onChange={v => setSecurity(p=>({...p,newPwd:v}))}     type="password" placeholder="Choisissez un mot de passe fort" />
+                <Field
+                  label="Mot de passe actuel"
+                  value={security.currentPwd}
+                  onChange={(v) => setSecurity((p) => ({ ...p, currentPwd: v }))}
+                  type="password"
+                  placeholder="********"
+                />
+                <Field
+                  label="Nouveau mot de passe"
+                  value={security.newPwd}
+                  onChange={(v) => setSecurity((p) => ({ ...p, newPwd: v }))}
+                  type="password"
+                  placeholder="Choisissez un mot de passe fort"
+                />
 
                 {security.newPwd && (
-                  <div style={{ marginTop:-10, marginBottom:16 }}>
+                  <div style={{ marginTop: -10, marginBottom: 16 }}>
                     <div className="strength-bar">
-                      <div className="strength-fill" style={{ width:`${(pwdStrength.score/5)*100}%`, background:pwdStrength.color }} />
+                      <div
+                        className="strength-fill"
+                        style={{
+                          width: `${(pwdStrength.score / 5) * 100}%`,
+                          background: pwdStrength.color,
+                        }}
+                      />
                     </div>
-                    <div style={{ display:"flex", justifyContent:"space-between", fontSize:11 }}>
-                      <span style={{ color:pwdStrength.color, fontWeight:500 }}>{pwdStrength.label}</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}>
+                      <span style={{ color: pwdStrength.color, fontWeight: 500 }}>
+                        {pwdStrength.label}
+                      </span>
                     </div>
                   </div>
                 )}
 
                 <Field
-                  label="Confirmer le nouveau mot de passe" value={security.confirmPwd}
-                  onChange={v => setSecurity(p=>({...p,confirmPwd:v}))} type="password"
+                  label="Confirmer le nouveau mot de passe"
+                  value={security.confirmPwd}
+                  onChange={(v) => setSecurity((p) => ({ ...p, confirmPwd: v }))}
+                  type="password"
                   placeholder="Repetez le mot de passe"
-                  error={security.confirmPwd && security.newPwd !== security.confirmPwd ? "Les mots de passe ne correspondent pas" : undefined}
+                  error={
+                    security.confirmPwd && security.newPwd !== security.confirmPwd
+                      ? "Les mots de passe ne correspondent pas"
+                      : undefined
+                  }
                 />
 
                 <button
                   onClick={changePassword}
-                  disabled={saving || !security.currentPwd || !security.newPwd || security.newPwd !== security.confirmPwd || pwdStrength.score < 2}
+                  disabled={
+                    saving ||
+                    !security.currentPwd ||
+                    !security.newPwd ||
+                    security.newPwd !== security.confirmPwd ||
+                    pwdStrength.score < 2
+                  }
                   style={{
-                    background:"var(--accent)", border:"none", borderRadius:9, padding:"12px 24px",
-                    fontSize:14, fontWeight:700, color:"var(--bg-base)", cursor:"pointer",
-                    fontFamily:"'DM Sans', sans-serif", display:"flex", alignItems:"center", gap:7,
-                    opacity: saving || !security.currentPwd || !security.newPwd || security.newPwd !== security.confirmPwd || pwdStrength.score < 2 ? .4 : 1,
-                    transition:"opacity .15s",
+                    background: "var(--accent)",
+                    border: "none",
+                    borderRadius: 9,
+                    padding: "12px 24px",
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: "var(--bg-base)",
+                    cursor: "pointer",
+                    fontFamily: "'DM Sans', sans-serif",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 7,
+                    opacity:
+                      saving ||
+                      !security.currentPwd ||
+                      !security.newPwd ||
+                      security.newPwd !== security.confirmPwd ||
+                      pwdStrength.score < 2
+                        ? 0.4
+                        : 1,
+                    transition: "opacity .15s",
                   }}
                 >
                   {saving ? "Modification..." : "Modifier le mot de passe"}
@@ -826,28 +1235,139 @@ export default function SettingsPage() {
               <div className="s-card">
                 <div className="s-card-title">Sessions actives</div>
                 {[
-                  { device:"Chrome  -  Windows 11",         location:"Yaounde, CM", current:true,  ts:"Maintenant" },
-                  { device:"Firefox  -  Ubuntu 22",          location:"Yaounde, CM", current:false, ts:"Il y a 2 h"  },
-                  { device:"Alanya Mobile  -  Android 13",   location:"Douala, CM",  current:false, ts:"Hier 20:14"  },
+                  {
+                    device: "Chrome  -  Windows 11",
+                    location: "Yaounde, CM",
+                    current: true,
+                    ts: "Maintenant",
+                  },
+                  {
+                    device: "Firefox  -  Ubuntu 22",
+                    location: "Yaounde, CM",
+                    current: false,
+                    ts: "Il y a 2 h",
+                  },
+                  {
+                    device: "Alanya Mobile  -  Android 13",
+                    location: "Douala, CM",
+                    current: false,
+                    ts: "Hier 20:14",
+                  },
                 ].map((s, i) => (
-                  <div className="session-row" key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 0", borderBottom: i < 2 ? "1px solid var(--border-subtle)" : "none", gap:12 }}>
-                    <div className="session-main" style={{ display:"flex", alignItems:"flex-start", gap:12, minWidth:0, flex:1 }}>
-                      <div style={{ width:36, height:36, borderRadius:8, background:"var(--border-subtle)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.8" strokeLinecap="round">
-                          {s.device.includes("Mobile") ? <><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></> : <><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="21"/></>}
+                  <div
+                    className="session-row"
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "12px 0",
+                      borderBottom: i < 2 ? "1px solid var(--border-subtle)" : "none",
+                      gap: 12,
+                    }}
+                  >
+                    <div
+                      className="session-main"
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 12,
+                        minWidth: 0,
+                        flex: 1,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 8,
+                          background: "var(--border-subtle)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="var(--text-muted)"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                        >
+                          {s.device.includes("Mobile") ? (
+                            <>
+                              <rect x="5" y="2" width="14" height="20" rx="2" />
+                              <line x1="12" y1="18" x2="12.01" y2="18" />
+                            </>
+                          ) : (
+                            <>
+                              <rect x="2" y="3" width="20" height="14" rx="2" />
+                              <polyline points="8 21 12 17 16 21" />
+                              <line x1="12" y1="17" x2="12" y2="21" />
+                            </>
+                          )}
                         </svg>
                       </div>
                       <div>
-                        <div style={{ fontSize:13, fontWeight:500, color:"var(--text-primary)", display:"flex", alignItems:"center", gap:7, marginBottom:2 }}>
+                        <div
+                          style={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            color: "var(--text-primary)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 7,
+                            marginBottom: 2,
+                          }}
+                        >
                           {s.device}
-                          {s.current && <span style={{ fontSize:9, background:"var(--success-dim)", color:"var(--success)", padding:"2px 7px", borderRadius:4, fontWeight:600 }}>Appareil actuel</span>}
+                          {s.current && (
+                            <span
+                              style={{
+                                fontSize: 9,
+                                background: "var(--success-dim)",
+                                color: "var(--success)",
+                                padding: "2px 7px",
+                                borderRadius: 4,
+                                fontWeight: 600,
+                              }}
+                            >
+                              Appareil actuel
+                            </span>
+                          )}
                         </div>
-                        <div style={{ fontSize:11, color:"var(--text-faint)" }}>{s.location}  -  {s.ts}</div>
+                        <div style={{ fontSize: 11, color: "var(--text-faint)" }}>
+                          {s.location} - {s.ts}
+                        </div>
                       </div>
                     </div>
                     {!s.current && (
-                      <button onClick={() => { warning("Session fermee", `${s.device} a ete deconnecte.`) }} style={{ background:"var(--danger-dim)", border:"1px solid var(--danger-border)", borderRadius:7, padding:"6px 12px", fontSize:11, color:"var(--danger)", cursor:"pointer", fontFamily:"'DM Sans', sans-serif", fontWeight:500, transition:"all .15s" }}
-                        onMouseEnter={e=>(e.currentTarget.style.background="var(--danger-dim)")} onMouseLeave={e=>(e.currentTarget.style.background="var(--danger-dim)")}>
+                      <button
+                        onClick={() => {
+                          warning("Session fermee", `${s.device} a ete deconnecte.`)
+                        }}
+                        style={{
+                          background: "var(--danger-dim)",
+                          border: "1px solid var(--danger-border)",
+                          borderRadius: 7,
+                          padding: "6px 12px",
+                          fontSize: 11,
+                          color: "var(--danger)",
+                          cursor: "pointer",
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontWeight: 500,
+                          transition: "all .15s",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.background = "var(--danger-dim)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.background = "var(--danger-dim)")
+                        }
+                      >
                         Deconnecter
                       </button>
                     )}
@@ -856,19 +1376,41 @@ export default function SettingsPage() {
               </div>
 
               <div className="s-card">
-                <div className="s-card-title" style={{ color:"var(--danger)", display:"flex", alignItems:"center", gap:8 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="2" strokeLinecap="round">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                <div
+                  className="s-card-title"
+                  style={{ color: "var(--danger)", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--danger)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
                   </svg>
                   Zone dangereuse
                 </div>
-                <DangerZoneItem label="Deconnecter tous les appareils" description="Invalide tous les refresh tokens actifs sur tous vos appareils." buttonLabel="Deconnecter tout" onClick={logoutAll} />
-                <DangerZoneItem label="Supprimer mon compte" description="Action irreversible. Toutes vos donnees seront effacees definitivement apres 30 jours." buttonLabel="Supprimer le compte" onClick={deleteAccount} destructive />
+                <DangerZoneItem
+                  label="Deconnecter tous les appareils"
+                  description="Invalide tous les refresh tokens actifs sur tous vos appareils."
+                  buttonLabel="Deconnecter tout"
+                  onClick={logoutAll}
+                />
+                <DangerZoneItem
+                  label="Supprimer mon compte"
+                  description="Action irreversible. Toutes vos donnees seront effacees definitivement apres 30 jours."
+                  buttonLabel="Supprimer le compte"
+                  onClick={deleteAccount}
+                  destructive
+                />
               </div>
             </>
           )}
-
 
           {section === "notifications" && (
             <>
@@ -876,14 +1418,33 @@ export default function SettingsPage() {
               <p className="s-page-sub">Choisissez ce que vous voulez recevoir et comment.</p>
               <div className="s-card">
                 <div className="s-card-title">Notifications push</div>
-                <Toggle value={notifMessages} onChange={setNotifMessages} label="Messages" description="Recevoir une notification pour chaque nouveau message." />
-                <Toggle value={notifCalls}    onChange={setNotifCalls}    label="Appels entrants" description="Etre notifie des appels audio et video." />
-                <Toggle value={notifSounds}   onChange={setNotifSounds}   label="Sons" description="Jouer un son a la reception d'un message." />
-                <Toggle value={notifPreview}  onChange={setNotifPreview}  label="Apercu du message" description="Afficher le debut du message dans la notification." />
+                <Toggle
+                  value={notifMessages}
+                  onChange={setNotifMessages}
+                  label="Messages"
+                  description="Recevoir une notification pour chaque nouveau message."
+                />
+                <Toggle
+                  value={notifCalls}
+                  onChange={setNotifCalls}
+                  label="Appels entrants"
+                  description="Etre notifie des appels audio et video."
+                />
+                <Toggle
+                  value={notifSounds}
+                  onChange={setNotifSounds}
+                  label="Sons"
+                  description="Jouer un son a la reception d'un message."
+                />
+                <Toggle
+                  value={notifPreview}
+                  onChange={setNotifPreview}
+                  label="Apercu du message"
+                  description="Afficher le debut du message dans la notification."
+                />
               </div>
             </>
           )}
-
 
           {section === "privacy" && (
             <>
@@ -891,14 +1452,47 @@ export default function SettingsPage() {
               <p className="s-page-sub">Controlez ce que les autres peuvent voir sur vous.</p>
               <div className="s-card">
                 <div className="s-card-title">Visibilite</div>
-                <Toggle value={readReceipts}  onChange={v => { setReadReceipts(v); v ? info("Confirmations de lecture activees") : info("Confirmations de lecture desactivees") }}  label="Confirmations de lecture" description="Envoyer la confirmation de lecture quand vous lisez un message." />
-                <Toggle value={onlineStatus}  onChange={v => { setOnlineStatus(v); v ? info("Statut en ligne visible") : info("Statut en ligne masque") }}                           label="Statut en ligne" description="Afficher 'En ligne' quand vous utilisez Alanya." />
-                <Toggle value={lastSeen}      onChange={v => { setLastSeen(v); v ? info("Derniere connexion visible") : info("Derniere connexion masquee") }}                        label="Derniere connexion" description="Afficher quand vous avez ete vu pour la derniere fois." />
-                <Toggle value={profileVisible} onChange={v => { setProfileVisible(v); v ? info("Photo de profil visible") : info("Photo de profil masquee") }}                     label="Photo de profil" description="Rendre votre avatar visible par vos contacts." />
+                <Toggle
+                  value={readReceipts}
+                  onChange={(v) => {
+                    setReadReceipts(v)
+                    v
+                      ? info("Confirmations de lecture activees")
+                      : info("Confirmations de lecture desactivees")
+                  }}
+                  label="Confirmations de lecture"
+                  description="Envoyer la confirmation de lecture quand vous lisez un message."
+                />
+                <Toggle
+                  value={onlineStatus}
+                  onChange={(v) => {
+                    setOnlineStatus(v)
+                    v ? info("Statut en ligne visible") : info("Statut en ligne masque")
+                  }}
+                  label="Statut en ligne"
+                  description="Afficher 'En ligne' quand vous utilisez Alanya."
+                />
+                <Toggle
+                  value={lastSeen}
+                  onChange={(v) => {
+                    setLastSeen(v)
+                    v ? info("Derniere connexion visible") : info("Derniere connexion masquee")
+                  }}
+                  label="Derniere connexion"
+                  description="Afficher quand vous avez ete vu pour la derniere fois."
+                />
+                <Toggle
+                  value={profileVisible}
+                  onChange={(v) => {
+                    setProfileVisible(v)
+                    v ? info("Photo de profil visible") : info("Photo de profil masquee")
+                  }}
+                  label="Photo de profil"
+                  description="Rendre votre avatar visible par vos contacts."
+                />
               </div>
             </>
           )}
-
 
           {section === "appearance" && (
             <>
@@ -911,18 +1505,55 @@ export default function SettingsPage() {
               <div className="s-card">
                 <div className="s-card-title">Taille du texte</div>
                 <div className="font-opts">
-                  {(["small","medium","large"] as const).map(size => (
-                    <button key={size} className={`font-opt ${fontSize===size?"on":""}`} onClick={() => { setFontSize(size); info(`Taille ${size === "small" ? "petite" : size === "medium" ? "normale" : "grande"} activee`) }}>
-                      <div style={{ fontSize: size==="small"?14:size==="medium"?17:21, color: fontSize===size?"var(--accent)":"var(--text-primary)", fontFamily:"'Bricolage Grotesque', sans-serif", fontWeight:700, lineHeight:1 }}>Aa</div>
-                      <div className="font-opt-label">{size==="small"?"Petite":size==="medium"?"Normale":"Grande"}</div>
+                  {(["small", "medium", "large"] as const).map((size) => (
+                    <button
+                      key={size}
+                      className={`font-opt ${fontSize === size ? "on" : ""}`}
+                      onClick={() => {
+                        setFontSize(size)
+                        info(
+                          `Taille ${size === "small" ? "petite" : size === "medium" ? "normale" : "grande"} activee`
+                        )
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: size === "small" ? 14 : size === "medium" ? 17 : 21,
+                          color: fontSize === size ? "var(--accent)" : "var(--text-primary)",
+                          fontFamily: "'Bricolage Grotesque', sans-serif",
+                          fontWeight: 700,
+                          lineHeight: 1,
+                        }}
+                      >
+                        Aa
+                      </div>
+                      <div className="font-opt-label">
+                        {size === "small" ? "Petite" : size === "medium" ? "Normale" : "Grande"}
+                      </div>
                     </button>
                   ))}
                 </div>
               </div>
               <div className="s-card">
                 <div className="s-card-title">Langue</div>
-                <select value={language} onChange={e => { setLanguage(e.target.value); info("Langue modifiee") }}
-                  style={{ width:"100%", background:"var(--bg-surface)", border:"1px solid var(--border-subtle)", borderRadius:10, padding:"12px 14px", fontSize:13, color:"var(--text-primary)", fontFamily:"'DM Sans', sans-serif", outline:"none" }}>
+                <select
+                  value={language}
+                  onChange={(e) => {
+                    setLanguage(e.target.value)
+                    info("Langue modifiee")
+                  }}
+                  style={{
+                    width: "100%",
+                    background: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: 10,
+                    padding: "12px 14px",
+                    fontSize: 13,
+                    color: "var(--text-primary)",
+                    fontFamily: "'DM Sans', sans-serif",
+                    outline: "none",
+                  }}
+                >
                   <option value="fr">Francais</option>
                   <option value="en">English</option>
                 </select>
@@ -930,46 +1561,88 @@ export default function SettingsPage() {
             </>
           )}
 
-
           {section === "about" && (
             <>
               <div className="s-page-title">A propos</div>
               <p className="s-page-sub">Informations sur l'application Alanya.</p>
               <div className="s-card">
                 {[
-                  { label:"Application",     value:"Alanya" },
-                  { label:"Version",         value:"1.0.0-beta" },
-                  { label:"Environnement",   value:"Production" },
-                  { label:"Projet",          value:"Projet BD - ENSPY 2025-2026" },
-                  { label:"Encadrant",       value:"Dr. NANA BINKEU" },
-                  { label:"Groupe",          value:"Alanya II" },
+                  { label: "Application", value: "Alanya" },
+                  { label: "Version", value: "1.0.0-beta" },
+                  { label: "Environnement", value: "Production" },
+                  { label: "Projet", value: "Projet BD - ENSPY 2025-2026" },
+                  { label: "Encadrant", value: "Dr. NANA BINKEU" },
+                  { label: "Groupe", value: "Alanya II" },
                 ].map(({ label, value }) => (
-                  <div className="about-row" key={label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"11px 0", borderBottom:"1px solid var(--border-subtle)", gap:12 }}>
-                    <span style={{ fontSize:13, color:"var(--text-muted)" }}>{label}</span>
-                    <span className="about-value" style={{ fontSize:13, color:"var(--text-primary)", fontWeight:500, textAlign:"right" }}>{value}</span>
+                  <div
+                    className="about-row"
+                    key={label}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "11px 0",
+                      borderBottom: "1px solid var(--border-subtle)",
+                      gap: 12,
+                    }}
+                  >
+                    <span style={{ fontSize: 13, color: "var(--text-muted)" }}>{label}</span>
+                    <span
+                      className="about-value"
+                      style={{
+                        fontSize: 13,
+                        color: "var(--text-primary)",
+                        fontWeight: 500,
+                        textAlign: "right",
+                      }}
+                    >
+                      {value}
+                    </span>
                   </div>
                 ))}
               </div>
               <div className="s-card">
                 <div className="s-card-title">Stack technique</div>
                 {[
-                  { label:"Front-end",   value:"Next.js 14  -  React Native (Expo)" },
-                  { label:"Back-end",    value:"Spring Boot 3  -  Microservices" },
-                  { label:"Base de donnees", value:"PostgreSQL 15" },
-                  { label:"Temps reel",  value:"WebSocket (STOMP)  -  Apache Kafka" },
-                  { label:"Appels A/V",  value:"WebRTC + serveur TURN/STUN" },
-                  { label:"Auth",        value:"JWT (Access 15 min  -  Refresh 7 j)" },
-                  { label:"Deploiement", value:"Docker  -  Vercel  -  Cloudflare Tunnel" },
+                  { label: "Front-end", value: "Next.js 14  -  React Native (Expo)" },
+                  { label: "Back-end", value: "Spring Boot 3  -  Microservices" },
+                  { label: "Base de donnees", value: "PostgreSQL 15" },
+                  { label: "Temps reel", value: "WebSocket (STOMP)  -  Apache Kafka" },
+                  { label: "Appels A/V", value: "WebRTC + serveur TURN/STUN" },
+                  { label: "Auth", value: "JWT (Access 15 min  -  Refresh 7 j)" },
+                  { label: "Deploiement", value: "Docker  -  Vercel  -  Cloudflare Tunnel" },
                 ].map(({ label, value }) => (
-                  <div className="stack-row" key={label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"11px 0", borderBottom:"1px solid var(--border-subtle)", gap:16 }}>
-                    <span style={{ fontSize:12, color:"var(--text-muted)", flexShrink:0 }}>{label}</span>
-                    <span className="stack-value" style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:500, textAlign:"right" }}>{value}</span>
+                  <div
+                    className="stack-row"
+                    key={label}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "11px 0",
+                      borderBottom: "1px solid var(--border-subtle)",
+                      gap: 16,
+                    }}
+                  >
+                    <span style={{ fontSize: 12, color: "var(--text-muted)", flexShrink: 0 }}>
+                      {label}
+                    </span>
+                    <span
+                      className="stack-value"
+                      style={{
+                        fontSize: 12,
+                        color: "var(--text-secondary)",
+                        fontWeight: 500,
+                        textAlign: "right",
+                      }}
+                    >
+                      {value}
+                    </span>
                   </div>
                 ))}
               </div>
             </>
           )}
-
         </main>
       </div>
 
@@ -979,4 +1652,3 @@ export default function SettingsPage() {
     </>
   )
 }
-

@@ -75,23 +75,43 @@ export default function NotFound() {
       `}</style>
 
       <div className="root">
-        <div className="code" aria-hidden="true">404</div>
+        <div className="code" aria-hidden="true">
+          404
+        </div>
         <div className="hex" />
         <h1 className="title">Page introuvable</h1>
         <p className="sub">
-          Cette page n'existe pas ou a ete deplacee.<br />
+          Cette page n'existe pas ou a ete deplacee.
+          <br />
           Verifiez l'URL ou retournez a l'accueil.
         </p>
         <div className="actions">
           <Link to="/dashboard" className="btn-primary">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
             Tableau de bord
           </Link>
           <Link to="/chats" className="btn-ghost">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
             </svg>
             Messages
           </Link>
@@ -100,4 +120,3 @@ export default function NotFound() {
     </>
   )
 }
-

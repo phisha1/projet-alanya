@@ -1,8 +1,4 @@
-import {
-  loadSessionUser,
-  normalizePhoneNumber,
-  type SessionUser,
-} from "../data/session-user"
+import { loadSessionUser, normalizePhoneNumber, type SessionUser } from "../data/session-user"
 import { clearSessionToken, saveSessionToken } from "../data/session-auth"
 import {
   findPrototypeAccount,

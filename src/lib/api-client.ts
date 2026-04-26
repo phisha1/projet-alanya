@@ -78,7 +78,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
     throw new ApiError(
       inferMessage(payload, `La requete a echoue (${response.status}).`),
       response.status,
-      payload,
+      payload
     )
   }
 

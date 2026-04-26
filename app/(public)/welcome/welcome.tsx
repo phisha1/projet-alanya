@@ -22,7 +22,9 @@ export default function WelcomePage() {
               <ThemeToggle className="welcome-theme-toggle" />
             </div>
             <a href="#features">Fonctionnalites</a>
-            <Link to="/login" className="btn-nav">Se connecter</Link>
+            <Link to="/login" className="btn-nav">
+              Se connecter
+            </Link>
           </div>
         </nav>
 
@@ -37,12 +39,14 @@ export default function WelcomePage() {
             <h1 className="headline">
               <span>Parle.</span>
               <span>Partage.</span>
-              <span className="overflow-word"><em>Connecte.</em></span>
+              <span className="overflow-word">
+                <em>Connecte.</em>
+              </span>
             </h1>
 
             <p className="subline">
-              La messagerie pensee pour les ingenieurs de demain.
-              Securisee, rapide, et taillee pour les esprits brillants de l'ENSPY.
+              La messagerie pensee pour les ingenieurs de demain. Securisee, rapide, et taillee pour
+              les esprits brillants de l'ENSPY.
             </p>
 
             <div className="cta-row">
@@ -59,15 +63,21 @@ export default function WelcomePage() {
             <div id="features" className="features">
               <div className="feat">
                 <div className="feat-label">Latence</div>
-                <div className="feat-val"><strong>&lt; 500ms</strong> livraison</div>
+                <div className="feat-val">
+                  <strong>&lt; 500ms</strong> livraison
+                </div>
               </div>
               <div className="feat">
                 <div className="feat-label">Fichiers</div>
-                <div className="feat-val">Jusqu'a <strong>50 Mo</strong></div>
+                <div className="feat-val">
+                  Jusqu'a <strong>50 Mo</strong>
+                </div>
               </div>
               <div className="feat">
                 <div className="feat-label">Appels</div>
-                <div className="feat-val">Audio <strong>&amp;</strong> Video</div>
+                <div className="feat-val">
+                  Audio <strong>&amp;</strong> Video
+                </div>
               </div>
             </div>
           </div>
@@ -105,7 +115,14 @@ export default function WelcomePage() {
                 <div className="phone-input-field">Message...</div>
                 <div className="send-btn">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--bg-base)">
-                    <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="var(--bg-base)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                    <path
+                      d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"
+                      stroke="var(--bg-base)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      fill="none"
+                    />
                   </svg>
                 </div>
               </div>
@@ -116,4 +133,3 @@ export default function WelcomePage() {
     </>
   )
 }
-

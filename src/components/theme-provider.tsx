@@ -1,17 +1,15 @@
-﻿import {
-  createContext, useContext, useEffect, useState, type ReactNode,
-} from "react"
+﻿import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
 export type Theme = "dark" | "light" | "system"
 export type Palette = "default" | "soft"
 
 interface ThemeContextValue {
-  theme:         Theme          // preference stockee ("dark" | "light" | "system")
-  resolvedTheme: "dark"|"light" // theme reellement applique (system resolu)
-  palette:       Palette
-  setTheme:      (t: Theme) => void
+  theme: Theme // preference stockee ("dark" | "light" | "system")
+  resolvedTheme: "dark" | "light" // theme reellement applique (system resolu)
+  palette: Palette
+  setTheme: (t: Theme) => void
   togglePalette: () => void
-  toggle:        () => void     // bascule dark/light directement
+  toggle: () => void // bascule dark/light directement
 }
 
 const ThemeCtx = createContext<ThemeContextValue | null>(null)
@@ -24,7 +22,7 @@ export function useTheme(): ThemeContextValue {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark")
-  const [resolved, setResolved] = useState<"dark"|"light">("dark")
+  const [resolved, setResolved] = useState<"dark" | "light">("dark")
   const [palette, setPaletteState] = useState<Palette>("default")
 
   useEffect(() => {
@@ -37,21 +35,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)")
-    const handler = () => { if (theme === "system") applyTheme("system") }
+    const handler = () => {
+      if (theme === "system") applyTheme("system")
+    }
     mq.addEventListener("change", handler)
     return () => mq.removeEventListener("change", handler)
   }, [theme])
 
   function applyTheme(t: Theme) {
     const isDark =
-      t === "dark" ||
-      (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
     const root = document.documentElement
     root.setAttribute("data-theme", isDark ? "dark" : "light")
     // Pour Tailwind dark mode (class strategy)
     if (isDark) root.classList.add("dark")
-    else        root.classList.remove("dark")
+    else root.classList.remove("dark")
 
     setResolved(isDark ? "dark" : "light")
   }
@@ -79,7 +78,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ThemeCtx.Provider value={{ theme, resolvedTheme: resolved, palette, setTheme, toggle, togglePalette }}>
+    <ThemeCtx.Provider
+      value={{ theme, resolvedTheme: resolved, palette, setTheme, toggle, togglePalette }}
+    >
       {children}
     </ThemeCtx.Provider>
   )

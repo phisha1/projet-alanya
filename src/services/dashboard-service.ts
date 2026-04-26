@@ -31,10 +31,46 @@ const FALLBACK_USER = {
 }
 
 const FALLBACK_CALLS: DashboardCall[] = [
-  { id: "1", contactId: "1", name: "Kevin Manga", initials: "KM", type: "video", direction: "out", duration: "14 min", time: "Hier 20:30" },
-  { id: "2", contactId: "4", name: "Laure Ateba", initials: "LA", type: "audio", direction: "missed", duration: "-", time: "Hier 18:05" },
-  { id: "3", contactId: "5", name: "Paul Essomba", initials: "PE", type: "audio", direction: "in", duration: "3 min", time: "Lun. 11:20" },
-  { id: "4", contactId: "1", name: "Kevin Manga", initials: "KM", type: "audio", direction: "out", duration: "8 min", time: "Dim. 16:44" },
+  {
+    id: "1",
+    contactId: "1",
+    name: "Kevin Manga",
+    initials: "KM",
+    type: "video",
+    direction: "out",
+    duration: "14 min",
+    time: "Hier 20:30",
+  },
+  {
+    id: "2",
+    contactId: "4",
+    name: "Laure Ateba",
+    initials: "LA",
+    type: "audio",
+    direction: "missed",
+    duration: "-",
+    time: "Hier 18:05",
+  },
+  {
+    id: "3",
+    contactId: "5",
+    name: "Paul Essomba",
+    initials: "PE",
+    type: "audio",
+    direction: "in",
+    duration: "3 min",
+    time: "Lun. 11:20",
+  },
+  {
+    id: "4",
+    contactId: "1",
+    name: "Kevin Manga",
+    initials: "KM",
+    type: "audio",
+    direction: "out",
+    duration: "8 min",
+    time: "Dim. 16:44",
+  },
 ]
 
 export function getDashboardData() {

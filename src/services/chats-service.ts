@@ -9,11 +9,15 @@ export function getChatConversations(): ConversationMock[] {
   const localConversations = loadLocalConversations()
   const groupFallbacks = loadLocalGroups()
     .map(toConversationMock)
-    .filter((conversation) => !localConversations.some((localConversation) => localConversation.id === conversation.id))
-  const mockFallbacks = MOCK_CONVERSATIONS.filter((conversation) => (
-    !localConversations.some((localConversation) => localConversation.id === conversation.id)
-    && !groupFallbacks.some((groupConversation) => groupConversation.id === conversation.id)
-  ))
+    .filter(
+      (conversation) =>
+        !localConversations.some((localConversation) => localConversation.id === conversation.id)
+    )
+  const mockFallbacks = MOCK_CONVERSATIONS.filter(
+    (conversation) =>
+      !localConversations.some((localConversation) => localConversation.id === conversation.id) &&
+      !groupFallbacks.some((groupConversation) => groupConversation.id === conversation.id)
+  )
 
   const merged = [...localConversations, ...groupFallbacks, ...mockFallbacks]
 

@@ -28,8 +28,8 @@ function getGreeting(): string {
 function getTodayLabel(): string {
   return new Date().toLocaleDateString("fr-FR", {
     weekday: "long",
-    day:     "numeric",
-    month:   "long",
+    day: "numeric",
+    month: "long",
   })
 }
 
@@ -39,10 +39,15 @@ function getTodayLabel(): string {
  * Carte de statistique rapide.
  * La variante `accent` (messages non lus) s'affiche en dore.
  */
-function StatCard({ label, value, sub, accent = false }: {
-  label:   string
-  value:   string
-  sub:     string
+function StatCard({
+  label,
+  value,
+  sub,
+  accent = false,
+}: {
+  label: string
+  value: string
+  sub: string
   accent?: boolean
 }) {
   return (
@@ -61,7 +66,8 @@ function StatCard({ label, value, sub, accent = false }: {
 function CallDirectionIcon({ direction }: { direction: DashboardCall["direction"] }) {
   return (
     <svg
-      width="12" height="12"
+      width="12"
+      height="12"
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth="2"
@@ -85,15 +91,12 @@ export default function DashboardPage() {
 
   return (
     <main className="dash">
-
-
       <div className="dash-header">
         <div className="greeting">{getTodayLabel()}</div>
         <h1 className="dash-title">
           {getGreeting()}, <span>{firstName}.</span>
         </h1>
       </div>
-
 
       <div className="stats-grid">
         <StatCard
@@ -102,31 +105,23 @@ export default function DashboardPage() {
           sub="dans 2 conversations"
           accent
         />
-        <StatCard
-          label="Conversations"
-          value={String(recentChats.length)}
-          sub="actives ce mois"
-        />
+        <StatCard label="Conversations" value={String(recentChats.length)} sub="actives ce mois" />
         <StatCard
           label="Appels recents"
           value={String(recentCalls.length)}
           sub="les 7 derniers jours"
         />
-        <StatCard
-          label="Contacts"
-          value={String(contacts.length)}
-          sub="dans votre reseau"
-        />
+        <StatCard label="Contacts" value={String(contacts.length)} sub="dans votre reseau" />
       </div>
 
-
       <div className="dash-grid">
-
         {/* Conversations */}
         <div className="card">
           <div className="card-head">
             <span className="card-title">Conversations recentes</span>
-            <Link to="/chats" className="card-link">Tout voir</Link>
+            <Link to="/chats" className="card-link">
+              Tout voir
+            </Link>
           </div>
 
           {recentChats.map((chat, i) => {
@@ -152,9 +147,7 @@ export default function DashboardPage() {
 
                 <div className="chat-right">
                   <div className="chat-time">{chat.time}</div>
-                  {chat.unread > 0 && (
-                    <div className="unread-badge">{chat.unread}</div>
-                  )}
+                  {chat.unread > 0 && <div className="unread-badge">{chat.unread}</div>}
                 </div>
               </Link>
             )
@@ -193,29 +186,27 @@ export default function DashboardPage() {
             <span className="profile-row-val">{contacts.length} contacts</span>
           </div>
 
-          <button className="profile-edit" onClick={() => navigate("/settings")}>Modifier le profil</button>
+          <button className="profile-edit" onClick={() => navigate("/settings")}>
+            Modifier le profil
+          </button>
         </div>
-
       </div>
 
-
       <div className="dash-grid-3">
-
         {/* Appels recents */}
         <div className="card">
           <div className="card-head">
             <span className="card-title">Appels recents</span>
-            <Link to="/calls" className="card-link">Tout voir</Link>
+            <Link to="/calls" className="card-link">
+              Tout voir
+            </Link>
           </div>
 
           {recentCalls.map((call, i) => {
             const color = avatarColor(i)
             return (
               <div className="call-item" key={call.id}>
-                <div
-                  className="avatar avatar--sm"
-                  style={{ background: color + "20", color }}
-                >
+                <div className="avatar avatar--sm" style={{ background: color + "20", color }}>
                   {call.initials}
                 </div>
 
@@ -223,9 +214,7 @@ export default function DashboardPage() {
                   <div className="call-name">{call.name}</div>
                   <div className="call-meta">
                     <CallDirectionIcon direction={call.direction} />
-                    <span className="type-badge">
-                      {call.type === "video" ? "Video" : "Audio"}
-                    </span>
+                    <span className="type-badge">{call.type === "video" ? "Video" : "Audio"}</span>
                     {call.duration !== "-" && <span>{call.duration}</span>}
                     {call.direction === "missed" && (
                       <span className="call-missed-label">Manque</span>
@@ -238,11 +227,22 @@ export default function DashboardPage() {
                   <button
                     className="call-btn"
                     title="Rappeler"
-                    onClick={() => navigate(`/calls/new?contact=${call.contactId}&type=${call.type}&returnTo=${encodeURIComponent("/dashboard")}`)}
+                    onClick={() =>
+                      navigate(
+                        `/calls/new?contact=${call.contactId}&type=${call.type}&returnTo=${encodeURIComponent("/dashboard")}`
+                      )
+                    }
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                      stroke="var(--accent)" strokeWidth="2" strokeLinecap="round">
-                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="var(--accent)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    >
+                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
                     </svg>
                   </button>
                 </div>
@@ -262,10 +262,7 @@ export default function DashboardPage() {
             const color = avatarColor(i)
             return (
               <div className="contact-item" key={contact.id}>
-                <div
-                  className="avatar avatar--sm"
-                  style={{ background: color + "20", color }}
-                >
+                <div className="avatar avatar--sm" style={{ background: color + "20", color }}>
                   {contact.initials}
                   {contact.online && <div className="av-dot av-dot--sm" />}
                 </div>
@@ -282,9 +279,7 @@ export default function DashboardPage() {
             )
           })}
         </div>
-
       </div>
     </main>
   )
 }
-

@@ -31,27 +31,136 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Routes>
               <Route path="/" element={<WelcomePage />} />
               <Route path="/welcome" element={<WelcomePage />} />
-              <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
-              <Route path="/signup" element={<PublicOnlyRoute><SignUpPage /></PublicOnlyRoute>} />
-              <Route path="/sign-in" element={<PublicOnlyRoute><Navigate to="/signup" replace /></PublicOnlyRoute>} />
-              <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPage /></PublicOnlyRoute>} />
+              <Route
+                path="/login"
+                element={
+                  <PublicOnlyRoute>
+                    <LoginPage />
+                  </PublicOnlyRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PublicOnlyRoute>
+                    <SignUpPage />
+                  </PublicOnlyRoute>
+                }
+              />
+              <Route
+                path="/sign-in"
+                element={
+                  <PublicOnlyRoute>
+                    <Navigate to="/signup" replace />
+                  </PublicOnlyRoute>
+                }
+              />
+              <Route
+                path="/forgot-password"
+                element={
+                  <PublicOnlyRoute>
+                    <ForgotPasswordPage />
+                  </PublicOnlyRoute>
+                }
+              />
 
-              <Route path="/dashboard" element={<ProtectedRoute><ProtectedLayout><DashboardPage /></ProtectedLayout></ProtectedRoute>} />
-              <Route path="/chats" element={<ProtectedRoute><ProtectedLayout><ChatsPage /></ProtectedLayout></ProtectedRoute>} />
-              <Route path="/chats/new" element={<ProtectedRoute><ProtectedLayout><NewChatPage /></ProtectedLayout></ProtectedRoute>} />
-              <Route path="/chats/:chatId" element={<ProtectedRoute><ProtectedLayout><ChatRoomPage /></ProtectedLayout></ProtectedRoute>} />
-              <Route path="/chats/:chatId/info" element={<ProtectedRoute><ProtectedLayout><ConvInfoPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <DashboardPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chats"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <ChatsPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chats/new"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <NewChatPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chats/:chatId"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <ChatRoomPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chats/:chatId/info"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <ConvInfoPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
 
-              <Route path="/calls" element={<ProtectedRoute><ProtectedLayout><CallsPage /></ProtectedLayout></ProtectedRoute>} />
-              <Route path="/calls/new" element={<ProtectedRoute><ProtectedLayout><NewCallPage /></ProtectedLayout></ProtectedRoute>} />
-              <Route path="/calls/:callId" element={<ProtectedRoute><ProtectedLayout><CallRoomPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route
+                path="/calls"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <CallsPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/calls/new"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <NewCallPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/calls/:callId"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <CallRoomPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
 
-              <Route path="/settings" element={<ProtectedRoute><ProtectedLayout><SettingsPage /></ProtectedLayout></ProtectedRoute>} />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <SettingsPage />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </AuthProvider>
         </BrowserRouter>
       </ToastProvider>
     </ThemeProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )

@@ -7,9 +7,7 @@ export interface SessionUser {
 }
 
 const STORAGE_KEY = "alanya-session-user-v2"
-const LEGACY_STORAGE_KEYS = [
-  "alanya-session-user-v1",
-]
+const LEGACY_STORAGE_KEYS = ["alanya-session-user-v1"]
 const MIGRATION_KEY = "alanya-auth-storage-migrated-v2"
 
 function hasStorage() {
@@ -67,4 +65,3 @@ export function clearSessionUser() {
   runStorageMigration()
   window.localStorage.removeItem(STORAGE_KEY)
 }
-

@@ -14,7 +14,12 @@ interface IncomingCallOverlayProps {
   onDecline: () => void
 }
 
-export default function IncomingCallOverlay({ caller, type, onAccept, onDecline }: IncomingCallOverlayProps) {
+export default function IncomingCallOverlay({
+  caller,
+  type,
+  onAccept,
+  onDecline,
+}: IncomingCallOverlayProps) {
   const [remaining, setRemaining] = useState(30)
 
   useEffect(() => {
@@ -166,7 +171,10 @@ export default function IncomingCallOverlay({ caller, type, onAccept, onDecline 
       <div className="ical-overlay" role="dialog" aria-modal="true" aria-label="Appel entrant">
         <div className="ical-card">
           <div className="ical-avatar-wrap">
-            <div className="ical-avatar" style={{ background: caller.color.bg, color: caller.color.fg }}>
+            <div
+              className="ical-avatar"
+              style={{ background: caller.color.bg, color: caller.color.fg }}
+            >
               <div className="ical-ring" style={{ color: caller.color.fg }} />
               <div className="ical-ring" style={{ color: caller.color.fg }} />
               <div className="ical-ring" style={{ color: caller.color.fg }} />
@@ -176,13 +184,26 @@ export default function IncomingCallOverlay({ caller, type, onAccept, onDecline 
 
           <div className="ical-type">Appel {type === "video" ? "video" : "audio"} entrant</div>
           <div className="ical-name">{caller.name}</div>
-          <div className="ical-sub">{type === "video" ? "Souhaite un appel video" : "Vous appelle"}</div>
+          <div className="ical-sub">
+            {type === "video" ? "Souhaite un appel video" : "Vous appelle"}
+          </div>
 
           <div className="ical-actions">
             <button className="ical-action decline" onClick={onDecline}>
               <div className="ical-action-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 18.92v3a2 2 0 01-2 2A17 17 0 013 5a2 2 0 012-2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.49 10a16 16 0 001.19 3.31z" style={{ transform: "rotate(135deg)", transformOrigin: "center" }} />
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
+                  <path
+                    d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 18.92v3a2 2 0 01-2 2A17 17 0 013 5a2 2 0 012-2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.49 10a16 16 0 001.19 3.31z"
+                    style={{ transform: "rotate(135deg)", transformOrigin: "center" }}
+                  />
                 </svg>
               </div>
               <span className="ical-action-label">Refuser</span>
@@ -190,7 +211,15 @@ export default function IncomingCallOverlay({ caller, type, onAccept, onDecline 
 
             <button className="ical-action accept" onClick={onAccept}>
               <div className="ical-action-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
                 </svg>
               </div>

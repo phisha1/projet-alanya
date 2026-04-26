@@ -65,14 +65,14 @@ Modes disponibles :
 
 ## Parcours disponibles
 
-| Section | Pages |
-| --- | --- |
-| Accueil | `/`, `/welcome` |
-| Authentification | `/login`, `/signup`, `/forgot-password` |
-| Tableau de bord | `/dashboard` |
-| Conversations | `/chats`, `/chats/new`, `/chats/:chatId`, `/chats/:chatId/info` |
-| Appels | `/calls`, `/calls/new`, `/calls/:callId` |
-| Parametres | `/settings` |
+| Section          | Pages                                                           |
+| ---------------- | --------------------------------------------------------------- |
+| Accueil          | `/`, `/welcome`                                                 |
+| Authentification | `/login`, `/signup`, `/forgot-password`                         |
+| Tableau de bord  | `/dashboard`                                                    |
+| Conversations    | `/chats`, `/chats/new`, `/chats/:chatId`, `/chats/:chatId/info` |
+| Appels           | `/calls`, `/calls/new`, `/calls/:callId`                        |
+| Parametres       | `/settings`                                                     |
 
 ## Backend
 

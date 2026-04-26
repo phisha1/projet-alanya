@@ -49,7 +49,15 @@ function passwordStrength(pwd: string) {
   return { score, ...levels[Math.min(5, score)] }
 }
 
-function StepHeader({ step, title, subtitle }: { step: Step; title: React.ReactNode; subtitle: React.ReactNode }) {
+function StepHeader({
+  step,
+  title,
+  subtitle,
+}: {
+  step: Step
+  title: React.ReactNode
+  subtitle: React.ReactNode
+}) {
   return (
     <div className="step-head">
       <div className="step-pre">Etape {step} sur 3</div>
@@ -67,7 +75,9 @@ function OtpInput({ value, onChange }: { value: string[]; onChange: (value: stri
       {Array.from({ length: OTP_LEN }, (_, index) => (
         <input
           key={index}
-          ref={(el) => { refs.current[index] = el }}
+          ref={(el) => {
+            refs.current[index] = el
+          }}
           className="otp-digit"
           type="text"
           inputMode="numeric"
@@ -162,7 +172,9 @@ export default function SignUpPage() {
       setCountdown(60)
       setStep(3)
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Impossible d'envoyer le code OTP.")
+      setError(
+        submitError instanceof Error ? submitError.message : "Impossible d'envoyer le code OTP."
+      )
     } finally {
       setLoading(false)
     }
@@ -182,12 +194,15 @@ export default function SignUpPage() {
     }
 
     try {
-      await register({
-        name: form.name.trim(),
-        phone: normalizePhone(form.phone),
-        email: form.email.trim().toLowerCase(),
-        password: form.password,
-      }, entered)
+      await register(
+        {
+          name: form.name.trim(),
+          phone: normalizePhone(form.phone),
+          email: form.email.trim().toLowerCase(),
+          password: form.password,
+        },
+        entered
+      )
       navigate("/dashboard", { replace: true })
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Verification impossible.")
@@ -234,84 +249,199 @@ export default function SignUpPage() {
 
         <div className="sec-promises">
           <div className="sec-title">Authentification</div>
-          <div className="sec-item"><div className="sec-icon">1</div><div className="sec-txt">Email obligatoire et lie a un seul numero.</div></div>
-          <div className="sec-item"><div className="sec-icon">2</div><div className="sec-txt">Mot de passe fort requis.</div></div>
-          <div className="sec-item"><div className="sec-icon">3</div><div className="sec-txt">Code OTP fictif pour le prototype.</div></div>
+          <div className="sec-item">
+            <div className="sec-icon">1</div>
+            <div className="sec-txt">Email obligatoire et lie a un seul numero.</div>
+          </div>
+          <div className="sec-item">
+            <div className="sec-icon">2</div>
+            <div className="sec-txt">Mot de passe fort requis.</div>
+          </div>
+          <div className="sec-item">
+            <div className="sec-icon">3</div>
+            <div className="sec-txt">Code OTP fictif pour le prototype.</div>
+          </div>
         </div>
       </aside>
 
       <main className="si-right">
         <div className="form-wrap">
-          {error && <div className="error-banner"><span>{error}</span></div>}
+          {error && (
+            <div className="error-banner">
+              <span>{error}</span>
+            </div>
+          )}
 
           {step === 1 && (
             <form onSubmit={submitStep1} noValidate>
-              <StepHeader step={1} title="Creer un compte." subtitle="Nom, numero de telephone et email." />
+              <StepHeader
+                step={1}
+                title="Creer un compte."
+                subtitle="Nom, numero de telephone et email."
+              />
 
               <div className="field">
-                <input id="name" type="text" placeholder=" " value={form.name} onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))} required />
+                <input
+                  id="name"
+                  type="text"
+                  placeholder=" "
+                  value={form.name}
+                  onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                  required
+                />
                 <label htmlFor="name">Nom complet</label>
               </div>
 
               <div className="field">
-                <input id="phone" type="tel" placeholder=" " value={form.phone} onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))} required />
+                <input
+                  id="phone"
+                  type="tel"
+                  placeholder=" "
+                  value={form.phone}
+                  onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
+                  required
+                />
                 <label htmlFor="phone">Numero de telephone</label>
               </div>
 
               <div className="field">
-                <input id="email" type="email" placeholder=" " value={form.email} onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))} autoComplete="email" required />
+                <input
+                  id="email"
+                  type="email"
+                  placeholder=" "
+                  value={form.email}
+                  onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+                  autoComplete="email"
+                  required
+                />
                 <label htmlFor="email">Adresse email</label>
               </div>
 
-              <button type="submit" className="btn-submit" disabled={!form.name.trim() || !validPhone(form.phone) || !form.email.trim() || !validEmail(form.email)}>Continuer -&gt;</button>
-              <div className="login-link">Deja un compte ? <Link to="/login">Se connecter</Link></div>
+              <button
+                type="submit"
+                className="btn-submit"
+                disabled={
+                  !form.name.trim() ||
+                  !validPhone(form.phone) ||
+                  !form.email.trim() ||
+                  !validEmail(form.email)
+                }
+              >
+                Continuer -&gt;
+              </button>
+              <div className="login-link">
+                Deja un compte ? <Link to="/login">Se connecter</Link>
+              </div>
             </form>
           )}
 
           {step === 2 && (
             <form onSubmit={submitStep2} noValidate>
-              <StepHeader step={2} title="Securisez votre compte." subtitle={`Pour ${normalizePhone(form.phone)}`} />
+              <StepHeader
+                step={2}
+                title="Securisez votre compte."
+                subtitle={`Pour ${normalizePhone(form.phone)}`}
+              />
 
               <div className="field">
-                <input id="pwd" type={showPwd ? "text" : "password"} placeholder=" " value={form.password} onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))} className="input-with-toggle" required />
+                <input
+                  id="pwd"
+                  type={showPwd ? "text" : "password"}
+                  placeholder=" "
+                  value={form.password}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, password: event.target.value }))
+                  }
+                  className="input-with-toggle"
+                  required
+                />
                 <label htmlFor="pwd">Mot de passe</label>
-                <div className="field-icon"><button className="tog" type="button" onClick={() => setShowPwd((v) => !v)}>{showPwd ? "Masquer" : "Afficher"}</button></div>
+                <div className="field-icon">
+                  <button className="tog" type="button" onClick={() => setShowPwd((v) => !v)}>
+                    {showPwd ? "Masquer" : "Afficher"}
+                  </button>
+                </div>
               </div>
 
               {form.password && (
                 <div className="strength-wrap">
-                  <div className="strength-bar-track"><div className="strength-bar-fill" style={{ width: `${(strength.score / 5) * 100}%`, background: strength.color }} /></div>
-                  <div className="strength-meta"><span className="strength-label" style={{ color: strength.color }}>{strength.label}</span></div>
+                  <div className="strength-bar-track">
+                    <div
+                      className="strength-bar-fill"
+                      style={{
+                        width: `${(strength.score / 5) * 100}%`,
+                        background: strength.color,
+                      }}
+                    />
+                  </div>
+                  <div className="strength-meta">
+                    <span className="strength-label" style={{ color: strength.color }}>
+                      {strength.label}
+                    </span>
+                  </div>
                 </div>
               )}
 
               <div className="field">
-                <input id="confirm" type={showConfirm ? "text" : "password"} placeholder=" " value={form.confirm} onChange={(event) => setForm((prev) => ({ ...prev, confirm: event.target.value }))} className="input-with-toggle" required />
+                <input
+                  id="confirm"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder=" "
+                  value={form.confirm}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, confirm: event.target.value }))
+                  }
+                  className="input-with-toggle"
+                  required
+                />
                 <label htmlFor="confirm">Confirmer le mot de passe</label>
-                <div className="field-icon"><button className="tog" type="button" onClick={() => setShowConfirm((v) => !v)}>{showConfirm ? "Masquer" : "Afficher"}</button></div>
+                <div className="field-icon">
+                  <button className="tog" type="button" onClick={() => setShowConfirm((v) => !v)}>
+                    {showConfirm ? "Masquer" : "Afficher"}
+                  </button>
+                </div>
               </div>
 
               <div className="btn-row">
-                <button type="button" className="btn-submit btn-back" onClick={() => setStep(1)}>?</button>
-                <button type="submit" className="btn-submit" disabled={loading || strength.score < 2 || !match}>{loading ? "Creation..." : "Creer le compte ->"}</button>
+                <button type="button" className="btn-submit btn-back" onClick={() => setStep(1)}>
+                  ?
+                </button>
+                <button
+                  type="submit"
+                  className="btn-submit"
+                  disabled={loading || strength.score < 2 || !match}
+                >
+                  {loading ? "Creation..." : "Creer le compte ->"}
+                </button>
               </div>
             </form>
           )}
 
           {step === 3 && (
             <div>
-              <StepHeader step={3} title="Verification." subtitle={`Code envoye a ${form.email.trim().toLowerCase()}`} />
+              <StepHeader
+                step={3}
+                title="Verification."
+                subtitle={`Code envoye a ${form.email.trim().toLowerCase()}`}
+              />
 
               <div className="otp-wrap">
                 <OtpInput value={otpDigits} onChange={setOtpDigits} />
                 <div className="resend-row">
-                  {demoOtp
-                    ? <>Code fictif (prototype): <strong className="countdown-accent">{demoOtp}</strong></>
-                    : <>Code genere par la couche de prototype.</>}
+                  {demoOtp ? (
+                    <>
+                      Code fictif (prototype):{" "}
+                      <strong className="countdown-accent">{demoOtp}</strong>
+                    </>
+                  ) : (
+                    <>Code genere par la couche de prototype.</>
+                  )}
                 </div>
                 <div className="resend-row">
                   {countdown > 0 ? (
-                    <span>Renvoyer dans <strong className="countdown-accent">{countdown}s</strong></span>
+                    <span>
+                      Renvoyer dans <strong className="countdown-accent">{countdown}s</strong>
+                    </span>
                   ) : (
                     <button
                       className="resend-btn"
@@ -327,7 +457,11 @@ export default function SignUpPage() {
                           setOtpDigits(Array(OTP_LEN).fill(""))
                           setCountdown(60)
                         } catch (submitError) {
-                          setError(submitError instanceof Error ? submitError.message : "Impossible de regenerer le code.")
+                          setError(
+                            submitError instanceof Error
+                              ? submitError.message
+                              : "Impossible de regenerer le code."
+                          )
                         }
                       }}
                     >
@@ -337,7 +471,11 @@ export default function SignUpPage() {
                 </div>
               </div>
 
-              {loading && <div className="spinner-center"><div className="spinner spinner--gold" /></div>}
+              {loading && (
+                <div className="spinner-center">
+                  <div className="spinner spinner--gold" />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -345,4 +483,3 @@ export default function SignUpPage() {
     </div>
   )
 }
-

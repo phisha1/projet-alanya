@@ -29,21 +29,29 @@ function formatTime(d: Date) {
 }
 
 function formatDateSeparator(d: Date) {
-  const today = new Date(); const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1)
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(today.getDate() - 1)
   if (d.toDateString() === today.toDateString()) return "Aujourd'hui"
   if (d.toDateString() === yesterday.toDateString()) return "Hier"
   return d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
 }
 
 function StatusIcon({ status }: { status: MessageStatus }) {
-  if (status === "sending")   return <span style={{ color: "var(--text-faint)", fontSize: 10 }}>...</span>
-  if (status === "sent")      return <span style={{ color: "var(--text-muted)", fontSize: 11 }}>ok</span>
-  if (status === "delivered") return <span style={{ color: "var(--text-muted)", fontSize: 11 }}>vu</span>
+  if (status === "sending")
+    return <span style={{ color: "var(--text-faint)", fontSize: 10 }}>...</span>
+  if (status === "sent") return <span style={{ color: "var(--text-muted)", fontSize: 11 }}>ok</span>
+  if (status === "delivered")
+    return <span style={{ color: "var(--text-muted)", fontSize: 11 }}>vu</span>
   return <span style={{ color: "var(--info)", fontSize: 11 }}>lu</span>
 }
 
 function MessageBubble({
-  msg, isMe, replyMsg, onReply, chatColor,
+  msg,
+  isMe,
+  replyMsg,
+  onReply,
+  chatColor,
 }: {
   msg: Message
   isMe: boolean
@@ -55,16 +63,38 @@ function MessageBubble({
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", alignItems: isMe ? "flex-end" : "flex-start", marginBottom: 2 }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: isMe ? "flex-end" : "flex-start",
+        marginBottom: 2,
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 6, flexDirection: isMe ? "row-reverse" : "row" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 6,
+          flexDirection: isMe ? "row-reverse" : "row",
+        }}
+      >
         {/* Bouton repondre */}
         {hovered && (
           <button
             onClick={() => onReply(msg)}
-            style={{ background: "var(--border-subtle)", border: "1px solid var(--border-default)", borderRadius: 6, padding: "4px 8px", color: "var(--text-secondary)", fontSize: 10, cursor: "pointer", flexShrink: 0, fontFamily: "'DM Sans', sans-serif" }}
+            style={{
+              background: "var(--border-subtle)",
+              border: "1px solid var(--border-default)",
+              borderRadius: 6,
+              padding: "4px 8px",
+              color: "var(--text-secondary)",
+              fontSize: 10,
+              cursor: "pointer",
+              flexShrink: 0,
+              fontFamily: "'DM Sans', sans-serif",
+            }}
           >
             Repondre
           </button>
@@ -73,61 +103,139 @@ function MessageBubble({
         <div style={{ maxWidth: "72%", display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Citation */}
           {replyMsg && (
-            <div style={{
-              background: isMe ? "var(--accent-dim)" : "var(--border-subtle)",
-              borderLeft: `3px solid ${isMe ? "var(--accent)" : chatColor.text}`,
-              borderRadius: "0 6px 6px 0",
-              padding: "6px 10px",
-              fontSize: 11, color: "var(--text-secondary)",
-              marginBottom: 2, maxWidth: "100%",
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-            }}>
+            <div
+              style={{
+                background: isMe ? "var(--accent-dim)" : "var(--border-subtle)",
+                borderLeft: `3px solid ${isMe ? "var(--accent)" : chatColor.text}`,
+                borderRadius: "0 6px 6px 0",
+                padding: "6px 10px",
+                fontSize: 11,
+                color: "var(--text-secondary)",
+                marginBottom: 2,
+                maxWidth: "100%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
               {replyMsg.content}
             </div>
           )}
 
           {/* Bulle */}
-          <div style={{
-            background: isMe ? "var(--accent)" : "var(--border-subtle)",
-            color: isMe ? "var(--bg-base)" : "var(--text-primary)",
-            padding: msg.type === "file" ? "10px 14px" : "10px 14px",
-            borderRadius: isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-            fontSize: 13, lineHeight: 1.55,
-            wordBreak: "break-word",
-          }}>
+          <div
+            style={{
+              background: isMe ? "var(--accent)" : "var(--border-subtle)",
+              color: isMe ? "var(--bg-base)" : "var(--text-primary)",
+              padding: msg.type === "file" ? "10px 14px" : "10px 14px",
+              borderRadius: isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+              fontSize: 13,
+              lineHeight: 1.55,
+              wordBreak: "break-word",
+            }}
+          >
             {msg.type === "file" && (
               <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 200 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: isMe ? "var(--accent-border)" : "var(--border-default)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: isMe ? "var(--bg-base)" : "var(--text-secondary)" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 8,
+                    background: isMe ? "var(--accent-border)" : "var(--border-default)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    color: isMe ? "var(--bg-base)" : "var(--text-secondary)",
+                  }}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
                   </svg>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{msg.fileName}</div>
-                  <div style={{ fontSize: 10, opacity: .7 }}>{msg.fileSize}</div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 500,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {msg.fileName}
+                  </div>
+                  <div style={{ fontSize: 10, opacity: 0.7 }}>{msg.fileSize}</div>
                 </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
                 </svg>
               </div>
             )}
 
             {msg.type === "image" && (
-              <div style={{ width: 200, height: 140, background: isMe ? "var(--accent-border)" : "var(--border-default)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4 }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ opacity: .4 }}>
-                  <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+              <div
+                style={{
+                  width: 200,
+                  height: 140,
+                  background: isMe ? "var(--accent-border)" : "var(--border-default)",
+                  borderRadius: 8,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: 4,
+                }}
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  style={{ opacity: 0.4 }}
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
                 </svg>
               </div>
             )}
 
-            {(msg.type === "text" || msg.type === "image") && (
-              <span>{msg.content}</span>
-            )}
+            {(msg.type === "text" || msg.type === "image") && <span>{msg.content}</span>}
           </div>
 
           {/* Meta */}
-          <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: isMe ? "flex-end" : "flex-start", padding: "0 2px" }}>
-            <span style={{ fontSize: 10, color: "var(--text-faint)" }}>{formatTime(msg.timestamp)}</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              justifyContent: isMe ? "flex-end" : "flex-start",
+              padding: "0 2px",
+            }}
+          >
+            <span style={{ fontSize: 10, color: "var(--text-faint)" }}>
+              {formatTime(msg.timestamp)}
+            </span>
             {isMe && <StatusIcon status={msg.status} />}
           </div>
         </div>
@@ -137,16 +245,16 @@ function MessageBubble({
 }
 
 export default function ChatRoomPage() {
-  const params   = useParams()
+  const params = useParams()
   const navigate = useNavigate()
-  const chatId   = params.chatId as string
+  const chatId = params.chatId as string
   const returnTo = `/chats/${chatId}`
   const { error } = useToast()
 
   const contacts = useMemo(() => loadContacts(), [])
   const fallbackContact = useMemo(
     () => contacts.find((contact) => contact.id === chatId),
-    [contacts, chatId],
+    [contacts, chatId]
   )
   const fallbackGroup = useMemo(() => findLocalGroup(chatId), [chatId])
   const chat = useMemo(
@@ -163,19 +271,19 @@ export default function ChatRoomPage() {
             isGroup: false,
           }
         : undefined),
-    [chatId, fallbackContact, fallbackGroup],
+    [chatId, fallbackContact, fallbackGroup]
   )
 
   const [messages, setMessages] = useState<Message[]>(chat ? loadLocalMessages(chatId) : [])
-  const [input, setInput]       = useState("")
-  const [replyTo, setReplyTo]   = useState<Message | null>(null)
-  const [isTyping, setIsTyping] = useState(false)   // typing de l'interlocuteur
-  const [sending, setSending]   = useState(false)
+  const [input, setInput] = useState("")
+  const [replyTo, setReplyTo] = useState<Message | null>(null)
+  const [isTyping, setIsTyping] = useState(false) // typing de l'interlocuteur
+  const [sending, setSending] = useState(false)
   const [showAttach, setShowAttach] = useState(false)
 
-  const bottomRef  = useRef<HTMLDivElement>(null)
-  const inputRef   = useRef<HTMLTextAreaElement>(null)
-  const fileRef    = useRef<HTMLInputElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
   const typingTimer = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
@@ -199,15 +307,18 @@ export default function ChatRoomPage() {
   useEffect(() => {
     if (!chat || messages.length === 0) return
 
-    syncConversationFromMessages({
-      id: chat.id,
-      name: chat.name,
-      initials: chat.initials,
-      colorIdx: chat.colorIdx,
-      online: chat.online,
-      isGroup: chat.isGroup,
-      members: chat.members,
-    }, messages)
+    syncConversationFromMessages(
+      {
+        id: chat.id,
+        name: chat.name,
+        initials: chat.initials,
+        colorIdx: chat.colorIdx,
+        online: chat.online,
+        isGroup: chat.isGroup,
+        members: chat.members,
+      },
+      messages
+    )
   }, [chat, messages])
 
   // Scroll en bas a chaque nouveau message
@@ -235,7 +346,7 @@ export default function ChatRoomPage() {
         status: "delivered",
         timestamp: new Date(),
       }
-      setMessages(prev => [...prev, reply])
+      setMessages((prev) => [...prev, reply])
     }, delay)
   }, [chatId])
 
@@ -254,7 +365,7 @@ export default function ChatRoomPage() {
       replyTo: replyTo?.id,
     }
 
-    setMessages(prev => [...prev, optimistic])
+    setMessages((prev) => [...prev, optimistic])
     setInput("")
     setReplyTo(null)
     setSending(false)
@@ -264,13 +375,13 @@ export default function ChatRoomPage() {
 
     // Simule la confirmation du serveur apres 400ms
     setTimeout(() => {
-      setMessages(prev => prev.map(m =>
-        m.id === optimistic.id ? { ...m, status: "sent" } : m
-      ))
+      setMessages((prev) =>
+        prev.map((m) => (m.id === optimistic.id ? { ...m, status: "sent" } : m))
+      )
       setTimeout(() => {
-        setMessages(prev => prev.map(m =>
-          m.id === optimistic.id ? { ...m, status: "delivered" } : m
-        ))
+        setMessages((prev) =>
+          prev.map((m) => (m.id === optimistic.id ? { ...m, status: "delivered" } : m))
+        )
         simulateTyping()
       }, 600)
     }, 400)
@@ -318,11 +429,11 @@ export default function ChatRoomPage() {
       fileName: file.name,
       fileSize: `${(file.size / 1024 / 1024).toFixed(1)} Mo`,
     }
-    setMessages(prev => [...prev, msg])
+    setMessages((prev) => [...prev, msg])
     setShowAttach(false)
     // TODO : POST /api/chats/:id/files (multipart/form-data)
     setTimeout(() => {
-      setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, status: "delivered" } : m))
+      setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, status: "delivered" } : m)))
     }, 1200)
     e.target.value = ""
   }
@@ -344,182 +455,348 @@ export default function ChatRoomPage() {
 
   return (
     <div className="room-root">
+      <div className="room-top">
+        <button className="back-btn" onClick={() => navigate("/chats")} aria-label="Retour">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <path d="M19 12H5M12 5l-7 7 7 7" />
+          </svg>
+        </button>
 
-        <div className="room-top">
-          <button className="back-btn" onClick={() => navigate("/chats")} aria-label="Retour">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M19 12H5M12 5l-7 7 7 7"/>
+        <div className="room-av" style={{ background: color.bg, color: color.text }}>
+          {chat.initials}
+          {chat.online && !chat.isGroup && <div className="room-av-dot" />}
+        </div>
+
+        <div className="room-info">
+          <div className="room-name">{chat.name}</div>
+          <div
+            className="room-sub"
+            style={{
+              color: isTyping
+                ? "var(--accent)"
+                : chat.online
+                  ? "var(--success)"
+                  : "var(--text-muted)",
+            }}
+          >
+            {isTyping
+              ? "en train d'ecrire..."
+              : chat.isGroup
+                ? `${chat.members?.length ?? 0} membres`
+                : chat.online
+                  ? "En ligne"
+                  : "Hors ligne"}
+          </div>
+        </div>
+
+        <div className="room-actions">
+          {/* Appel audio */}
+          <button
+            className="action-btn"
+            aria-label="Appel audio"
+            title="Appel audio"
+            onClick={() =>
+              navigate(
+                `/calls/new?contact=${chatId}&type=audio&returnTo=${encodeURIComponent(returnTo)}`
+              )
+            }
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            >
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
             </svg>
           </button>
-
-          <div className="room-av" style={{ background: color.bg, color: color.text }}>
-            {chat.initials}
-            {chat.online && !chat.isGroup && <div className="room-av-dot" />}
-          </div>
-
-          <div className="room-info">
-            <div className="room-name">{chat.name}</div>
-            <div className="room-sub" style={{ color: isTyping ? "var(--accent)" : chat.online ? "var(--success)" : "var(--text-muted)" }}>
-              {isTyping ? "en train d'ecrire..."
-                : chat.isGroup ? `${chat.members?.length ?? 0} membres`
-                : chat.online ? "En ligne" : "Hors ligne"}
-            </div>
-          </div>
-
-          <div className="room-actions">
-            {/* Appel audio */}
-            <button className="action-btn" aria-label="Appel audio" title="Appel audio"
-              onClick={() => navigate(`/calls/new?contact=${chatId}&type=audio&returnTo=${encodeURIComponent(returnTo)}`)}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-              </svg>
-            </button>
-            {/* Appel video */}
-            <button className="action-btn" aria-label="Appel video" title="Appel video"
-              onClick={() => navigate(`/calls/new?contact=${chatId}&type=video&returnTo=${encodeURIComponent(returnTo)}`)}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
-              </svg>
-            </button>
-            {/* Info */}
-            <button className="action-btn" aria-label="Infos conversation" title="Infos" onClick={() => navigate(`/chats/${chatId}/info`)}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-
-        <div className="room-body">
-          {grouped.map(({ date, msgs }) => (
-            <div key={date}>
-              <div className="date-sep">
-                <div className="date-sep-line" />
-                <div className="date-sep-txt">{date}</div>
-                <div className="date-sep-line" />
-              </div>
-
-              {msgs.map(msg => {
-                const isMe = msg.senderId === "me"
-                const reply = msg.replyTo ? messages.find(m => m.id === msg.replyTo) : undefined
-                return (
-                  <MessageBubble
-                    key={msg.id}
-                    msg={msg}
-                    isMe={isMe}
-                    replyMsg={reply}
-                    onReply={setReplyTo}
-                    chatColor={color}
-                  />
-                )
-              })}
-            </div>
-          ))}
-
-          {/* Indicateur de frappe */}
-          {isTyping && (
-            <div className="typing-indicator">
-              <div className="typing-av" style={{ background: color.bg, color: color.text }}>{chat.initials}</div>
-              <div className="typing-bubble">
-                <div className="td" /><div className="td" /><div className="td" />
-              </div>
-            </div>
-          )}
-
-          <div ref={bottomRef} />
-        </div>
-
-
-        {replyTo && (
-          <div className="reply-bar">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round">
-              <polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 00-4-4H4"/>
+          {/* Appel video */}
+          <button
+            className="action-btn"
+            aria-label="Appel video"
+            title="Appel video"
+            onClick={() =>
+              navigate(
+                `/calls/new?contact=${chatId}&type=video&returnTo=${encodeURIComponent(returnTo)}`
+              )
+            }
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            >
+              <polygon points="23 7 16 12 23 17 23 7" />
+              <rect x="1" y="5" width="15" height="14" rx="2" />
             </svg>
-            <div className="reply-bar-content">
-              <div className="reply-bar-label">Repondre a</div>
-              <div className="reply-bar-txt">{replyTo.content}</div>
+          </button>
+          {/* Info */}
+          <button
+            className="action-btn"
+            aria-label="Infos conversation"
+            title="Infos"
+            onClick={() => navigate(`/chats/${chatId}/info`)}
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="room-body">
+        {grouped.map(({ date, msgs }) => (
+          <div key={date}>
+            <div className="date-sep">
+              <div className="date-sep-line" />
+              <div className="date-sep-txt">{date}</div>
+              <div className="date-sep-line" />
             </div>
-            <button className="reply-cancel" onClick={() => setReplyTo(null)} aria-label="Annuler la reponse">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
+
+            {msgs.map((msg) => {
+              const isMe = msg.senderId === "me"
+              const reply = msg.replyTo ? messages.find((m) => m.id === msg.replyTo) : undefined
+              return (
+                <MessageBubble
+                  key={msg.id}
+                  msg={msg}
+                  isMe={isMe}
+                  replyMsg={reply}
+                  onReply={setReplyTo}
+                  chatColor={color}
+                />
+              )
+            })}
+          </div>
+        ))}
+
+        {/* Indicateur de frappe */}
+        {isTyping && (
+          <div className="typing-indicator">
+            <div className="typing-av" style={{ background: color.bg, color: color.text }}>
+              {chat.initials}
+            </div>
+            <div className="typing-bubble">
+              <div className="td" />
+              <div className="td" />
+              <div className="td" />
+            </div>
           </div>
         )}
 
+        <div ref={bottomRef} />
+      </div>
 
-        <div className="room-input-wrap">
-          <input ref={fileRef} type="file" style={{ display: "none" }} onChange={handleFileSelect}
-            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.mp3,.mp4,.wav" />
-
-          <div className="room-input-row" style={{ position: "relative" }}>
-            {/* Popup attachement */}
-            {showAttach && (
-              <div className="attach-menu">
-                <button className="attach-opt" onClick={() => { fileRef.current!.accept = "image/*"; fileRef.current!.click(); }}>
-                  <div className="attach-icon" style={{ background: "#a78bfa20", color: "#a78bfa" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                  </div>
-                  Photo / image
-                </button>
-                <button className="attach-opt" onClick={() => { fileRef.current!.accept = ".pdf,.doc,.docx,.xls,.xlsx,.txt"; fileRef.current!.click(); }}>
-                  <div className="attach-icon" style={{ background: "var(--info)20", color: "var(--info)" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                    </svg>
-                  </div>
-                  Document
-                </button>
-                <button className="attach-opt" onClick={() => { fileRef.current!.accept = ".mp3,.wav,.ogg,.m4a"; fileRef.current!.click(); }}>
-                  <div className="attach-icon" style={{ background: "var(--success)20", color: "var(--success)" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-                    </svg>
-                  </div>
-                  Audio
-                </button>
-              </div>
-            )}
-
-            <button
-              className="attach-btn"
-              onClick={() => setShowAttach(v => !v)}
-              aria-label="Joindre un fichier"
-            >
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
-              </svg>
-            </button>
-
-            <textarea
-              ref={inputRef}
-              className="room-textarea"
-              placeholder="Message..."
-              value={input}
-              onChange={handleInput}
-              onKeyDown={handleKeyDown}
-              rows={1}
-              aria-label="Saisir un message"
-            />
-
-            <button
-              className="send-btn"
-              onClick={sendMessage}
-              disabled={!input.trim()}
-              aria-label="Envoyer"
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--bg-base)" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
-            </button>
+      {replyTo && (
+        <div className="reply-bar">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--accent)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <polyline points="9 17 4 12 9 7" />
+            <path d="M20 18v-2a4 4 0 00-4-4H4" />
+          </svg>
+          <div className="reply-bar-content">
+            <div className="reply-bar-label">Repondre a</div>
+            <div className="reply-bar-txt">{replyTo.content}</div>
           </div>
-          <div className="input-hint">Entree pour envoyer  -  Shift+Entree pour sauter une ligne  -  Max 50 Mo par fichier</div>
+          <button
+            className="reply-cancel"
+            onClick={() => setReplyTo(null)}
+            aria-label="Annuler la reponse"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      <div className="room-input-wrap">
+        <input
+          ref={fileRef}
+          type="file"
+          style={{ display: "none" }}
+          onChange={handleFileSelect}
+          accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.mp3,.mp4,.wav"
+        />
+
+        <div className="room-input-row" style={{ position: "relative" }}>
+          {/* Popup attachement */}
+          {showAttach && (
+            <div className="attach-menu">
+              <button
+                className="attach-opt"
+                onClick={() => {
+                  fileRef.current!.accept = "image/*"
+                  fileRef.current!.click()
+                }}
+              >
+                <div className="attach-icon" style={{ background: "#a78bfa20", color: "#a78bfa" }}>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                </div>
+                Photo / image
+              </button>
+              <button
+                className="attach-opt"
+                onClick={() => {
+                  fileRef.current!.accept = ".pdf,.doc,.docx,.xls,.xlsx,.txt"
+                  fileRef.current!.click()
+                }}
+              >
+                <div
+                  className="attach-icon"
+                  style={{ background: "var(--info)20", color: "var(--info)" }}
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+                Document
+              </button>
+              <button
+                className="attach-opt"
+                onClick={() => {
+                  fileRef.current!.accept = ".mp3,.wav,.ogg,.m4a"
+                  fileRef.current!.click()
+                }}
+              >
+                <div
+                  className="attach-icon"
+                  style={{ background: "var(--success)20", color: "var(--success)" }}
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                </div>
+                Audio
+              </button>
+            </div>
+          )}
+
+          <button
+            className="attach-btn"
+            onClick={() => setShowAttach((v) => !v)}
+            aria-label="Joindre un fichier"
+          >
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            >
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
+            </svg>
+          </button>
+
+          <textarea
+            ref={inputRef}
+            className="room-textarea"
+            placeholder="Message..."
+            value={input}
+            onChange={handleInput}
+            onKeyDown={handleKeyDown}
+            rows={1}
+            aria-label="Saisir un message"
+          />
+
+          <button
+            className="send-btn"
+            onClick={sendMessage}
+            disabled={!input.trim()}
+            aria-label="Envoyer"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--bg-base)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+        <div className="input-hint">
+          Entree pour envoyer - Shift+Entree pour sauter une ligne - Max 50 Mo par fichier
         </div>
       </div>
+    </div>
   )
 }
-

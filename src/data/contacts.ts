@@ -19,12 +19,60 @@ export const CONTACT_COLORS: Record<ContactColor, { bg: string; fg: string }> = 
 }
 
 export const DEFAULT_CONTACTS: Contact[] = [
-  { id: "1", name: "Kevin Manga", initials: "KM", color: "amber", online: true, email: "k.manga@enspy.cm", phone: "+237690000001" },
-  { id: "2", name: "Groupe Alanya II", initials: "GA", color: "blue", online: false, email: "group.alanya@enspy.cm", phone: "+237690000002" },
-  { id: "3", name: "Dr. NANA BINKEU", initials: "NB", color: "violet", online: false, email: "nana.binkeu@enspy.cm", phone: "+237690000003" },
-  { id: "4", name: "Laure Ateba", initials: "LA", color: "teal", online: true, email: "l.ateba@enspy.cm", phone: "+237690000004" },
-  { id: "5", name: "Paul Essomba", initials: "PE", color: "rose", online: false, email: "p.essomba@enspy.cm", phone: "+237690000005" },
-  { id: "6", name: "Nina Fouda", initials: "NF", color: "amber", online: false, email: "n.fouda@enspy.cm", phone: "+237690000006" },
+  {
+    id: "1",
+    name: "Kevin Manga",
+    initials: "KM",
+    color: "amber",
+    online: true,
+    email: "k.manga@enspy.cm",
+    phone: "+237690000001",
+  },
+  {
+    id: "2",
+    name: "Groupe Alanya II",
+    initials: "GA",
+    color: "blue",
+    online: false,
+    email: "group.alanya@enspy.cm",
+    phone: "+237690000002",
+  },
+  {
+    id: "3",
+    name: "Dr. NANA BINKEU",
+    initials: "NB",
+    color: "violet",
+    online: false,
+    email: "nana.binkeu@enspy.cm",
+    phone: "+237690000003",
+  },
+  {
+    id: "4",
+    name: "Laure Ateba",
+    initials: "LA",
+    color: "teal",
+    online: true,
+    email: "l.ateba@enspy.cm",
+    phone: "+237690000004",
+  },
+  {
+    id: "5",
+    name: "Paul Essomba",
+    initials: "PE",
+    color: "rose",
+    online: false,
+    email: "p.essomba@enspy.cm",
+    phone: "+237690000005",
+  },
+  {
+    id: "6",
+    name: "Nina Fouda",
+    initials: "NF",
+    color: "amber",
+    online: false,
+    email: "n.fouda@enspy.cm",
+    phone: "+237690000006",
+  },
 ]
 
 export interface DirectoryAccount {
@@ -36,14 +84,62 @@ export interface DirectoryAccount {
 }
 
 export const ACCOUNT_DIRECTORY: DirectoryAccount[] = [
-  { name: "Kevin Manga", phone: "+237690000001", email: "k.manga@enspy.cm", online: true, color: "amber" },
-  { name: "Groupe Alanya II", phone: "+237690000002", email: "group.alanya@enspy.cm", online: false, color: "blue" },
-  { name: "Dr. NANA BINKEU", phone: "+237690000003", email: "nana.binkeu@enspy.cm", online: false, color: "violet" },
-  { name: "Laure Ateba", phone: "+237690000004", email: "l.ateba@enspy.cm", online: true, color: "teal" },
-  { name: "Paul Essomba", phone: "+237690000005", email: "p.essomba@enspy.cm", online: false, color: "rose" },
-  { name: "Nina Fouda", phone: "+237690000006", email: "n.fouda@enspy.cm", online: false, color: "amber" },
-  { name: "Serge Mvondo", phone: "+237690000007", email: "s.mvondo@enspy.cm", online: true, color: "blue" },
-  { name: "Anita Mekongo", phone: "+237690000008", email: "a.mekongo@enspy.cm", online: false, color: "teal" },
+  {
+    name: "Kevin Manga",
+    phone: "+237690000001",
+    email: "k.manga@enspy.cm",
+    online: true,
+    color: "amber",
+  },
+  {
+    name: "Groupe Alanya II",
+    phone: "+237690000002",
+    email: "group.alanya@enspy.cm",
+    online: false,
+    color: "blue",
+  },
+  {
+    name: "Dr. NANA BINKEU",
+    phone: "+237690000003",
+    email: "nana.binkeu@enspy.cm",
+    online: false,
+    color: "violet",
+  },
+  {
+    name: "Laure Ateba",
+    phone: "+237690000004",
+    email: "l.ateba@enspy.cm",
+    online: true,
+    color: "teal",
+  },
+  {
+    name: "Paul Essomba",
+    phone: "+237690000005",
+    email: "p.essomba@enspy.cm",
+    online: false,
+    color: "rose",
+  },
+  {
+    name: "Nina Fouda",
+    phone: "+237690000006",
+    email: "n.fouda@enspy.cm",
+    online: false,
+    color: "amber",
+  },
+  {
+    name: "Serge Mvondo",
+    phone: "+237690000007",
+    email: "s.mvondo@enspy.cm",
+    online: true,
+    color: "blue",
+  },
+  {
+    name: "Anita Mekongo",
+    phone: "+237690000008",
+    email: "a.mekongo@enspy.cm",
+    online: false,
+    color: "teal",
+  },
 ]
 
 const STORAGE_KEY = "alanya-contacts-v1"
@@ -82,10 +178,12 @@ export function findDirectoryAccountByPhone(phone: string): DirectoryAccount | n
 }
 
 export function toInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("") || "NC"
+  return (
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("") || "NC"
+  )
 }

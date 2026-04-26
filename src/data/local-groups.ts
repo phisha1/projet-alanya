@@ -33,12 +33,14 @@ function writeGroups(groups: LocalGroup[]) {
 }
 
 function toInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("") || "NG"
+  return (
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("") || "NG"
+  )
 }
 
 export function loadLocalGroups() {

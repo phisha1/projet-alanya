@@ -1,8 +1,16 @@
 ﻿import { useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
-import { CONTACT_COLORS, findDirectoryAccountByPhone, normalizePhone, toInitials } from "../../../../src/data/contacts"
-import { ensureDirectConversation, ensureGroupConversation } from "../../../../src/data/local-conversations"
+import {
+  CONTACT_COLORS,
+  findDirectoryAccountByPhone,
+  normalizePhone,
+  toInitials,
+} from "../../../../src/data/contacts"
+import {
+  ensureDirectConversation,
+  ensureGroupConversation,
+} from "../../../../src/data/local-conversations"
 import { createLocalGroup } from "../../../../src/data/local-groups"
 import { useContacts } from "../../../../src/hooks/use-contacts"
 
@@ -79,7 +87,10 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
 
     const account = findDirectoryAccountByPhone(phone)
     if (!account) {
-      error("Compte introuvable", "Aucun compte Alanya trouve pour ce numero (verification locale prototype).")
+      error(
+        "Compte introuvable",
+        "Aucun compte Alanya trouve pour ce numero (verification locale prototype)."
+      )
       return
     }
 
@@ -151,20 +162,39 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
         .ncm-main-btn:disabled { opacity: .45; cursor: not-allowed; }
       `}</style>
 
-      <div className="ncm-overlay" onClick={(event) => event.target === event.currentTarget && onClose()}>
+      <div
+        className="ncm-overlay"
+        onClick={(event) => event.target === event.currentTarget && onClose()}
+      >
         <div className="ncm-card" role="dialog" aria-label="Nouveau chat">
           <div className="ncm-head">
             <div className="ncm-title-row">
-              <h2 className="ncm-title">{mode === "chat" ? "Nouveau message" : "Nouveau groupe"}</h2>
+              <h2 className="ncm-title">
+                {mode === "chat" ? "Nouveau message" : "Nouveau groupe"}
+              </h2>
               <div className="ncm-actions">
-                <button className="ncm-add-btn" onClick={() => setShowAdd((value) => !value)}>+ Contact</button>
-                <button className="ncm-close" onClick={onClose}>Fermer</button>
+                <button className="ncm-add-btn" onClick={() => setShowAdd((value) => !value)}>
+                  + Contact
+                </button>
+                <button className="ncm-close" onClick={onClose}>
+                  Fermer
+                </button>
               </div>
             </div>
 
             <div className="ncm-tabs">
-              <button className={`ncm-tab ${mode === "chat" ? "on" : ""}`} onClick={() => setMode("chat")}>Message direct</button>
-              <button className={`ncm-tab ${mode === "group" ? "on" : ""}`} onClick={() => setMode("group")}>Nouveau groupe</button>
+              <button
+                className={`ncm-tab ${mode === "chat" ? "on" : ""}`}
+                onClick={() => setMode("chat")}
+              >
+                Message direct
+              </button>
+              <button
+                className={`ncm-tab ${mode === "group" ? "on" : ""}`}
+                onClick={() => setMode("group")}
+              >
+                Nouveau groupe
+              </button>
             </div>
 
             <input
@@ -179,20 +209,30 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
 
             {showAdd && (
               <div className="ncm-add-box">
-                <input placeholder="Numero de telephone (+237...)" value={newPhone} onChange={(event) => setNewPhone(event.target.value)} />
+                <input
+                  placeholder="Numero de telephone (+237...)"
+                  value={newPhone}
+                  onChange={(event) => setNewPhone(event.target.value)}
+                />
                 <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                   Verification locale (prototype) par numero uniquement.
                 </div>
                 <div className="ncm-add-row">
-                  <button className="cancel" onClick={() => setShowAdd(false)}>Annuler</button>
-                  <button className="confirm" onClick={createContact}>Ajouter</button>
+                  <button className="cancel" onClick={() => setShowAdd(false)}>
+                    Annuler
+                  </button>
+                  <button className="confirm" onClick={createContact}>
+                    Ajouter
+                  </button>
                 </div>
               </div>
             )}
           </div>
 
           <div className="ncm-list">
-            {filtered.length === 0 && <div className="ncm-empty">Aucun contact trouve pour "{query}"</div>}
+            {filtered.length === 0 && (
+              <div className="ncm-empty">Aucun contact trouve pour "{query}"</div>
+            )}
 
             {filtered.map((contact) => {
               const color = CONTACT_COLORS[contact.color]
@@ -202,7 +242,9 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
                 <div
                   key={contact.id}
                   className={`ncm-item ${checked ? "checked" : ""}`}
-                  onClick={() => (mode === "chat" ? startDirectChat(contact.id) : toggleSelection(contact.id))}
+                  onClick={() =>
+                    mode === "chat" ? startDirectChat(contact.id) : toggleSelection(contact.id)
+                  }
                 >
                   <div className="ncm-avatar" style={{ background: color.bg, color: color.fg }}>
                     {contact.initials}
@@ -217,7 +259,15 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
                   {mode === "group" && (
                     <div className="ncm-check">
                       {checked && (
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round">
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                        >
                           <path d="M20 6L9 17l-5-5" />
                         </svg>
                       )}
@@ -238,7 +288,11 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
                 value={groupName}
                 onChange={(event) => setGroupName(event.target.value)}
               />
-              <button className="ncm-main-btn" onClick={createGroup} disabled={loading || groupName.trim().length < 2 || selected.size < 2}>
+              <button
+                className="ncm-main-btn"
+                onClick={createGroup}
+                disabled={loading || groupName.trim().length < 2 || selected.size < 2}
+              >
                 {loading ? "Creation..." : "Creer"}
               </button>
             </div>
@@ -253,4 +307,3 @@ export default function NewChatPage() {
   const navigate = useNavigate()
   return <NewChatModal onClose={() => navigate("/chats")} />
 }
-

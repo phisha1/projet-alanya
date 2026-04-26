@@ -30,13 +30,18 @@ export default function NewCallPage() {
     if (!contactExists) return
 
     const callId = `n${Date.now()}`
-    navigate(`/calls/${callId}?contact=${presetContact}&type=${presetType}&returnTo=${encodeURIComponent(returnTo)}`, { replace: true })
+    navigate(
+      `/calls/${callId}?contact=${presetContact}&type=${presetType}&returnTo=${encodeURIComponent(returnTo)}`,
+      { replace: true }
+    )
   }, [contacts, navigate, presetContact, presetType, returnTo])
 
   const startCall = () => {
     if (!selectedId) return
     const callId = `n${Date.now()}`
-    navigate(`/calls/${callId}?contact=${selectedId}&type=${type}&returnTo=${encodeURIComponent(returnTo)}`)
+    navigate(
+      `/calls/${callId}?contact=${selectedId}&type=${type}&returnTo=${encodeURIComponent(returnTo)}`
+    )
   }
 
   return (
@@ -48,7 +53,15 @@ export default function NewCallPage() {
 
         <div className="calls-controls" style={{ marginTop: 14 }}>
           <div className="search-wrap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" />
             </svg>
@@ -60,8 +73,18 @@ export default function NewCallPage() {
           </div>
 
           <div className="filter-group">
-            <button className={`filter-btn ${type === "audio" ? "on" : ""}`} onClick={() => setType("audio")}>Audio</button>
-            <button className={`filter-btn ${type === "video" ? "on" : ""}`} onClick={() => setType("video")}>Video</button>
+            <button
+              className={`filter-btn ${type === "audio" ? "on" : ""}`}
+              onClick={() => setType("audio")}
+            >
+              Audio
+            </button>
+            <button
+              className={`filter-btn ${type === "video" ? "on" : ""}`}
+              onClick={() => setType("video")}
+            >
+              Video
+            </button>
           </div>
         </div>
       </div>
@@ -76,9 +99,15 @@ export default function NewCallPage() {
               key={contact.id}
               className="call-item"
               onClick={() => setSelectedId(contact.id)}
-              style={selected ? { borderColor: "var(--accent-border)", background: "var(--accent-dim)" } : undefined}
+              style={
+                selected
+                  ? { borderColor: "var(--accent-border)", background: "var(--accent-dim)" }
+                  : undefined
+              }
             >
-              <div className="call-av" style={{ background: color.bg, color: color.fg }}>{contact.initials}</div>
+              <div className="call-av" style={{ background: color.bg, color: color.fg }}>
+                {contact.initials}
+              </div>
 
               <div className="call-info">
                 <div className="call-name">{contact.name}</div>
@@ -92,7 +121,11 @@ export default function NewCallPage() {
           )
         })}
 
-        {filtered.length === 0 && <div className="empty-state"><div className="empty-txt">Aucun contact trouve</div></div>}
+        {filtered.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-txt">Aucun contact trouve</div>
+          </div>
+        )}
       </div>
 
       <div style={{ marginTop: 12, display: "flex", justifyContent: "flex-end" }}>
@@ -103,4 +136,3 @@ export default function NewCallPage() {
     </div>
   )
 }
-

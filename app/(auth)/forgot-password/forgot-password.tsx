@@ -37,9 +37,8 @@ export default function ForgotPasswordPage() {
           <div className="fp-pretitle">Recuperation</div>
           <h1>Recuperation du compte.</h1>
           <p>
-            Entrez l'email ou le numero associe au compte. Pour ce prototype,
-            aucun vrai lien n'est envoye, mais le parcours reste pret pour le
-            futur service serveur.
+            Entrez l'email ou le numero associe au compte. Pour ce prototype, aucun vrai lien n'est
+            envoye, mais le parcours reste pret pour le futur service serveur.
           </p>
         </div>
 
@@ -47,8 +46,8 @@ export default function ForgotPasswordPage() {
           <div className="fp-success" role="status">
             <strong>Compte retrouve.</strong>
             <span>
-              La prochaine version pourra envoyer un lien ou un code a
-              {` ${identifier.trim()}`} pour changer le mot de passe.
+              La prochaine version pourra envoyer un lien ou un code a{` ${identifier.trim()}`} pour
+              changer le mot de passe.
             </span>
           </div>
         ) : (

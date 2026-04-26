@@ -1,9 +1,5 @@
 import { type Contact } from "./contacts"
-import {
-  type ChatMessageMock,
-  type ConversationMock,
-  type MessageType,
-} from "../mocks/chat-data"
+import { type ChatMessageMock, type ConversationMock, type MessageType } from "../mocks/chat-data"
 
 interface StoredMessage extends Omit<ChatMessageMock, "timestamp"> {
   timestamp: string
@@ -146,7 +142,7 @@ export function seedLocalMessages(chatId: string, messages: ChatMessageMock[]) {
 
 export function syncConversationFromMessages(
   conversation: Omit<ConversationMock, "lastMessage" | "lastMessageType" | "time" | "unread">,
-  messages: ChatMessageMock[],
+  messages: ChatMessageMock[]
 ) {
   const latest = messages[messages.length - 1]
 

@@ -135,17 +135,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsReady(true)
   }, [user])
 
-  const value = useMemo<AuthContextValue>(() => ({
-    isReady,
-    user,
-    isAuthenticated: Boolean(user),
-    login,
-    register,
-    logout,
-    logoutEverywhere,
-    updateUser,
-    deleteAccount,
-  }), [deleteAccount, isReady, login, logout, logoutEverywhere, register, updateUser, user])
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      isReady,
+      user,
+      isAuthenticated: Boolean(user),
+      login,
+      register,
+      logout,
+      logoutEverywhere,
+      updateUser,
+      deleteAccount,
+    }),
+    [deleteAccount, isReady, login, logout, logoutEverywhere, register, updateUser, user]
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

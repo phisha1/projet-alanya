@@ -56,10 +56,14 @@ export default function LoginPage() {
 
         <div className="left-body">
           <h1 className="left-heading">
-            Content de<br />
+            Content de
+            <br />
             te <em>revoir.</em>
           </h1>
-          <p className="left-sub">Utilisez votre numero de telephone et votre mot de passe pour reprendre vos conversations.</p>
+          <p className="left-sub">
+            Utilisez votre numero de telephone et votre mot de passe pour reprendre vos
+            conversations.
+          </p>
         </div>
 
         <div className="stat-row">
@@ -85,15 +89,17 @@ export default function LoginPage() {
           <p className="form-subtitle">Entrez vos identifiants pour acceder a votre compte.</p>
 
           {error ? (
-            <div style={{
-              marginBottom: 16,
-              border: "1px solid var(--danger-border, #ef444430)",
-              background: "var(--danger-dim, #ef444415)",
-              color: "var(--danger, #ef4444)",
-              borderRadius: 10,
-              padding: "10px 12px",
-              fontSize: 12,
-            }}>
+            <div
+              style={{
+                marginBottom: 16,
+                border: "1px solid var(--danger-border, #ef444430)",
+                background: "var(--danger-dim, #ef444415)",
+                color: "var(--danger, #ef4444)",
+                borderRadius: 10,
+                padding: "10px 12px",
+                fontSize: 12,
+              }}
+            >
               {error}
             </div>
           ) : null}
@@ -135,19 +141,29 @@ export default function LoginPage() {
           </div>
 
           <div className="forgot-row">
-            <Link to="/forgot-password" className="forgot-link">Mot de passe oublie ?</Link>
+            <Link to="/forgot-password" className="forgot-link">
+              Mot de passe oublie ?
+            </Link>
           </div>
 
           <button type="submit" className="btn-submit" disabled={loading || !canSubmit}>
-            {loading ? <><div className="spinner" /> Connexion...</> : <>Se connecter -&gt;</>}
+            {loading ? (
+              <>
+                <div className="spinner" /> Connexion...
+              </>
+            ) : (
+              <>Se connecter -&gt;</>
+            )}
           </button>
 
           <p className="signup-txt">
-            Pas encore de compte ? <Link to="/signup" className="signup-link">Creer un compte</Link>
+            Pas encore de compte ?{" "}
+            <Link to="/signup" className="signup-link">
+              Creer un compte
+            </Link>
           </p>
         </form>
       </div>
     </div>
   )
 }
-

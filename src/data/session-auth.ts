@@ -1,7 +1,5 @@
 const STORAGE_KEY = "alanya-session-token-v2"
-const LEGACY_STORAGE_KEYS = [
-  "alanya-session-token-v1",
-]
+const LEGACY_STORAGE_KEYS = ["alanya-session-token-v1"]
 const MIGRATION_KEY = "alanya-session-token-migrated-v2"
 
 function hasStorage() {

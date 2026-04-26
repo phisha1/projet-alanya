@@ -52,20 +52,56 @@ const MOCK_INFO: ConvInfo = {
   initials: "GA",
   color: "blue",
   isGroup: true,
-  description: "Groupe de travail pour le projet de messagerie instantanee - Projet BD ENSPY 2025-2026",
+  description:
+    "Groupe de travail pour le projet de messagerie instantanee - Projet BD ENSPY 2025-2026",
   createdAt: "15 janvier 2026",
   members: [
-    { id: "me", name: "Arsene Nguemo", initials: "AN", color: "amber", role: "admin", online: true },
+    {
+      id: "me",
+      name: "Arsene Nguemo",
+      initials: "AN",
+      color: "amber",
+      role: "admin",
+      online: true,
+    },
     { id: "1", name: "Kevin Manga", initials: "KM", color: "amber", role: "admin", online: true },
     { id: "4", name: "Laure Ateba", initials: "LA", color: "teal", role: "member", online: true },
     { id: "5", name: "Paul Essomba", initials: "PE", color: "rose", role: "member", online: false },
     { id: "6", name: "Nina Fouda", initials: "NF", color: "amber", role: "member", online: false },
   ],
   files: [
-    { id: "f1", name: "rapport_architecture.pdf", size: "1.2 Mo", type: "pdf", ts: "Hier 10:41", sender: "Kevin Manga" },
-    { id: "f2", name: "schema_bd_final.pdf", size: "856 Ko", type: "pdf", ts: "Lun. 14:22", sender: "Paul Essomba" },
-    { id: "f3", name: "maquettes_ui.png", size: "2.4 Mo", type: "image", ts: "Dim. 09:15", sender: "Laure Ateba" },
-    { id: "f4", name: "reunion_notes.pdf", size: "312 Ko", type: "pdf", ts: "Sam. 16:30", sender: "Arsene Nguemo" },
+    {
+      id: "f1",
+      name: "rapport_architecture.pdf",
+      size: "1.2 Mo",
+      type: "pdf",
+      ts: "Hier 10:41",
+      sender: "Kevin Manga",
+    },
+    {
+      id: "f2",
+      name: "schema_bd_final.pdf",
+      size: "856 Ko",
+      type: "pdf",
+      ts: "Lun. 14:22",
+      sender: "Paul Essomba",
+    },
+    {
+      id: "f3",
+      name: "maquettes_ui.png",
+      size: "2.4 Mo",
+      type: "image",
+      ts: "Dim. 09:15",
+      sender: "Laure Ateba",
+    },
+    {
+      id: "f4",
+      name: "reunion_notes.pdf",
+      size: "312 Ko",
+      type: "pdf",
+      ts: "Sam. 16:30",
+      sender: "Arsene Nguemo",
+    },
   ],
 }
 
@@ -110,7 +146,15 @@ function FileIcon({ type }: { type: SharedFile["type"] }) {
   }
 
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={colors[type]} strokeWidth="1.8" strokeLinecap="round">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={colors[type]}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    >
       {paths[type]}
     </svg>
   )
@@ -181,7 +225,9 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
   }
 
   const promoteAdmin = (id: string) => {
-    setMembers((prev) => prev.map((member) => (member.id === id ? { ...member, role: "admin" } : member)))
+    setMembers((prev) =>
+      prev.map((member) => (member.id === id ? { ...member, role: "admin" } : member))
+    )
     const member = members.find((entry) => entry.id === id)
     if (!member) return
     info(`${member.name} est maintenant administrateur`)
@@ -349,7 +395,15 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
         <div className="cip-head">
           {onClose && (
             <button className="cip-back" onClick={onClose} aria-label="Fermer">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
@@ -365,29 +419,75 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
               {!conv.isGroup && conv.online && <div className="cip-av-dot" />}
             </div>
             <div className="cip-name">{conv.name}</div>
-            {conv.isGroup && <div className="cip-sub">{conv.description ?? `${members.length} membres`}</div>}
+            {conv.isGroup && (
+              <div className="cip-sub">{conv.description ?? `${members.length} membres`}</div>
+            )}
             {!conv.isGroup && conv.statusMsg && <div className="cip-sub">{conv.statusMsg}</div>}
 
             <div className="cip-actions">
-              <button className="ca-btn" onClick={() => navigate(`/chats/${conv.id}`)} aria-label="Message">
+              <button
+                className="ca-btn"
+                onClick={() => navigate(`/chats/${conv.id}`)}
+                aria-label="Message"
+              >
                 <div className="ca-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  >
                     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
                   </svg>
                 </div>
                 <span className="ca-label">Message</span>
               </button>
-              <button className="ca-btn" onClick={() => navigate(`/calls/new?contact=${conv.id}&type=audio&returnTo=${encodeURIComponent(`/chats/${conv.id}/info`)}`)} aria-label="Audio">
+              <button
+                className="ca-btn"
+                onClick={() =>
+                  navigate(
+                    `/calls/new?contact=${conv.id}&type=audio&returnTo=${encodeURIComponent(`/chats/${conv.id}/info`)}`
+                  )
+                }
+                aria-label="Audio"
+              >
                 <div className="ca-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  >
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
                   </svg>
                 </div>
                 <span className="ca-label">Audio</span>
               </button>
-              <button className="ca-btn" onClick={() => navigate(`/calls/new?contact=${conv.id}&type=video&returnTo=${encodeURIComponent(`/chats/${conv.id}/info`)}`)} aria-label="Video">
+              <button
+                className="ca-btn"
+                onClick={() =>
+                  navigate(
+                    `/calls/new?contact=${conv.id}&type=video&returnTo=${encodeURIComponent(`/chats/${conv.id}/info`)}`
+                  )
+                }
+                aria-label="Video"
+              >
                 <div className="ca-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  >
                     <polygon points="23 7 16 12 23 17 23 7" />
                     <rect x="1" y="5" width="15" height="14" rx="2" />
                   </svg>
@@ -396,7 +496,15 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
               </button>
               <button className="ca-btn" aria-label="Rechercher">
                 <div className="ca-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  >
                     <circle cx="11" cy="11" r="8" />
                     <path d="M21 21l-4.35-4.35" />
                   </svg>
@@ -432,10 +540,16 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
 
           {conv.isGroup && (
             <div className="cip-tabs" style={{ marginTop: 14 }}>
-              <button className={`cip-tab ${tab === "membres" ? "on" : ""}`} onClick={() => setTab("membres")}>
+              <button
+                className={`cip-tab ${tab === "membres" ? "on" : ""}`}
+                onClick={() => setTab("membres")}
+              >
                 Membres ({members.length})
               </button>
-              <button className={`cip-tab ${tab === "fichiers" ? "on" : ""}`} onClick={() => setTab("fichiers")}>
+              <button
+                className={`cip-tab ${tab === "fichiers" ? "on" : ""}`}
+                onClick={() => setTab("fichiers")}
+              >
                 Fichiers ({conv.files.length})
               </button>
             </div>
@@ -451,28 +565,61 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
 
                   return (
                     <div className="member-item" key={member.id}>
-                      <div className="m-av" style={{ background: memberColor.bg, color: memberColor.fg }}>
+                      <div
+                        className="m-av"
+                        style={{ background: memberColor.bg, color: memberColor.fg }}
+                      >
                         {member.initials}
                         {member.online && <div className="m-dot" />}
                       </div>
                       <div className="m-info">
                         <div className="m-name">
                           {member.name}
-                          {member.role === "admin" && <span className={`m-role ${isMe ? "me-badge" : ""}`}>{isMe ? "Vous (admin)" : "Admin"}</span>}
-                          {isMe && member.role !== "admin" && <span className="m-role me-badge">Vous</span>}
+                          {member.role === "admin" && (
+                            <span className={`m-role ${isMe ? "me-badge" : ""}`}>
+                              {isMe ? "Vous (admin)" : "Admin"}
+                            </span>
+                          )}
+                          {isMe && member.role !== "admin" && (
+                            <span className="m-role me-badge">Vous</span>
+                          )}
                         </div>
                       </div>
                       {!isMe && isAdmin && (
                         <div className="m-actions">
                           {member.role !== "admin" && (
-                            <button className="m-action" title="Nommer administrateur" onClick={() => promoteAdmin(member.id)}>
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                            <button
+                              className="m-action"
+                              title="Nommer administrateur"
+                              onClick={() => promoteAdmin(member.id)}
+                            >
+                              <svg
+                                width="13"
+                                height="13"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                              >
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                               </svg>
                             </button>
                           )}
-                          <button className="m-action danger" title="Exclure du groupe" onClick={() => removeMember(member.id)}>
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <button
+                            className="m-action danger"
+                            title="Exclure du groupe"
+                            onClick={() => removeMember(member.id)}
+                          >
+                            <svg
+                              width="13"
+                              height="13"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                            >
                               <line x1="18" y1="6" x2="6" y2="18" />
                               <line x1="6" y1="6" x2="18" y2="18" />
                             </svg>
@@ -510,7 +657,15 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
                     event.currentTarget.style.color = "var(--text-muted)"
                   }}
                 >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
@@ -524,22 +679,47 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
             <div className="cip-section">
               {!conv.isGroup && <div className="cip-section-title">Fichiers partages</div>}
               {conv.files.map((file) => (
-                <div className="file-item" key={file.id} onClick={() => info("Telechargement", file.name)}>
+                <div
+                  className="file-item"
+                  key={file.id}
+                  onClick={() => info("Telechargement", file.name)}
+                >
                   <div className="f-icon">
                     <FileIcon type={file.type} />
                   </div>
                   <div className="f-info">
                     <div className="f-name">{file.name}</div>
-                    <div className="f-meta">{file.size} · {file.sender} · {file.ts}</div>
+                    <div className="f-meta">
+                      {file.size} · {file.sender} · {file.ts}
+                    </div>
                   </div>
                   <button className="f-dl" aria-label="Telecharger">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    >
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
                     </svg>
                   </button>
                 </div>
               ))}
-              {conv.files.length === 0 && <div style={{ textAlign: "center", color: "var(--text-ghost)", fontSize: 12, padding: "20px 0" }}>Aucun fichier partage</div>}
+              {conv.files.length === 0 && (
+                <div
+                  style={{
+                    textAlign: "center",
+                    color: "var(--text-ghost)",
+                    fontSize: 12,
+                    padding: "20px 0",
+                  }}
+                >
+                  Aucun fichier partage
+                </div>
+              )}
             </div>
           )}
 
@@ -564,19 +744,37 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
             {conv.isGroup && (
               <div className="danger-item" onClick={leaveGroup}>
                 <div className="di-icon" style={{ background: "var(--warning-dim,#fbbf2415)" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning,#fbbf24)" strokeWidth="1.8" strokeLinecap="round">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--warning,#fbbf24)"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  >
                     <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
                   </svg>
                 </div>
                 <div>
-                  <div className="danger-label" style={{ color: "var(--warning,#fbbf24)" }}>Quitter le groupe</div>
+                  <div className="danger-label" style={{ color: "var(--warning,#fbbf24)" }}>
+                    Quitter le groupe
+                  </div>
                   <div className="danger-sub">Vous ne recevrez plus les messages</div>
                 </div>
               </div>
             )}
             <div className="danger-item" onClick={deleteConv}>
               <div className="di-icon" style={{ background: "var(--danger-dim)" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="1.8" strokeLinecap="round">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--danger)"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                >
                   <polyline points="3 6 5 6 21 6" />
                   <path d="M19 6l-1 14H6L5 6" />
                   <path d="M10 11v6M14 11v6" />
@@ -596,7 +794,12 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
 
       {pendingAction && (
         <div className="cip-confirm-overlay" onClick={() => setPendingAction(null)}>
-          <div className="cip-confirm-card" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="cip-confirm-card"
+            role="dialog"
+            aria-modal="true"
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className="cip-confirm-title">{pendingAction.title}</div>
             <div className="cip-confirm-text">{pendingAction.description}</div>
             <div className="cip-confirm-actions">
@@ -661,7 +864,9 @@ function buildConvInfoFromMock(chatId: string): ConvInfo | null {
 
 function buildConvInfoFromLocalData(chatId: string): ConvInfo | null {
   const contacts = loadContacts()
-  const localConversation = loadLocalConversations().find((conversation) => conversation.id === chatId)
+  const localConversation = loadLocalConversations().find(
+    (conversation) => conversation.id === chatId
+  )
   const group = findLocalGroup(chatId)
 
   if (group) {
@@ -732,7 +937,15 @@ export default function ConvInfoPage() {
 
   if (!convInfo) {
     return (
-      <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-base)", justifyContent: "center", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          minHeight: "100vh",
+          background: "var(--bg-base)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: 32, marginBottom: 12 }}>?</div>
           <div>Conversation introuvable</div>
@@ -745,7 +958,14 @@ export default function ConvInfoPage() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-base)", justifyContent: "center" }}>
+    <div
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        background: "var(--bg-base)",
+        justifyContent: "center",
+      }}
+    >
       <ConvInfoPanel info={convInfo} onClose={() => navigate(-1)} />
     </div>
   )

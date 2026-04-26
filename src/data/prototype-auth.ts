@@ -35,7 +35,9 @@ async function hashPassword(password: string) {
   return Array.from(new Uint8Array(buffer), (value) => value.toString(16).padStart(2, "0")).join("")
 }
 
-function hasLegacyPassword(account: StoredPrototypeAuthAccount): account is LegacyPrototypeAuthAccount & { password: string } {
+function hasLegacyPassword(
+  account: StoredPrototypeAuthAccount
+): account is LegacyPrototypeAuthAccount & { password: string } {
   return typeof account.password === "string" && account.password.length > 0
 }
 
@@ -107,7 +109,10 @@ export function findPrototypeAccount(phone: string) {
 
 export function findPrototypeAccountByEmail(email: string) {
   const normalizedEmail = normalizeEmail(email)
-  return loadAccounts().find((account) => normalizeEmail(account.email ?? "") === normalizedEmail) ?? null
+  return (
+    loadAccounts().find((account) => normalizeEmail(account.email ?? "") === normalizedEmail) ??
+    null
+  )
 }
 
 export async function migrateLegacyPrototypeAccounts() {
@@ -150,10 +155,7 @@ export async function registerPrototypeAccount(user: SessionUser, password: stri
     passwordHash,
   }
 
-  saveAccounts([
-    ...(await Promise.all(accounts.map(toHashedAccount))),
-    nextAccount,
-  ])
+  saveAccounts([...(await Promise.all(accounts.map(toHashedAccount))), nextAccount])
 
   return sanitizeSessionUser(nextAccount)
 }
@@ -196,9 +198,10 @@ export function updatePrototypeAccountProfile(user: SessionUser) {
 
   if (index === -1) return
 
-  const emailOwner = accounts.find((account, currentIndex) => (
-    currentIndex !== index && normalizeEmail(account.email ?? "") === normalizedEmail
-  ))
+  const emailOwner = accounts.find(
+    (account, currentIndex) =>
+      currentIndex !== index && normalizeEmail(account.email ?? "") === normalizedEmail
+  )
 
   if (emailOwner) {
     throw new Error("Cette adresse email est deja liee a un autre compte.")
