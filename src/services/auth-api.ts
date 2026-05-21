@@ -53,6 +53,10 @@ function shouldUsePrototypeFallback(error: unknown) {
   return error instanceof ApiError && [0, 404, 405, 501].includes(error.status)
 }
 
+function shouldIgnoreMissingLogout(error: unknown) {
+  return error instanceof ApiError && [0, 401, 403, 404, 405, 501].includes(error.status)
+}
+
 function toSessionUser(user: AuthUserPayload | undefined, fallback: SessionUser): SessionUser {
   return {
     name: user?.name?.trim() || fallback.name,
@@ -200,7 +204,7 @@ export async function logoutCurrentSession() {
   try {
     await apiRequest<void>("/api/auth/logout", { method: "POST" })
   } catch (error) {
-    if (!shouldUsePrototypeFallback(error)) throw error
+    if (!shouldIgnoreMissingLogout(error)) throw error
   } finally {
     clearSessionToken()
   }
@@ -210,7 +214,7 @@ export async function logoutAllSessions() {
   try {
     await apiRequest<void>("/api/auth/logout-all", { method: "POST" })
   } catch (error) {
-    if (!shouldUsePrototypeFallback(error)) throw error
+    if (!shouldIgnoreMissingLogout(error)) throw error
   } finally {
     clearSessionToken()
   }

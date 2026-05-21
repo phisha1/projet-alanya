@@ -1,5 +1,10 @@
-﻿import { Link, useNavigate } from "react-router-dom"
-import { getDashboardData, type DashboardCall } from "../../../src/services/dashboard-service"
+﻿import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import {
+  fetchDashboardData,
+  type DashboardCall,
+  type DashboardData,
+} from "../../../src/services/dashboard-service"
 import "./dashboard-page.css"
 
 // TYPES
@@ -84,7 +89,29 @@ function CallDirectionIcon({ direction }: { direction: DashboardCall["direction"
 
 export default function DashboardPage() {
   const navigate = useNavigate()
-  const { currentUser, recentChats, recentCalls, contacts } = getDashboardData()
+  const [data, setData] = useState<DashboardData | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    void fetchDashboardData().then((result) => {
+      if (!cancelled) setData(result)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (!data) {
+    return (
+      <main className="dash">
+        <div className="dash-header">
+          <h1 className="dash-title">Chargement...</h1>
+        </div>
+      </main>
+    )
+  }
+
+  const { currentUser, recentChats, recentCalls, contacts } = data
   const totalUnread = recentChats.reduce((acc, chat) => acc + chat.unread, 0)
   const onlineCount = contacts.filter((contact) => contact.online).length
   const firstName = currentUser.name.split(" ")[0]

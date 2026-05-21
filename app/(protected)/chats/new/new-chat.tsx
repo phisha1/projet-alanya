@@ -3,16 +3,11 @@ import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
 import {
   CONTACT_COLORS,
-  findDirectoryAccountByPhone,
   normalizePhone,
-  toInitials,
 } from "../../../../src/data/contacts"
-import {
-  ensureDirectConversation,
-  ensureGroupConversation,
-} from "../../../../src/data/local-conversations"
-import { createLocalGroup } from "../../../../src/data/local-groups"
 import { useContacts } from "../../../../src/hooks/use-contacts"
+import { addContactByPhone } from "../../../../src/services/contacts-service"
+import { createGroupChat, createPrivateChat } from "../../../../src/services/chats-service"
 
 type Mode = "chat" | "group"
 
@@ -48,12 +43,14 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
     })
   }
 
-  const startDirectChat = (contactId: string) => {
-    const contact = contacts.find((entry) => entry.id === contactId)
-    if (contact) {
-      ensureDirectConversation(contact)
+  const startDirectChat = async (contactId: string) => {
+    try {
+      const conversation = await createPrivateChat(contactId)
+      navigate(`/chats/${conversation.id}`)
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Impossible de creer la conversation."
+      error("Conversation impossible", message)
     }
-    navigate(`/chats/${contactId}`)
   }
 
   const createGroup = async () => {
@@ -63,15 +60,19 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
     }
 
     setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 700))
-    const group = createLocalGroup(groupName, Array.from(selected))
-    ensureGroupConversation(group)
-    success("Groupe cree", `${selected.size} membres ajoutes.`)
-    setLoading(false)
-    navigate(`/chats/${group.id}`)
+    try {
+      const conversation = await createGroupChat(groupName.trim(), Array.from(selected))
+      success("Groupe cree", `${selected.size} membres ajoutes.`)
+      navigate(`/chats/${conversation.id}`)
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Impossible de creer le groupe."
+      error("Groupe impossible", message)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const createContact = () => {
+  const createContact = async () => {
     const phone = normalizePhone(newPhone)
 
     if (!/^\+?[0-9]{8,15}$/.test(phone)) {
@@ -85,39 +86,18 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
       return
     }
 
-    const account = findDirectoryAccountByPhone(phone)
-    if (!account) {
-      error(
-        "Compte introuvable",
-        "Aucun compte Alanya trouve pour ce numero (verification locale prototype)."
-      )
-      return
+    try {
+      const contact = await addContactByPhone(phone)
+      addContact(contact)
+      // Pas de creation de conversation ici : elle sera creee via POST /api/chats
+      // uniquement quand l'utilisateur clique sur le contact (startDirectChat).
+      success("Contact ajoute", `${contact.name} est disponible.`)
+      setNewPhone("")
+      setShowAdd(false)
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Impossible d'ajouter ce contact."
+      error("Ajout impossible", message)
     }
-
-    const contactId = `c-${Date.now()}`
-
-    addContact({
-      id: contactId,
-      name: account.name,
-      initials: toInitials(account.name),
-      color: account.color,
-      online: account.online,
-      email: account.email,
-      phone,
-    })
-    ensureDirectConversation({
-      id: contactId,
-      name: account.name,
-      initials: toInitials(account.name),
-      color: account.color,
-      online: account.online,
-      email: account.email,
-      phone,
-    })
-
-    success("Contact ajoute", `${account.name} est disponible.`)
-    setNewPhone("")
-    setShowAdd(false)
   }
 
   return (
@@ -215,7 +195,7 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
                   onChange={(event) => setNewPhone(event.target.value)}
                 />
                 <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
-                  Verification locale (prototype) par numero uniquement.
+                  Recherche dans les comptes Alanya.
                 </div>
                 <div className="ncm-add-row">
                   <button className="cancel" onClick={() => setShowAdd(false)}>

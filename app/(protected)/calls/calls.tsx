@@ -1,8 +1,8 @@
-﻿import { useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   CALL_COLORS as COLORS,
-  getCallsHistory,
+  fetchCallsHistory,
   type CallDirection,
   type CallRecord,
 } from "../../../src/services/calls-service"
@@ -50,7 +50,17 @@ export default function CallsPage() {
   const navigate = useNavigate()
   const [filter, setFilter] = useState<FilterType>("all")
   const [search, setSearch] = useState("")
-  const callsHistory = useMemo(() => getCallsHistory(), [])
+  const [callsHistory, setCallsHistory] = useState<CallRecord[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    void fetchCallsHistory().then((list) => {
+      if (!cancelled) setCallsHistory(list)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const missedCount = useMemo(
     () => callsHistory.filter((call) => call.direction === "missed").length,
@@ -268,7 +278,9 @@ export default function CallsPage() {
                     <div
                       className="call-item"
                       key={call.id}
-                      onClick={() => navigate(`/calls/${call.id}`)}
+                      onClick={() =>
+                        navigate(`/calls/${call.id}?contact=${call.contactId}&type=${call.type}`)
+                      }
                     >
                       <div className="call-av" style={{ background: color.bg, color: color.fg }}>
                         {call.contactInitials}

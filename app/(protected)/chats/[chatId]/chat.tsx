@@ -2,27 +2,38 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import {
   CHAT_COLORS,
-  MOCK_CHAT_INFOS,
-  MOCK_CHAT_MESSAGES,
   type ChatMessageMock,
+  type ConversationMock,
   type MessageStatus,
 } from "../../../../src/mocks/chat-data"
 import { loadContacts } from "../../../../src/data/contacts"
 import {
   ensureDirectConversation,
   ensureGroupConversation,
-  loadLocalMessages,
-  seedLocalMessages,
   syncConversationFromMessages,
 } from "../../../../src/data/local-conversations"
 import { findLocalGroup, toChatInfoMock } from "../../../../src/data/local-groups"
 import { useToast } from "../../../../src/components/toast"
+import {
+  fetchMessages,
+  markChatAsRead,
+  sendChatMessage,
+  toFrontMessage,
+  type BackendMessage,
+} from "../../../../src/services/messages-service"
+import { fetchConversationById } from "../../../../src/services/chats-service"
+import {
+  publishTyping,
+  subscribeToConversation,
+  subscribeToStatus,
+  subscribeToTyping,
+} from "../../../../src/services/websocket-service"
+import { loadSessionUser } from "../../../../src/data/session-user"
 import "./chat-room-page.css"
 
 type Message = ChatMessageMock
 
-// TODO : GET /api/chats/:id  +  GET /api/chats/:id/messages?page=1&limit=50
-// TODO : WebSocket ws://.../chats/:id  (STOMP)
+// Realtime : WebSocket STOMP sur /topic/chats/{id} (subscribeToConversation)
 
 function formatTime(d: Date) {
   return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
@@ -257,10 +268,33 @@ export default function ChatRoomPage() {
     [contacts, chatId]
   )
   const fallbackGroup = useMemo(() => findLocalGroup(chatId), [chatId])
+
+  // Conversation chargee depuis le backend (GET /api/chats trouve par id)
+  const [backendChat, setBackendChat] = useState<ConversationMock | null>(null)
+  const [chatLoading, setChatLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    setChatLoading(true)
+    void fetchConversationById(chatId)
+      .then((conv) => {
+        if (!cancelled) setBackendChat(conv)
+      })
+      .catch(() => {
+        if (!cancelled) setBackendChat(null)
+      })
+      .finally(() => {
+        if (!cancelled) setChatLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [chatId])
+
   const chat = useMemo(
     () =>
-      MOCK_CHAT_INFOS[chatId] ??
-      (fallbackGroup ? toChatInfoMock(fallbackGroup) : undefined) ??
+      // Priorite : backend d'abord, puis contact local, puis groupe local.
+      backendChat ??
       (fallbackContact
         ? {
             id: fallbackContact.id,
@@ -270,14 +304,16 @@ export default function ChatRoomPage() {
             online: fallbackContact.online,
             isGroup: false,
           }
-        : undefined),
-    [chatId, fallbackContact, fallbackGroup]
+        : undefined) ??
+      (fallbackGroup ? toChatInfoMock(fallbackGroup) : undefined),
+    [backendChat, fallbackContact, fallbackGroup]
   )
 
-  const [messages, setMessages] = useState<Message[]>(chat ? loadLocalMessages(chatId) : [])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [replyTo, setReplyTo] = useState<Message | null>(null)
-  const [isTyping, setIsTyping] = useState(false) // typing de l'interlocuteur
+  // typing de l'interlocuteur (recu via WebSocket /topic/chats/{id}/typing)
+  const [isTyping, setIsTyping] = useState(false)
   const [sending, setSending] = useState(false)
   const [showAttach, setShowAttach] = useState(false)
 
@@ -286,23 +322,79 @@ export default function ChatRoomPage() {
   const fileRef = useRef<HTMLInputElement>(null)
   const typingTimer = useRef<ReturnType<typeof setTimeout>>()
 
+  const refreshMessages = useCallback(async () => {
+    const list = await fetchMessages(chatId)
+    setMessages(list)
+  }, [chatId])
+
   useEffect(() => {
     if (!chat) return
 
     if (fallbackContact) {
       ensureDirectConversation(fallbackContact)
     }
-
     if (fallbackGroup) {
       ensureGroupConversation(fallbackGroup)
     }
 
-    if (MOCK_CHAT_INFOS[chatId]) {
-      seedLocalMessages(chatId, MOCK_CHAT_MESSAGES)
-    }
+    let cancelled = false
 
-    setMessages(loadLocalMessages(chatId))
-  }, [chat, chatId, fallbackContact, fallbackGroup])
+    // Charge l'historique initial via GET /api/chats/{id}/messages
+    void refreshMessages().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.warn("[chat] fetchMessages a echoue", err)
+      if (!cancelled) setMessages([])
+    })
+
+    // Temps reel : abonnement STOMP sur /topic/chats/{id} (nouveaux messages)
+    const myPhone = loadSessionUser()?.phone ?? null
+    const unsubscribeMessages = subscribeToConversation(chatId, (data) => {
+      if (cancelled) return
+      const incoming = toFrontMessage(data as BackendMessage, myPhone)
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === incoming.id)) return prev
+        return [...prev, incoming]
+      })
+      if (incoming.senderId !== "me") {
+        void markChatAsRead(chatId)
+      }
+    })
+
+    // Abonnement aux evenements "en train d'ecrire"
+    let typingTimeoutId: ReturnType<typeof setTimeout> | null = null
+    const unsubscribeTyping = subscribeToTyping(chatId, (event) => {
+      if (cancelled) return
+      // Ignore ses propres evenements
+      if (myPhone && event.phone === myPhone) return
+      setIsTyping(Boolean(event.isTyping))
+      if (typingTimeoutId) clearTimeout(typingTimeoutId)
+      // Failsafe : si on ne recoit pas le "stopped typing", on coupe apres 4s
+      if (event.isTyping) {
+        typingTimeoutId = setTimeout(() => setIsTyping(false), 4000)
+      }
+    })
+
+    // Abonnement aux mises a jour de statut (messages lus par l'autre)
+    const unsubscribeStatus = subscribeToStatus(chatId, (event) => {
+      if (cancelled) return
+      if (myPhone && event.readBy === myPhone) return // c'est nous qui avons lu
+      const ids = new Set(event.messageIds)
+      setMessages((prev) =>
+        prev.map((m) => (ids.has(m.id) ? { ...m, status: "read" } : m))
+      )
+    })
+
+    // Quand on ouvre la conv, on marque tout comme lu
+    void markChatAsRead(chatId)
+
+    return () => {
+      cancelled = true
+      unsubscribeMessages()
+      unsubscribeTyping()
+      unsubscribeStatus()
+      if (typingTimeoutId) clearTimeout(typingTimeoutId)
+    }
+  }, [chat, chatId, refreshMessages, fallbackContact, fallbackGroup])
 
   useEffect(() => {
     if (!chat || messages.length === 0) return
@@ -326,37 +418,14 @@ export default function ChatRoomPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  // Simuler "en train d'ecrire" de l'interlocuteur apres envoi
-  const simulateTyping = useCallback(() => {
-    setIsTyping(true)
-    const delay = 1500 + Math.random() * 1000
-    setTimeout(() => {
-      setIsTyping(false)
-      const replies = [
-        "Super, je regarde ca !",
-        "OK merci.",
-        "Recu, je te reponds des que possible.",
-        "Nickel, on en parle a la prochaine reunion.",
-      ]
-      const reply: Message = {
-        id: `m${Date.now()}`,
-        senderId: chatId,
-        content: replies[Math.floor(Math.random() * replies.length)],
-        type: "text",
-        status: "delivered",
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, reply])
-    }, delay)
-  }, [chatId])
-
-  // Envoi d'un message
-  const sendMessage = useCallback(() => {
+  // Envoi d'un message — POST /api/chats/{chatId}/messages
+  const sendMessage = useCallback(async () => {
     const text = input.trim()
     if (!text || sending) return
 
+    const tempId = `tmp-${Date.now()}`
     const optimistic: Message = {
-      id: `tmp-${Date.now()}`,
+      id: tempId,
       senderId: "me",
       content: text,
       type: "text",
@@ -368,24 +437,35 @@ export default function ChatRoomPage() {
     setMessages((prev) => [...prev, optimistic])
     setInput("")
     setReplyTo(null)
-    setSending(false)
+    setSending(true)
 
-    // TODO : POST /api/chats/:id/messages via WebSocket STOMP
-    // stompClient.publish({ destination: `/app/chats/${chatId}`, body: JSON.stringify({ content: text, type: "text", replyTo: replyTo?.id }) })
+    // On a envoye -> on n'ecrit plus
+    const myPhone = loadSessionUser()?.phone
+    if (myPhone) {
+      clearTimeout(typingTimer.current)
+      publishTyping(chatId, myPhone, false)
+    }
 
-    // Simule la confirmation du serveur apres 400ms
-    setTimeout(() => {
+    try {
+      const saved = await sendChatMessage(chatId, text, "text")
+      // Replace le message optimiste par celui renvoye par le backend.
+      // Si le broadcast WebSocket est arrive avant (id deja present), on retire juste le tempId.
+      setMessages((prev) => {
+        const alreadyReceived = prev.some((m) => m.id === saved.id)
+        if (alreadyReceived) return prev.filter((m) => m.id !== tempId)
+        return prev.map((m) => (m.id === tempId ? saved : m))
+      })
+    } catch (err) {
+      // En cas d'echec, on marque le message comme "non envoye" pour informer l'user
       setMessages((prev) =>
-        prev.map((m) => (m.id === optimistic.id ? { ...m, status: "sent" } : m))
+        prev.map((m) => (m.id === tempId ? { ...m, status: "sending" } : m))
       )
-      setTimeout(() => {
-        setMessages((prev) =>
-          prev.map((m) => (m.id === optimistic.id ? { ...m, status: "delivered" } : m))
-        )
-        simulateTyping()
-      }, 600)
-    }, 400)
-  }, [input, sending, replyTo, simulateTyping])
+      const message = err instanceof Error ? err.message : "Envoi impossible."
+      error("Message non envoye", message)
+    } finally {
+      setSending(false)
+    }
+  }, [input, sending, replyTo, chatId, error])
 
   // Touche Entree = envoi (Shift+Entree = saut de ligne)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -395,18 +475,20 @@ export default function ChatRoomPage() {
     }
   }
 
-  // Auto-resize du textarea
+  // Auto-resize du textarea + emission typing via WebSocket
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
     e.target.style.height = "auto"
     e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px"
 
-    // TODO : envoyer l'evenement "typing" via WebSocket
-    // stompClient.publish({ destination: `/app/chats/${chatId}/typing`, body: JSON.stringify({ userId: "me" }) })
-    clearTimeout(typingTimer.current)
-    typingTimer.current = setTimeout(() => {
-      // stompClient.publish({ destination: `/app/chats/${chatId}/typing/stop`, body: ... })
-    }, 1500)
+    const myPhone = loadSessionUser()?.phone
+    if (myPhone) {
+      publishTyping(chatId, myPhone, true)
+      clearTimeout(typingTimer.current)
+      typingTimer.current = setTimeout(() => {
+        publishTyping(chatId, myPhone, false)
+      }, 1500)
+    }
   }
 
   // Upload fichier
@@ -446,6 +528,12 @@ export default function ChatRoomPage() {
     else last.msgs.push(msg)
     return acc
   }, [])
+
+  if (chatLoading && !chat) {
+    return (
+      <div style={{ padding: 24, color: "var(--text-muted)" }}>Chargement de la conversation...</div>
+    )
+  }
 
   if (!chat) {
     return <Navigate to="/chats" replace />

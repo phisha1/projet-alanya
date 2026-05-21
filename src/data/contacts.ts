@@ -149,16 +149,16 @@ function canUseStorage() {
 }
 
 export function loadContacts(): Contact[] {
-  if (!canUseStorage()) return DEFAULT_CONTACTS
+  if (!canUseStorage()) return []
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return DEFAULT_CONTACTS
+    if (!raw) return []
     const parsed = JSON.parse(raw) as Contact[]
-    if (!Array.isArray(parsed) || parsed.length === 0) return DEFAULT_CONTACTS
+    if (!Array.isArray(parsed)) return []
     return parsed
   } catch {
-    return DEFAULT_CONTACTS
+    return []
   }
 }
 

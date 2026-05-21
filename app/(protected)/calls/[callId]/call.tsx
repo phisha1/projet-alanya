@@ -1,5 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate, useParams, useSearchParams } from "react-router-dom"
+import { loadContacts } from "../../../../src/data/contacts"
 import "./call-room-page.css"
 type CallState = "connecting" | "ringing" | "active" | "ended"
 type CallType = "audio" | "video"
@@ -72,6 +73,15 @@ const MOCK_CALLS: Record<string, { contact: Participant; type: CallType }> = {
   c9: { type: "video", contact: CONTACTS["1"] },
 }
 
+const FALLBACK_CONTACT: Participant = {
+  id: "unknown",
+  name: "Contact",
+  initials: "CT",
+  color: { bg: "#60a5fa22", fg: "#60a5fa" },
+  muted: false,
+  videoOff: true,
+}
+
 function formatElapsed(seconds: number): string {
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)
@@ -94,9 +104,24 @@ export default function CallRoomPage() {
       return MOCK_CALLS[callId]
     }
 
+    const contactFromStore = loadContacts().find((entry) => entry.id === contactId)
+    if (contactFromStore) {
+      return {
+        type: queryType,
+        contact: {
+          id: contactFromStore.id,
+          name: contactFromStore.name,
+          initials: contactFromStore.initials,
+          color: { bg: "var(--accent-dim)", fg: "var(--accent)" },
+          muted: false,
+          videoOff: true,
+        },
+      }
+    }
+
     return {
       type: queryType,
-      contact: CONTACTS[contactId] ?? CONTACTS["1"],
+      contact: CONTACTS[contactId] ?? FALLBACK_CONTACT,
     }
   }, [callId, contactId, queryType])
 

@@ -1,10 +1,12 @@
-import { useMemo, useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useToast } from "../../../../src/components/toast"
 import { loadContacts } from "../../../../src/data/contacts"
 import { loadLocalConversations } from "../../../../src/data/local-conversations"
 import { findLocalGroup } from "../../../../src/data/local-groups"
-import { CHAT_COLORS, MOCK_CHAT_INFOS } from "../../../../src/mocks/chat-data"
+import { CHAT_COLORS } from "../../../../src/mocks/chat-data"
+import { fetchContacts } from "../../../../src/services/contacts-service"
+import { fetchConversationById } from "../../../../src/services/chats-service"
 
 interface Member {
   id: string
@@ -44,65 +46,6 @@ interface PendingAction {
   confirmLabel: string
   tone: "warning" | "danger"
   onConfirm: () => void
-}
-
-const MOCK_INFO: ConvInfo = {
-  id: "2",
-  name: "Groupe Alanya II",
-  initials: "GA",
-  color: "blue",
-  isGroup: true,
-  description:
-    "Groupe de travail pour le projet de messagerie instantanee - Projet BD ENSPY 2025-2026",
-  createdAt: "15 janvier 2026",
-  members: [
-    {
-      id: "me",
-      name: "Arsene Nguemo",
-      initials: "AN",
-      color: "amber",
-      role: "admin",
-      online: true,
-    },
-    { id: "1", name: "Kevin Manga", initials: "KM", color: "amber", role: "admin", online: true },
-    { id: "4", name: "Laure Ateba", initials: "LA", color: "teal", role: "member", online: true },
-    { id: "5", name: "Paul Essomba", initials: "PE", color: "rose", role: "member", online: false },
-    { id: "6", name: "Nina Fouda", initials: "NF", color: "amber", role: "member", online: false },
-  ],
-  files: [
-    {
-      id: "f1",
-      name: "rapport_architecture.pdf",
-      size: "1.2 Mo",
-      type: "pdf",
-      ts: "Hier 10:41",
-      sender: "Kevin Manga",
-    },
-    {
-      id: "f2",
-      name: "schema_bd_final.pdf",
-      size: "856 Ko",
-      type: "pdf",
-      ts: "Lun. 14:22",
-      sender: "Paul Essomba",
-    },
-    {
-      id: "f3",
-      name: "maquettes_ui.png",
-      size: "2.4 Mo",
-      type: "image",
-      ts: "Dim. 09:15",
-      sender: "Laure Ateba",
-    },
-    {
-      id: "f4",
-      name: "reunion_notes.pdf",
-      size: "312 Ko",
-      type: "pdf",
-      ts: "Sam. 16:30",
-      sender: "Arsene Nguemo",
-    },
-  ],
 }
 
 const COLORS: Record<string, { bg: string; fg: string }> = {
@@ -163,13 +106,13 @@ function FileIcon({ type }: { type: SharedFile["type"] }) {
 interface ConvInfoPanelProps {
   convId?: string
   onClose?: () => void
-  info?: ConvInfo
+  info: ConvInfo
 }
 
 export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanelProps) {
   const navigate = useNavigate()
   const { success, warning, info } = useToast()
-  const conv = propInfo ?? MOCK_INFO
+  const conv = propInfo
 
   const [tab, setTab] = useState<"membres" | "fichiers">("membres")
   const [muteNotifs, setMute] = useState(false)
@@ -823,42 +766,66 @@ export function ConvInfoPanel({ convId, onClose, info: propInfo }: ConvInfoPanel
   )
 }
 
-function buildConvInfoFromMock(chatId: string): ConvInfo | null {
-  const chat = MOCK_CHAT_INFOS[chatId]
-  if (!chat) return null
+const COLOR_NAMES = ["amber", "blue", "violet", "teal", "rose"] as const
 
-  const colorNames = ["amber", "blue", "violet", "teal", "rose"] as const
-  const colorName = colorNames[chat.colorIdx % colorNames.length]
+/**
+ * Construit le ConvInfo a partir de la conversation backend + de la liste de contacts.
+ * Pour un groupe : map chaque memberId vers un contact pour avoir les vrais noms.
+ * Pour un 1-to-1 : l'unique "membre" affiche est l'autre user.
+ */
+async function buildConvInfoFromBackend(chatId: string): Promise<ConvInfo | null> {
+  const conv = await fetchConversationById(chatId)
+  if (!conv) return null
+
+  const contacts = await fetchContacts()
+  const colorName = COLOR_NAMES[(conv.colorIdx ?? 0) % COLOR_NAMES.length]
+
+  if (conv.isGroup) {
+    const members: Member[] = (conv.members ?? []).map((memberId, index) => {
+      const contact = contacts.find((c) => c.id === memberId)
+      return {
+        id: memberId,
+        name: contact?.name ?? `Membre ${index + 1}`,
+        initials: contact?.initials ?? memberId.slice(0, 2).toUpperCase(),
+        color: contact?.color ?? COLOR_NAMES[index % COLOR_NAMES.length],
+        role: index === 0 ? "admin" : "member",
+        online: contact?.online ?? false,
+      }
+    })
+
+    return {
+      id: conv.id,
+      name: conv.name,
+      initials: conv.initials,
+      color: colorName,
+      isGroup: true,
+      members,
+      files: [],
+      createdAt: "",
+      description: `${members.length} membres`,
+    }
+  }
 
   return {
-    id: chat.id,
-    name: chat.name,
-    initials: chat.initials,
+    id: conv.id,
+    name: conv.name,
+    initials: conv.initials,
     color: colorName,
-    isGroup: chat.isGroup,
-    online: chat.online,
-    statusMsg: chat.online ? "En ligne" : "Hors ligne",
-    members: chat.isGroup
-      ? (chat.members?.map((member, index) => ({
-          id: String(index),
-          name: `Membre ${member}`,
-          initials: member,
-          color: colorNames[index % colorNames.length],
-          role: index === 0 ? "admin" : "member",
-          online: Math.random() > 0.5,
-        })) ?? [])
-      : [
-          {
-            id: chat.id,
-            name: chat.name,
-            initials: chat.initials,
-            color: colorName,
-            role: "member",
-            online: chat.online,
-          },
-        ],
+    isGroup: false,
+    online: conv.online,
+    statusMsg: conv.online ? "En ligne" : "Hors ligne",
+    members: [
+      {
+        id: conv.id,
+        name: conv.name,
+        initials: conv.initials,
+        color: colorName,
+        role: "member",
+        online: conv.online,
+      },
+    ],
     files: [],
-    createdAt: "Date inconnue",
+    createdAt: "",
   }
 }
 
@@ -929,11 +896,50 @@ function buildConvInfoFromLocalData(chatId: string): ConvInfo | null {
 export default function ConvInfoPage() {
   const navigate = useNavigate()
   const { chatId } = useParams<{ chatId: string }>()
+  const [convInfo, setConvInfo] = useState<ConvInfo | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const convInfo = useMemo(() => {
-    if (!chatId) return null
-    return buildConvInfoFromMock(chatId) ?? buildConvInfoFromLocalData(chatId)
+  useEffect(() => {
+    if (!chatId) {
+      setLoading(false)
+      return
+    }
+    let cancelled = false
+    setLoading(true)
+    void buildConvInfoFromBackend(chatId)
+      .then((info) => {
+        if (cancelled) return
+        // Fallback local : groupe cree en local ou cache contacts
+        setConvInfo(info ?? buildConvInfoFromLocalData(chatId))
+      })
+      .catch(() => {
+        if (cancelled) return
+        setConvInfo(buildConvInfoFromLocalData(chatId))
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
   }, [chatId])
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          minHeight: "100vh",
+          background: "var(--bg-base)",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "var(--text-muted)",
+        }}
+      >
+        Chargement...
+      </div>
+    )
+  }
 
   if (!convInfo) {
     return (

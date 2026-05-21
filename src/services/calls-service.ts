@@ -1,3 +1,5 @@
+import { apiRequest } from "../lib/api-client"
+
 export type CallDirection = "in" | "out" | "missed"
 export type CallType = "audio" | "video"
 export type CallStatus = "ended" | "declined" | "no_answer"
@@ -24,127 +26,68 @@ export const CALL_COLORS = {
   rose: { bg: "#fb718522", fg: "#fb7185" },
 }
 
-const FALLBACK_CALLS: CallRecord[] = [
-  {
-    id: "c1",
-    contactId: "1",
-    contactName: "Kevin Manga",
-    contactInitials: "KM",
-    contactColor: "amber",
-    direction: "out",
-    type: "video",
-    status: "ended",
-    duration: "14:23",
-    ts: new Date(Date.now() - 86400000 * 0.3),
-  },
-  {
-    id: "c2",
-    contactId: "4",
-    contactName: "Laure Ateba",
-    contactInitials: "LA",
-    contactColor: "teal",
-    direction: "missed",
-    type: "audio",
-    status: "no_answer",
-    ts: new Date(Date.now() - 86400000 * 0.5),
-  },
-  {
-    id: "c3",
-    contactId: "5",
-    contactName: "Paul Essomba",
-    contactInitials: "PE",
-    contactColor: "rose",
-    direction: "in",
-    type: "audio",
-    status: "ended",
-    duration: "3:07",
-    ts: new Date(Date.now() - 86400000 * 1.2),
-  },
-  {
-    id: "c4",
-    contactId: "1",
-    contactName: "Kevin Manga",
-    contactInitials: "KM",
-    contactColor: "amber",
-    direction: "out",
-    type: "audio",
-    status: "ended",
-    duration: "8:44",
-    ts: new Date(Date.now() - 86400000 * 2.1),
-  },
-  {
-    id: "c5",
-    contactId: "2",
-    contactName: "Groupe Alanya II",
-    contactInitials: "GA",
-    contactColor: "blue",
-    direction: "in",
-    type: "video",
-    status: "ended",
-    duration: "42:11",
-    ts: new Date(Date.now() - 86400000 * 2.8),
-    isGroup: true,
-  },
-  {
-    id: "c6",
-    contactId: "6",
-    contactName: "Nina Fouda",
-    contactInitials: "NF",
-    contactColor: "amber",
-    direction: "missed",
-    type: "video",
-    status: "no_answer",
-    ts: new Date(Date.now() - 86400000 * 3.5),
-  },
-  {
-    id: "c7",
-    contactId: "5",
-    contactName: "Paul Essomba",
-    contactInitials: "PE",
-    contactColor: "rose",
-    direction: "out",
-    type: "audio",
-    status: "declined",
-    ts: new Date(Date.now() - 86400000 * 4.0),
-  },
-  {
-    id: "c8",
-    contactId: "3",
-    contactName: "Dr. NANA BINKEU",
-    contactInitials: "NB",
-    contactColor: "violet",
-    direction: "in",
-    type: "audio",
-    status: "ended",
-    duration: "6:58",
-    ts: new Date(Date.now() - 86400000 * 5.2),
-  },
-  {
-    id: "c9",
-    contactId: "1",
-    contactName: "Kevin Manga",
-    contactInitials: "KM",
-    contactColor: "amber",
-    direction: "in",
-    type: "video",
-    status: "ended",
-    duration: "22:05",
-    ts: new Date(Date.now() - 86400000 * 6.9),
-  },
-  {
-    id: "c10",
-    contactId: "4",
-    contactName: "Laure Ateba",
-    contactInitials: "LA",
-    contactColor: "teal",
-    direction: "out",
-    type: "audio",
-    status: "ended",
-    duration: "1:44",
-    ts: new Date(Date.now() - 86400000 * 8.1),
-  },
-]
+const COLOR_WHEEL: (keyof typeof CALL_COLORS)[] = ["amber", "blue", "violet", "teal", "rose"]
 
-export function getCallsHistory() {
-  return FALLBACK_CALLS
+function pickColor(id: string): keyof typeof CALL_COLORS {
+  let sum = 0
+  for (let i = 0; i < id.length; i++) sum += id.charCodeAt(i)
+  return COLOR_WHEEL[sum % COLOR_WHEEL.length]
+}
+
+interface BackendCall {
+  id: string
+  contactId: string
+  contactName: string
+  contactInitials?: string
+  direction: CallDirection
+  type: CallType
+  status: CallStatus
+  duration?: string
+  createdAt?: string
+  isGroup?: boolean
+}
+
+interface ListCallsResponse {
+  calls: BackendCall[]
+}
+
+interface CreateCallResponse {
+  call: BackendCall
+}
+
+function toCallRecord(c: BackendCall): CallRecord {
+  return {
+    id: c.id,
+    contactId: c.contactId,
+    contactName: c.contactName,
+    contactInitials: c.contactInitials ?? "??",
+    contactColor: pickColor(c.contactId),
+    direction: c.direction,
+    type: c.type,
+    status: c.status,
+    duration: c.duration && c.duration !== "00:00" ? c.duration : undefined,
+    ts: c.createdAt ? new Date(c.createdAt) : new Date(),
+    isGroup: Boolean(c.isGroup),
+  }
+}
+
+/** GET /api/calls — historique d'appels de l'utilisateur. */
+export async function fetchCallsHistory(): Promise<CallRecord[]> {
+  try {
+    const response = await apiRequest<ListCallsResponse>("/api/calls")
+    return (response.calls ?? []).map(toCallRecord)
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn("[calls] fetch a echoue", error)
+    return []
+  }
+}
+
+/** POST /api/calls — enregistre un nouvel appel sortant. */
+export async function createCall(contactId: string, type: CallType): Promise<CallRecord> {
+  const response = await apiRequest<CreateCallResponse>("/api/calls", {
+    method: "POST",
+    body: { contactId, type },
+  })
+  return toCallRecord(response.call)
 }

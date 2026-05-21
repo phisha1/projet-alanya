@@ -1,10 +1,8 @@
-﻿import { useState, useMemo } from "react"
+﻿import { useState, useMemo, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { CHAT_COLORS, type ConversationMock } from "../../../src/mocks/chat-data"
-import { getChatConversations } from "../../../src/services/chats-service"
+import { fetchChatConversations } from "../../../src/services/chats-service"
 import "./chats-page.css"
-
-// TODO : GET /api/chats?page=1&limit=20
 
 function lastMsgIcon(type: ConversationMock["lastMessageType"]) {
   if (type === "file") return "[fichier] "
@@ -18,8 +16,16 @@ export default function ChatsPage() {
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<"all" | "unread" | "groups">("all")
 
-  const conversations = useMemo(() => {
-    return getChatConversations()
+  const [conversations, setConversations] = useState<ConversationMock[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    void fetchChatConversations().then((list) => {
+      if (!cancelled) setConversations(list)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const filtered = useMemo(() => {

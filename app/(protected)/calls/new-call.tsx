@@ -2,12 +2,16 @@
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { CONTACT_COLORS } from "../../../src/data/contacts"
 import { useContacts } from "../../../src/hooks/use-contacts"
+import { useToast } from "../../../src/components/toast"
+import { createCall } from "../../../src/services/calls-service"
 import "./calls-page.css"
 
 export default function NewCallPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { contacts } = useContacts()
+  const { error } = useToast()
+  const [starting, setStarting] = useState(false)
 
   const presetContact = searchParams.get("contact")
   const presetType = searchParams.get("type") === "video" ? "video" : "audio"
@@ -29,19 +33,40 @@ export default function NewCallPage() {
     const contactExists = contacts.some((contact) => contact.id === presetContact)
     if (!contactExists) return
 
-    const callId = `n${Date.now()}`
-    navigate(
-      `/calls/${callId}?contact=${presetContact}&type=${presetType}&returnTo=${encodeURIComponent(returnTo)}`,
-      { replace: true }
-    )
-  }, [contacts, navigate, presetContact, presetType, returnTo])
+    // Raccourci : on enregistre l'appel via POST /api/calls puis on navigue.
+    let cancelled = false
+    void createCall(presetContact, presetType)
+      .then((call) => {
+        if (cancelled) return
+        navigate(
+          `/calls/${call.id}?contact=${presetContact}&type=${presetType}&returnTo=${encodeURIComponent(returnTo)}`,
+          { replace: true }
+        )
+      })
+      .catch((e) => {
+        if (cancelled) return
+        const message = e instanceof Error ? e.message : "Impossible de demarrer l'appel."
+        error("Appel impossible", message)
+      })
 
-  const startCall = () => {
-    if (!selectedId) return
-    const callId = `n${Date.now()}`
-    navigate(
-      `/calls/${callId}?contact=${selectedId}&type=${type}&returnTo=${encodeURIComponent(returnTo)}`
-    )
+    return () => {
+      cancelled = true
+    }
+  }, [contacts, navigate, presetContact, presetType, returnTo, error])
+
+  const startCall = async () => {
+    if (!selectedId || starting) return
+    setStarting(true)
+    try {
+      const call = await createCall(selectedId, type)
+      navigate(
+        `/calls/${call.id}?contact=${selectedId}&type=${type}&returnTo=${encodeURIComponent(returnTo)}`
+      )
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Impossible de demarrer l'appel."
+      error("Appel impossible", message)
+      setStarting(false)
+    }
   }
 
   return (
@@ -129,8 +154,8 @@ export default function NewCallPage() {
       </div>
 
       <div style={{ marginTop: 12, display: "flex", justifyContent: "flex-end" }}>
-        <button className="new-call-btn" onClick={startCall} disabled={!selectedId}>
-          Demarrer appel {type}
+        <button className="new-call-btn" onClick={startCall} disabled={!selectedId || starting}>
+          {starting ? "Demarrage..." : `Demarrer appel ${type}`}
         </button>
       </div>
     </div>
