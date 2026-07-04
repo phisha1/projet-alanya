@@ -13,6 +13,27 @@ const STORAGE_KEY = "alanya-session-user-v2"
 const LEGACY_STORAGE_KEYS = ["alanya-session-user-v1"]
 const MIGRATION_KEY = "alanya-auth-storage-migrated-v2"
 
+/**
+ * UUID de l'utilisateur connecte — source fiable pour distinguer "moi"
+ * dans les messages et les evenements WebSocket.
+ * Priorite au user en session ; sinon on decode le JWT d'acces (champ sub),
+ * qui contient toujours l'id meme si la session locale est incomplete.
+ */
+export function getMyUserId(): string | null {
+  const sessionId = loadSessionUser()?.id
+  if (sessionId) return sessionId
+
+  if (!hasStorage()) return null
+  const token = window.localStorage.getItem("alanya-session-token-v2")
+  if (!token) return null
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+    return typeof payload.sub === "string" && payload.sub ? payload.sub : null
+  } catch {
+    return null
+  }
+}
+
 function hasStorage() {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined"
 }

@@ -39,7 +39,7 @@ import {
   subscribeToTyping,
   subscribeToWsConnected,
 } from "../../../../src/services/websocket-service"
-import { loadSessionUser } from "../../../../src/data/session-user"
+import { getMyUserId } from "../../../../src/data/session-user"
 import { startOutgoingCall } from "../../../../src/services/call-manager"
 import "./chat-room-page.css"
 
@@ -697,7 +697,7 @@ export default function ChatRoomPage() {
     })
 
     // Temps reel : abonnement aux nouveaux messages de la conversation
-    const myId = loadSessionUser()?.id ?? null
+    const myId = getMyUserId()
     const unsubscribeMessages = subscribeToConversation(chatId, (message) => {
       if (cancelled) return
       const incoming = toFrontMessage(message, myId)

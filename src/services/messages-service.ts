@@ -1,6 +1,6 @@
 import { apiRequest } from "../lib/api-client"
 import { type ChatMessageMock, type MessageStatus, type MessageType } from "../mocks/chat-data"
-import { loadSessionUser } from "../data/session-user"
+import { getMyUserId } from "../data/session-user"
 import {
   forwardMessageOverSocket,
   publishRead,
@@ -109,7 +109,7 @@ export async function fetchMessages(chatId: string): Promise<ChatMessageMock[]> 
   const response = await apiRequest<ListMessagesResponse>(
     `/api/conversations/${chatId}/messages?limit=100`
   )
-  const myId = loadSessionUser()?.id ?? null
+  const myId = getMyUserId()
   // Le backend pagine en ordre descendant ; l'UI affiche en ordre chronologique.
   return (response.messages ?? []).map((m) => toFrontMessage(m, myId)).reverse()
 }
@@ -140,7 +140,7 @@ export async function sendChatMessage(
   type: MessageType = "text",
   options: SendOptions = {}
 ): Promise<ChatMessageMock> {
-  const myId = loadSessionUser()?.id ?? null
+  const myId = getMyUserId()
   const tempId = `tmp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
   const msgType = toBackendType(type)
 

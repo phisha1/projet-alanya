@@ -1,4 +1,4 @@
-import { loadSessionUser } from "../data/session-user"
+import { getMyUserId, loadSessionUser } from "../data/session-user"
 import {
   acceptCallRest,
   endCallRest,
@@ -260,7 +260,7 @@ let ringTimeoutId: ReturnType<typeof setTimeout> | null = null
 let eventsUnsubscribe: (() => void) | null = null
 
 function myUserId(): string | null {
-  return loadSessionUser()?.id ?? null
+  return getMyUserId()
 }
 
 function myDisplayName(): string {
