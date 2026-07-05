@@ -1,5 +1,5 @@
 ﻿import { useState, useMemo, useEffect, useRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import { CHAT_COLORS, type ConversationMock } from "../../../src/mocks/chat-data"
 import { fetchChatConversations } from "../../../src/services/chats-service"
 import {
@@ -231,15 +231,17 @@ export default function ChatsPage() {
         )}
       </div>
 
-      {/* Bouton flottant orange -> repertoire des contacts (comme sur mobile) */}
+      {/* Bouton flottant orange -> repertoire des contacts (comme sur mobile).
+          position en CSS (chats-split.css) pour rester dans la colonne de gauche. */}
       <button
+        className="chats-fab"
         onClick={() => navigate("/contacts")}
         aria-label="Ouvrir les contacts"
         title="Contacts"
         style={{
-          position: "fixed",
-          right: 26,
-          bottom: 26,
+          position: "absolute",
+          right: 20,
+          bottom: 20,
           width: 56,
           height: 56,
           borderRadius: "50%",
@@ -273,7 +275,10 @@ export default function ChatsPage() {
 function ConvItem({ conv }: { conv: ConversationMock }) {
   const color = CHAT_COLORS[conv.colorIdx % CHAT_COLORS.length]
   return (
-    <Link to={`/chats/${conv.id}`} className="conv-item">
+    <NavLink
+      to={`/chats/${conv.id}`}
+      className={({ isActive }) => `conv-item ${isActive ? "active" : ""}`}
+    >
       <div className="av" style={{ background: color.bg, color: color.text }}>
         {conv.initials}
         {conv.online && !conv.isGroup && <div className="av-dot" />}
@@ -307,6 +312,6 @@ function ConvItem({ conv }: { conv: ConversationMock }) {
         <div className={`conv-time ${conv.unread > 0 ? "unread" : ""}`}>{conv.time}</div>
         {conv.unread > 0 && <div className="unread-badge">{conv.unread}</div>}
       </div>
-    </Link>
+    </NavLink>
   )
 }

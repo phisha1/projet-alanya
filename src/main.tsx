@@ -8,7 +8,6 @@ import { ToastProvider } from "./components/toast"
 import "./styles/globals.css"
 import LoginPage from "../app/(auth)/login/login"
 import ChatRoomPage from "../app/(protected)/chats/[chatId]/chat"
-import ChatsPage from "../app/(protected)/chats/chats"
 import CallRoomPage from "../app/(protected)/calls/[callId]/call"
 import CallsPage from "../app/(protected)/calls/calls"
 import NewCallPage from "../app/(protected)/calls/new-call"
@@ -21,6 +20,7 @@ import NotFoundPage from "../app/(public)/not-found/not-found"
 import SettingsPage from "../app/(protected)/settings/settings"
 import NewChatPage from "../app/(protected)/chats/new/new-chat"
 import ConvInfoPage from "../app/(protected)/chats/[chatId]/chat-info"
+import ChatsSplit, { ChatEmptyState } from "../app/(protected)/chats/chats-split"
 import ContactsPage from "../app/(protected)/contacts/contacts"
 import StatusPage from "../app/(protected)/status/status"
 
@@ -78,32 +78,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/chats"
-                element={
-                  <ProtectedRoute>
-                    <ProtectedLayout>
-                      <ChatsPage />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
-                }
-              />
+              {/* Nouveau chat et fiche info : plein ecran (hors vue deux colonnes) */}
               <Route
                 path="/chats/new"
                 element={
                   <ProtectedRoute>
                     <ProtectedLayout>
                       <NewChatPage />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chats/:chatId"
-                element={
-                  <ProtectedRoute>
-                    <ProtectedLayout>
-                      <ChatRoomPage />
                     </ProtectedLayout>
                   </ProtectedRoute>
                 }
@@ -118,6 +99,21 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                   </ProtectedRoute>
                 }
               />
+              {/* Vue deux colonnes facon WhatsApp Web : liste (persistante) + conversation.
+                  Le routage imbrique garde la liste montee quand on change de conversation. */}
+              <Route
+                path="/chats"
+                element={
+                  <ProtectedRoute>
+                    <ProtectedLayout>
+                      <ChatsSplit />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<ChatEmptyState />} />
+                <Route path=":chatId" element={<ChatRoomPage />} />
+              </Route>
 
               <Route
                 path="/contacts"

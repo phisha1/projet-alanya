@@ -1,0 +1,116 @@
+/* Vue deux colonnes facon WhatsApp Web */
+.chats-split {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+/* Colonne de gauche : liste des discussions (largeur fixe) */
+.chats-split-list {
+  width: 360px;
+  flex-shrink: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-subtle);
+}
+
+/* La liste remplit sa colonne (au lieu de 100vh en plein ecran) */
+.chats-split-list .chats-root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Colonne de droite : conversation ouverte (ou etat vide) */
+.chats-split-room {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.chats-split-room .room-root {
+  height: 100%;
+  flex: 1;
+}
+
+/* Le bouton flottant "contacts" reste dans la colonne de gauche */
+.chats-split-list .chats-fab {
+  position: absolute;
+}
+
+/* Etat vide a droite */
+.chats-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 40px;
+  background:
+    linear-gradient(var(--motif-overlay), var(--motif-overlay)),
+    url("/motif-bg.png") repeat;
+  background-size:
+    auto,
+    280px auto;
+}
+
+.chats-empty-badge {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--accent-dim);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chats-empty-title {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.chats-empty-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+/* Conversation ouverte : surlignee dans la liste (comme WhatsApp) */
+.chats-split-list .conv-item.active {
+  background: var(--accent-dim);
+}
+
+/* Sur desktop, la liste est toujours visible : la fleche retour est inutile */
+@media (min-width: 901px) {
+  .chats-split-room .back-btn {
+    display: none;
+  }
+}
+
+/* Sur ecran etroit (web ouvert sur telephone) : une seule colonne a la fois */
+@media (max-width: 900px) {
+  .chats-split-list {
+    width: 100%;
+    border-right: none;
+  }
+  .chats-split-room {
+    display: none;
+  }
+  .chats-split.room-open .chats-split-list {
+    display: none;
+  }
+  .chats-split.room-open .chats-split-room {
+    display: flex;
+  }
+}
