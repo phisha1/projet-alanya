@@ -4,6 +4,7 @@ import { useAuth } from "../../../src/components/auth-provider"
 import { useToast } from "../../../src/components/toast"
 import { ThemeSelector } from "../../../src/components/theme-toggle"
 import { type SessionUser } from "../../../src/data/session-user"
+import { isTurnConfigured } from "../../../src/services/calls-service"
 
 type SettingsSection = "profile" | "security" | "notifications" | "appearance" | "privacy" | "about"
 
@@ -740,7 +741,7 @@ export default function SettingsPage() {
 
         .settings-root {
           font-family: 'DM Sans', sans-serif;
-          min-height: 100vh; background: var(--bg-base); color: var(--text-primary);
+          min-height: 100vh; background: linear-gradient(var(--motif-overlay), var(--motif-overlay)), url("/motif-bg.png") repeat; background-size: auto, 280px auto; color: var(--text-primary);
           display: grid; grid-template-columns: 230px 1fr;
           width: 100%;
           overflow-x: hidden;
@@ -1570,6 +1571,13 @@ export default function SettingsPage() {
                   { label: "Application", value: "Alanya" },
                   { label: "Version", value: "1.0.0-beta" },
                   { label: "Environnement", value: "Production" },
+                  {
+                    label: "Relais TURN (appels)",
+                    // Diagnostic visible depuis un telephone : dit si ce build
+                    // embarque les variables VITE_TURN_* (necessaires pour les
+                    // appels entre reseaux differents).
+                    value: isTurnConfigured() ? "Configure ✓" : "Absent — appels limites",
+                  },
                   { label: "Projet", value: "Projet BD - ENSPY 2025-2026" },
                   { label: "Encadrant", value: "Dr. NANA BINKEU" },
                   { label: "Groupe", value: "Alanya II" },

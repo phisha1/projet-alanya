@@ -214,6 +214,11 @@ function envTurnServers(): RTCIceServer[] {
   ]
 }
 
+/** Le build actuel embarque-t-il un relais TURN (variables VITE_TURN_*) ? */
+export function isTurnConfigured(): boolean {
+  return envTurnServers().length > 0
+}
+
 function hasTurnServer(servers: RTCIceServer[]): boolean {
   return servers.some((server) => {
     const urls = Array.isArray(server.urls) ? server.urls : [server.urls]

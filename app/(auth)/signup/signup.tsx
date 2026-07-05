@@ -193,7 +193,7 @@ export default function SignUpPage() {
         },
         entered
       )
-      navigate("/dashboard", { replace: true })
+      navigate("/chats", { replace: true })
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Verification impossible.")
       setOtpDigits(Array(OTP_LEN).fill(""))

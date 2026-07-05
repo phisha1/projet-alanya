@@ -86,7 +86,7 @@ export default function NotFound() {
           Verifiez l'URL ou retournez a l'accueil.
         </p>
         <div className="actions">
-          <Link to="/dashboard" className="btn-primary">
+          <Link to="/chats" className="btn-primary">
             <svg
               width="15"
               height="15"

@@ -33,7 +33,7 @@ export default function LoginPage() {
     if (!canSubmit) return
 
     const redirectTo =
-      (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? "/dashboard"
+      (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? "/chats"
 
     setError("")
     setLoading(true)

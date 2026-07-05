@@ -122,6 +122,19 @@ class PeerSession {
     pc.oniceconnectionstatechange = () => {
       // eslint-disable-next-line no-console
       console.info(`[webrtc] ICE ${this.peerId.slice(0, 8)}… : ${pc.iceConnectionState}`)
+      // Aucun chemin reseau trouve (NAT stricts sans relais TURN) : on prefere
+      // un message clair a deux participants qui ne se voient jamais.
+      if (pc.iceConnectionState === "failed") {
+        const hasTurn = this.iceServers.some((server) => {
+          const urls = Array.isArray(server.urls) ? server.urls : [server.urls]
+          return urls.some((url) => typeof url === "string" && url.startsWith("turn"))
+        })
+        setState({
+          error: hasTurn
+            ? "Flux audio/video bloque malgre le relais TURN : reessayez ou changez de reseau."
+            : "Aucun relais TURN dans ce deploiement : ajoutez les variables VITE_TURN_* sur Vercel puis redeployez.",
+        })
+      }
     }
 
     for (const track of this.localStream.getTracks()) {

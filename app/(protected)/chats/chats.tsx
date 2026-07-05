@@ -6,6 +6,8 @@ import {
   subscribeToAllMessages,
   subscribeToWsConnected,
 } from "../../../src/services/websocket-service"
+import { useAuth } from "../../../src/components/auth-provider"
+import { toInitials } from "../../../src/data/session-user"
 import "./chats-page.css"
 
 function lastMsgIcon(type: ConversationMock["lastMessageType"]) {
@@ -17,6 +19,7 @@ function lastMsgIcon(type: ConversationMock["lastMessageType"]) {
 
 export default function ChatsPage() {
   const navigate = useNavigate()
+  const { user: sessionUser } = useAuth()
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<"all" | "unread" | "groups">("all")
 
@@ -69,8 +72,72 @@ export default function ChatsPage() {
   return (
     <div className="chats-root">
       <div className="ch-header">
+        {/* Carte profil : nom + numero Alanya, comme en tete de liste sur mobile */}
+        <div
+          onClick={() => navigate("/settings")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: 14,
+            padding: "12px 14px",
+            marginBottom: 14,
+            cursor: "pointer",
+          }}
+        >
+          <div
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: "50%",
+              background: "var(--brand)",
+              color: "var(--brand-text)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "'Bricolage Grotesque', sans-serif",
+              fontWeight: 800,
+              fontSize: 15,
+              flexShrink: 0,
+            }}
+          >
+            {toInitials(sessionUser?.name ?? "Moi")}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: 14,
+                color: "var(--text-primary)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {sessionUser?.name ?? "Mon profil"}
+            </div>
+            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+              Numero Alanya :{" "}
+              <strong style={{ color: "var(--accent)" }}>{sessionUser?.phone ?? "—"}</strong>
+            </div>
+          </div>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--text-faint)"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </div>
+
         <div className="ch-title-row">
-          <h1 className="ch-title">Messages</h1>
+          <h1 className="ch-title">Discussions</h1>
           <button className="new-chat-btn" onClick={() => navigate("/chats/new")}>
             <svg
               width="14"
@@ -163,6 +230,42 @@ export default function ChatsPage() {
           </>
         )}
       </div>
+
+      {/* Bouton flottant orange -> repertoire des contacts (comme sur mobile) */}
+      <button
+        onClick={() => navigate("/contacts")}
+        aria-label="Ouvrir les contacts"
+        title="Contacts"
+        style={{
+          position: "fixed",
+          right: 26,
+          bottom: 26,
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          border: "none",
+          background: "#c04d29",
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          boxShadow: "0 10px 28px #c04d2960",
+          zIndex: 100,
+        }}
+      >
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </svg>
+      </button>
     </div>
   )
 }

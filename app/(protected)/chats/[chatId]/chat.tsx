@@ -329,6 +329,10 @@ function MessageBubble({
           alignItems: "flex-end",
           gap: 6,
           flexDirection: isMe ? "row-reverse" : "row",
+          // La limite de largeur vit ICI (le parent fait 100% de la colonne) :
+          // un % sur un enfant d'une rangee auto-dimensionnee ecrase la bulle
+          // a sa largeur minimale (une lettre par ligne).
+          maxWidth: "min(78%, 560px)",
           transform: dragX ? `translateX(${dragX}px)` : undefined,
           transition: dragStart.current.active ? "none" : "transform 0.18s ease",
           touchAction: "pan-y",
@@ -417,7 +421,7 @@ function MessageBubble({
           </div>
         )}
 
-        <div style={{ maxWidth: "72%", display: "flex", flexDirection: "column", gap: 2 }}>
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
           {/* Citation */}
           {quote && !msg.isDeleted && (
             <div

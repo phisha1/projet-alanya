@@ -91,6 +91,21 @@ const Icons = {
       <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
     </svg>
   ),
+  Sparkle: () => (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+      <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z" />
+    </svg>
+  ),
   Settings: () => (
     <svg
       width="18"
@@ -151,17 +166,18 @@ const Icons = {
 
 // DONNEES DE NAVIGATION
 
+// Les memes sections que la barre d'onglets du mobile :
+// Discussions / Statuts / Appels / IA. Les contacts s'ouvrent via le
+// bouton flottant orange de la liste des discussions (comme sur mobile).
 const NAV_ITEMS: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: <Icons.Dashboard /> },
-  { href: "/chats", label: "Messages", icon: <Icons.Chat /> },
+  { href: "/chats", label: "Discussions", icon: <Icons.Chat /> },
   { href: "/status", label: "Statuts", icon: <Icons.Status /> },
   { href: "/calls", label: "Appels", icon: <Icons.Call /> },
+  { href: "/ai", label: "Assistant IA", icon: <Icons.Sparkle /> },
   { href: "/contacts", label: "Contacts", icon: <Icons.Contacts /> },
 ]
 
-const UNREAD_COUNTS: Record<string, number> = {
-  "/chats": 3,
-}
+const UNREAD_COUNTS: Record<string, number> = {}
 
 // COMPOSANT Sidebar
 

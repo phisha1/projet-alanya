@@ -27,7 +27,7 @@ export function AppEntryRoute() {
     return <RouteGuardFallback />
   }
 
-  return <Navigate to={isAuthenticated ? "/dashboard" : "/welcome"} replace />
+  return <Navigate to={isAuthenticated ? "/chats" : "/welcome"} replace />
 }
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -53,7 +53,7 @@ export function PublicOnlyRoute({ children }: { children: ReactNode }) {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/chats" replace />
   }
 
   return <>{children}</>

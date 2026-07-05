@@ -11,7 +11,12 @@
 .calls-root {
   font-family: "DM Sans", sans-serif;
   min-height: 100vh;
-  background: var(--bg-base);
+  background:
+    linear-gradient(var(--motif-overlay), var(--motif-overlay)),
+    url("/motif-bg.png") repeat;
+  background-size:
+    auto,
+    280px auto;
   color: var(--text-primary);
   display: flex;
   flex-direction: column;

@@ -13,7 +13,7 @@ import CallRoomPage from "../app/(protected)/calls/[callId]/call"
 import CallsPage from "../app/(protected)/calls/calls"
 import NewCallPage from "../app/(protected)/calls/new-call"
 import ProtectedLayout from "../app/(protected)/layout"
-import DashboardPage from "../app/(protected)/dashboard/dashboard"
+import AiAssistantPage from "../app/(protected)/ai/ai"
 import ForgotPasswordPage from "../app/(auth)/forgot-password/forgot-password"
 import SignUpPage from "../app/(auth)/signup/signup"
 import WelcomePage from "../app/(public)/welcome/welcome"
@@ -66,12 +66,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 }
               />
 
+              {/* L'ecran d'accueil est la liste des discussions, comme sur mobile. */}
+              <Route path="/dashboard" element={<Navigate to="/chats" replace />} />
               <Route
-                path="/dashboard"
+                path="/ai"
                 element={
                   <ProtectedRoute>
                     <ProtectedLayout>
-                      <DashboardPage />
+                      <AiAssistantPage />
                     </ProtectedLayout>
                   </ProtectedRoute>
                 }
