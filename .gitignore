@@ -5,9 +5,9 @@ node_modules/
 dist/
 build/
 
-# Backend internal Git backup (kept only if converting from a nested repo)
-ALANYA/.git-backup-before-monorepo/
-ALANYA/create-backend.sh
+# Ancien backend Java/Spring local (abandonne : le front utilise le backend
+# Next.js deploye). Conserve sur disque mais hors du depot.
+ALANYA/
 
 # TypeScript incremental build info
 *.tsbuildinfo
