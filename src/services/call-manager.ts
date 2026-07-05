@@ -607,6 +607,17 @@ export async function startOutgoingCall(
     }
   }, RING_TIMEOUT_MS)
 
+  // Le premier call_ring peut se perdre si le WebSocket etait en pleine
+  // reconnexion : on le renvoie deux fois tant que ca sonne. Sans risque cote
+  // destinataire (incoming_call est ignore si l'appel est deja connu).
+  for (const delayMs of [4000, 10000]) {
+    setTimeout(() => {
+      if (state.role === "outgoing" && state.activeCallId === started.id) {
+        sendCallRing(started.id)
+      }
+    }, delayMs)
+  }
+
   // Prepare le flux local tout de suite pour etre pret des que l'autre accepte.
   try {
     await ensureLocalStream(type === "video")

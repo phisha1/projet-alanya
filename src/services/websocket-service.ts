@@ -71,9 +71,79 @@ type Listener = (event: ServerEvent) => void
 
 let socket: WebSocket | null = null
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null
-let hasTriedRefresh = false
 const listeners = new Set<Listener>()
 const pendingSends: string[] = []
+
+/* ----------------- Robustesse de la connexion -----------------
+ * Deux pieges en production :
+ * 1. le serveur WS (Render gratuit) s'endort apres ~15 min sans trafic HTTP,
+ *    ce qui tue toutes les connexions ;
+ * 2. les NAT/proxies coupent silencieusement les WebSocket inactifs : le
+ *    navigateur croit etre connecte mais ne recoit plus rien (messages plus
+ *    en direct, sonneries d'appel perdues).
+ */
+
+const APP_PING_INTERVAL_MS = 25_000 // trafic sortant : garde le NAT ouvert, detecte les liens morts
+const KEEP_AWAKE_INTERVAL_MS = 8 * 60_000 // GET HTTP : empeche Render de s'endormir
+const CONNECT_TIMEOUT_MS = 12_000 // handshake bloque (cold start) : on coupe et on retente
+const RESYNC_THROTTLE_MS = 15_000
+const TOKEN_REFRESH_THROTTLE_MS = 60_000
+
+let lastTokenRefreshAt = 0
+
+let pingTimer: ReturnType<typeof setInterval> | null = null
+let keepAwakeTimer: ReturnType<typeof setInterval> | null = null
+let connectWatchdog: ReturnType<typeof setTimeout> | null = null
+let lifecycleHandlersRegistered = false
+let lastResyncAt = 0
+
+/** La connexion temps reel est-elle reellement ouverte ? */
+export function isSocketOpen(): boolean {
+  return socket !== null && socket.readyState === WebSocket.OPEN
+}
+
+/** Previent tous les ecrans abonnes qu'il faut se resynchroniser. */
+function dispatchResync() {
+  const now = Date.now()
+  if (now - lastResyncAt < RESYNC_THROTTLE_MS) return
+  lastResyncAt = now
+  for (const listener of listeners) listener({ type: "ws_connected" })
+}
+
+/** GET periodique vers le serveur Render pour l'empecher de s'endormir. */
+function startKeepAwake() {
+  if (keepAwakeTimer || typeof window === "undefined") return
+  const httpUrl = WS_URL.replace(/^ws/, "http")
+  keepAwakeTimer = setInterval(() => {
+    if (listeners.size === 0) return
+    void fetch(httpUrl, { method: "GET", mode: "no-cors", cache: "no-store" }).catch(
+      () => undefined
+    )
+  }, KEEP_AWAKE_INTERVAL_MS)
+}
+
+/** Reconnexion immediate quand l'onglet redevient visible / le reseau revient. */
+function registerLifecycleHandlers() {
+  if (lifecycleHandlersRegistered || typeof window === "undefined") return
+  lifecycleHandlersRegistered = true
+
+  const wakeUp = () => {
+    if (listeners.size === 0) return
+    if (isSocketOpen()) {
+      // Connecte en apparence… mais peut-etre mort : on force une resync des
+      // ecrans, et le prochain ping detectera un lien casse le cas echeant.
+      dispatchResync()
+    } else {
+      connect()
+    }
+  }
+
+  window.addEventListener("online", wakeUp)
+  window.addEventListener("focus", wakeUp)
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) wakeUp()
+  })
+}
 
 interface PendingAck {
   resolve: (message: WsMessagePayload) => void
@@ -96,15 +166,43 @@ function connect() {
   const ws = new WebSocket(`${WS_URL}/?token=${encodeURIComponent(token)}`)
   socket = ws
 
+  // Cold start Render : si le handshake ne se termine pas, on coupe et
+  // l'onclose planifiera une nouvelle tentative.
+  if (connectWatchdog) clearTimeout(connectWatchdog)
+  connectWatchdog = setTimeout(() => {
+    if (ws.readyState === WebSocket.CONNECTING) ws.close()
+  }, CONNECT_TIMEOUT_MS)
+
+  let opened = false
+
   ws.onopen = () => {
-    hasTriedRefresh = false
+    opened = true
+    if (connectWatchdog) {
+      clearTimeout(connectWatchdog)
+      connectWatchdog = null
+    }
     while (pendingSends.length) {
       const data = pendingSends.shift()
       if (data) ws.send(data)
     }
+
+    // Ping applicatif periodique (ignore par le serveur) : maintient le NAT
+    // ouvert et fait echouer rapidement un lien TCP mort -> reconnexion.
+    if (pingTimer) clearInterval(pingTimer)
+    pingTimer = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        try {
+          ws.send(JSON.stringify({ type: "ping" }))
+        } catch {
+          ws.close()
+        }
+      }
+    }, APP_PING_INTERVAL_MS)
+
     // Evenement synthetique : permet aux ecrans de se resynchroniser apres
     // une (re)connexion (messages arrives pendant la coupure).
-    for (const listener of listeners) listener({ type: "ws_connected" })
+    lastResyncAt = 0
+    dispatchResync()
   }
 
   ws.onmessage = (frame) => {
@@ -135,12 +233,24 @@ function connect() {
 
   ws.onclose = async (event) => {
     if (socket === ws) socket = null
+    if (pingTimer) {
+      clearInterval(pingTimer)
+      pingTimer = null
+    }
+    if (connectWatchdog) {
+      clearTimeout(connectWatchdog)
+      connectWatchdog = null
+    }
     // eslint-disable-next-line no-console
     console.info(`[ws] connexion fermee (code ${event.code}) — reconnexion dans 4s`)
 
-    // 4001 = token invalide/expire -> on tente un refresh une fois avant de reessayer.
-    if (event.code === 4001 && !hasTriedRefresh) {
-      hasTriedRefresh = true
+    // Handshake rejete (token expire, entre autres) : le serveur ferme avec
+    // 4001 mais le navigateur ne transmet qu'un 1006 generique. Des que la
+    // connexion echoue AVANT d'avoir ete ouverte, on rafraichit le token
+    // (au plus une fois par minute) puis on retente aussitot.
+    const handshakeRejected = event.code === 4001 || !opened
+    if (handshakeRejected && Date.now() - lastTokenRefreshAt > TOKEN_REFRESH_THROTTLE_MS) {
+      lastTokenRefreshAt = Date.now()
       const refreshed = await tryRefreshTokens()
       if (refreshed) {
         connect()
@@ -173,6 +283,8 @@ function sendRaw(payload: object) {
 
 function addListener(listener: Listener): () => void {
   listeners.add(listener)
+  registerLifecycleHandlers()
+  startKeepAwake()
   connect()
   return () => {
     listeners.delete(listener)
