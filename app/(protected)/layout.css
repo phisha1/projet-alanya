@@ -23,13 +23,18 @@
 
 .layout-root {
   display: flex;
-  min-height: 100vh;
+  /* Hauteur figee (pas min-height) : la page ne defile jamais, ce sont les
+     colonnes internes qui defilent -> les en-tetes restent visibles. */
+  height: 100vh;
+  overflow: hidden;
   background: var(--bg-deep);
 }
 
 .layout-main {
   flex: 1;
   min-width: 0;
+  min-height: 0; /* autorise les enfants a defiler au lieu de pousser la page */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   /* Motif africain du mobile sous un voile creme (MotifBackground) */
@@ -115,6 +120,85 @@
   .sb-close {
     display: flex;
   }
+}
+
+/* Bouton de repli (dans le bandeau terracotta) */
+.sb-collapse {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.14);
+  border: none;
+  color: var(--brand-text);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.sb-collapse:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.sb-link-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Navigation repliee (par defaut) : rail d'icones etroit --- */
+.sidebar.collapsed {
+  width: 68px;
+}
+.sidebar.collapsed .sb-logo {
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+}
+.sidebar.collapsed .sb-brand-copy {
+  display: none;
+}
+.sidebar.collapsed .sb-collapse {
+  margin-left: 0;
+}
+.sidebar.collapsed .sb-nav {
+  padding: 16px 8px;
+}
+.sidebar.collapsed .sb-nav-section {
+  display: none;
+}
+.sidebar.collapsed .sb-link {
+  justify-content: center;
+  padding: 11px 0;
+}
+.sidebar.collapsed .sb-link-label {
+  display: none;
+}
+.sidebar.collapsed .sb-badge {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  margin: 0;
+}
+.sidebar.collapsed .sb-link {
+  position: relative;
+}
+.sidebar.collapsed .sb-theme-label {
+  display: none;
+}
+.sidebar.collapsed .sb-theme-row {
+  justify-content: center;
+  padding: 0 0 10px;
+}
+.sidebar.collapsed .sb-footer {
+  padding: 14px 8px;
+}
+.sidebar.collapsed .sb-profile {
+  justify-content: center;
+  padding: 8px 0;
+}
+.sidebar.collapsed .sb-user-info,
+.sidebar.collapsed .sb-logout {
+  display: none;
 }
 
 /* --- Navigation --- */

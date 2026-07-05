@@ -90,7 +90,7 @@ export default function AiAssistantPage() {
   return (
     <div className="room-root">
       {/* En-tete facon conversation */}
-      <div className="room-head">
+      <div className="room-top">
         <div className="room-av" style={{ background: "var(--brand)", color: "var(--brand-text)" }}>
           <svg
             width="20"
@@ -136,7 +136,7 @@ export default function AiAssistantPage() {
       </div>
 
       {/* Fil de discussion */}
-      <div className="room-scroll">
+      <div className="room-body">
         {loading && (
           <div style={{ padding: 20, color: "var(--text-muted)", fontSize: 13 }}>Chargement...</div>
         )}

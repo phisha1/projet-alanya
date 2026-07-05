@@ -183,9 +183,11 @@ const UNREAD_COUNTS: Record<string, number> = {}
 
 interface SidebarProps {
   onClose?: () => void
+  collapsed?: boolean
+  onToggleCollapse?: () => void
 }
 
-function Sidebar({ onClose }: SidebarProps) {
+function Sidebar({ onClose, collapsed = false, onToggleCollapse }: SidebarProps) {
   const location = useLocation()
   const navigate = useNavigate()
   const { logout, user: sessionUser } = useAuth()
@@ -204,14 +206,37 @@ function Sidebar({ onClose }: SidebarProps) {
   }
 
   return (
-    <aside className="sidebar">
-      {/* Logo + bouton fermeture (mobile) */}
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+      {/* Logo + bouton fermeture (mobile) / repli (desktop) */}
       <div className="sb-logo">
         <img src={alanyaLogo} alt="Logo Alanya" className="sb-school-logo" />
         <div className="sb-brand-copy">
           <span className="sb-logo-txt">Alanya</span>
           <span className="sb-logo-subtitle">Messagerie ENSPY</span>
         </div>
+        {onToggleCollapse && (
+          <button
+            className="sb-collapse"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Deplier le menu" : "Replier le menu"}
+            title={collapsed ? "Deplier" : "Replier"}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        )}
         {onClose && (
           <button className="sb-close" onClick={onClose} aria-label="Fermer le menu">
             <Icons.Close />
@@ -233,9 +258,10 @@ function Sidebar({ onClose }: SidebarProps) {
               to={href}
               className={`sb-link ${isActive ? "active" : ""}`}
               onClick={onClose}
+              title={label}
             >
               {icon}
-              {label}
+              <span className="sb-link-label">{label}</span>
               {unreadCount && <span className="sb-badge">{unreadCount}</span>}
             </Link>
           )
@@ -247,9 +273,10 @@ function Sidebar({ onClose }: SidebarProps) {
           to="/settings"
           className={`sb-link ${pathname === "/settings" ? "active" : ""}`}
           onClick={onClose}
+          title="Parametres"
         >
           <Icons.Settings />
-          Parametres
+          <span className="sb-link-label">Parametres</span>
         </Link>
       </nav>
 
@@ -289,11 +316,27 @@ function Sidebar({ onClose }: SidebarProps) {
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  // Navigation repliee par defaut (plus de place pour les discussions).
+  const [collapsed, setCollapsed] = useState(() => {
+    const stored = typeof window !== "undefined" ? localStorage.getItem("alanya-nav-collapsed") : null
+    return stored === null ? true : stored === "1"
+  })
+  const toggleCollapsed = () => {
+    setCollapsed((v) => {
+      const next = !v
+      try {
+        localStorage.setItem("alanya-nav-collapsed", next ? "1" : "0")
+      } catch {
+        // stockage indisponible : pas grave
+      }
+      return next
+    })
+  }
 
   return (
-    <div className="layout-root">
+    <div className={`layout-root ${collapsed ? "nav-collapsed" : ""}`}>
       <div className="layout-sidebar-static">
-        <Sidebar />
+        <Sidebar collapsed={collapsed} onToggleCollapse={toggleCollapsed} />
       </div>
 
       <div
