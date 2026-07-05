@@ -1612,13 +1612,13 @@ export default function SettingsPage() {
               <div className="s-card">
                 <div className="s-card-title">Stack technique</div>
                 {[
-                  { label: "Front-end", value: "Next.js 14  -  React Native (Expo)" },
-                  { label: "Back-end", value: "Spring Boot 3  -  Microservices" },
-                  { label: "Base de donnees", value: "PostgreSQL 15" },
-                  { label: "Temps reel", value: "WebSocket (STOMP)  -  Apache Kafka" },
-                  { label: "Appels A/V", value: "WebRTC + serveur TURN/STUN" },
-                  { label: "Auth", value: "JWT (Access 15 min  -  Refresh 7 j)" },
-                  { label: "Deploiement", value: "Docker  -  Vercel  -  Cloudflare Tunnel" },
+                  { label: "Front-end", value: "React + Vite (web)  -  Flutter (mobile)" },
+                  { label: "Back-end", value: "Next.js (App Router, API Routes)" },
+                  { label: "Base de donnees", value: "PostgreSQL  -  Prisma" },
+                  { label: "Temps reel", value: "WebSocket (serveur Node dedie)" },
+                  { label: "Appels A/V", value: "WebRTC + serveur TURN/STUN (Metered)" },
+                  { label: "Auth", value: "JWT (Access 15 min  -  Refresh rotatif)" },
+                  { label: "Deploiement", value: "Vercel (API + web)  -  Render (WebSocket)" },
                 ].map(({ label, value }) => (
                   <div
                     className="stack-row"
