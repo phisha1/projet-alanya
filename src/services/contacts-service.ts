@@ -42,7 +42,7 @@ function toFrontContact(c: BackendContact): Contact {
     color: pickColor(c.id),
     online: false, // pas d'info de presence via REST sur ce backend
     email: "",
-    // Le champ "phone" du front porte le numero Alanya a 6 chiffres.
+    // Le champ "phone" du front porte le numero Alanya (6 ou 8 chiffres).
     phone: c.user.publicNumber,
   }
 }
@@ -64,7 +64,7 @@ export async function fetchContacts(): Promise<Contact[]> {
   }
 }
 
-/** POST /api/contacts — Ajoute un contact par son numero Alanya (6 chiffres), avec alias optionnel. */
+/** POST /api/contacts — Ajoute un contact par son numero Alanya (6 ou 8 chiffres), avec alias optionnel. */
 export async function addContactByPhone(rawNumber: string, alias?: string): Promise<Contact> {
   const publicNumber = rawNumber.replace(/\D/g, "")
   const response = await apiRequest<BackendContact>("/api/contacts", {

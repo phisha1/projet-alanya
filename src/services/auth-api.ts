@@ -16,7 +16,7 @@ import {
 import { ApiError, apiRequest } from "../lib/api-client"
 
 export interface LoginPayload {
-  /** Email ou numero Alanya a 6 chiffres. */
+  /** Email ou numero Alanya (6 ou 8 chiffres). */
   phone: string
   password: string
 }
@@ -92,7 +92,7 @@ function buildPrototypeUser(identifier: string) {
   } satisfies SessionUser
 }
 
-/** POST /api/auth/login — identifier = email ou numero Alanya (6 chiffres). */
+/** POST /api/auth/login — identifier = email ou numero Alanya (6 ou 8 chiffres). */
 export async function loginWithPassword(payload: LoginPayload) {
   const identifier = payload.phone.trim()
   const fallbackUser = buildPrototypeUser(identifier)

@@ -6,11 +6,16 @@ import { useToast } from "../../../src/components/toast"
 import { addContactByPhone } from "../../../src/services/contacts-service"
 import { createPrivateChat } from "../../../src/services/chats-service"
 import { startOutgoingCall } from "../../../src/services/call-manager"
+import {
+  ALANYA_NUMBER_MAX_LENGTH,
+  isValidAlanyaNumber,
+  normalizeAlanyaNumber,
+} from "../../../src/lib/alanya-number"
 import "../calls/calls-page.css"
 
 /**
  * Repertoire : liste des contacts + formulaire d'enregistrement d'un contact
- * par son numero Alanya (6 chiffres) avec alias optionnel.
+ * par son numero Alanya (6 ou 8 chiffres) avec alias optionnel.
  */
 export default function ContactsPage() {
   const navigate = useNavigate()
@@ -32,12 +37,12 @@ export default function ContactsPage() {
     )
   }, [contacts, query])
 
-  const canSave = /^\d{6}$/.test(newNumber.replace(/\D/g, ""))
+  const canSave = isValidAlanyaNumber(newNumber)
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!canSave || saving) return
-    const number = newNumber.replace(/\D/g, "")
+    const number = normalizeAlanyaNumber(newNumber)
 
     if (contacts.some((contact) => contact.phone === number)) {
       error("Contact existant", "Ce numero Alanya est deja dans votre repertoire.")
@@ -131,11 +136,11 @@ export default function ContactsPage() {
           >
             <input
               className="input-base"
-              placeholder="Numero Alanya (6 chiffres)"
+              placeholder="Numero Alanya (6 ou 8 chiffres)"
               value={newNumber}
               onChange={(e) => setNewNumber(e.target.value)}
               inputMode="numeric"
-              maxLength={6}
+              maxLength={ALANYA_NUMBER_MAX_LENGTH}
               style={{ padding: "10px 12px", width: 200, fontSize: 13 }}
             />
             <input

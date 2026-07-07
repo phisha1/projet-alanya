@@ -1,6 +1,7 @@
 ﻿import { useMemo, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
+import { isValidAlanyaNumber } from "../../../src/lib/alanya-number"
 const alanyaLogo = "/alanya-logo.png"
 import "./login-page.css"
 
@@ -8,10 +9,10 @@ function normalizeIdentifier(value: string) {
   return value.trim().replace(/\s+/g, "")
 }
 
-// Le backend accepte un email ou le numero Alanya a 6 chiffres.
+// Le backend accepte un email ou le numero Alanya (6 ou 8 chiffres).
 function isValidIdentifier(value: string) {
   const normalized = normalizeIdentifier(value)
-  return /^\d{6}$/.test(normalized) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)
+  return isValidAlanyaNumber(normalized) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)
 }
 
 export default function LoginPage() {
@@ -119,7 +120,7 @@ export default function LoginPage() {
               required
               autoComplete="username"
             />
-            <label htmlFor="phone">Email ou numero Alanya (6 chiffres)</label>
+            <label htmlFor="phone">Email ou numero Alanya (6 ou 8 chiffres)</label>
           </div>
 
           <div className="field">

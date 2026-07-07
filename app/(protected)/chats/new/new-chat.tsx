@@ -5,6 +5,7 @@ import { CONTACT_COLORS, normalizePhone } from "../../../../src/data/contacts"
 import { useContacts } from "../../../../src/hooks/use-contacts"
 import { addContactByPhone } from "../../../../src/services/contacts-service"
 import { createGroupChat, createPrivateChat } from "../../../../src/services/chats-service"
+import { isValidAlanyaNumber } from "../../../../src/lib/alanya-number"
 
 type Mode = "chat" | "group"
 
@@ -44,7 +45,7 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
     const contact = contacts.find((c) => c.id === contactId)
     if (!contact) return
     try {
-      // Le backend identifie les gens par leur numero Alanya (6 chiffres).
+      // Le backend identifie les gens par leur numero Alanya (6 ou 8 chiffres).
       const conversation = await createPrivateChat(contact.phone)
       navigate(`/chats/${conversation.id}`)
     } catch (e) {
@@ -78,8 +79,8 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
   const createContact = async () => {
     const phone = normalizePhone(newPhone).replace(/\D/g, "")
 
-    if (!/^[0-9]{6}$/.test(phone)) {
-      error("Numero invalide", "Utilisez le numero Alanya a 6 chiffres du contact.")
+    if (!isValidAlanyaNumber(phone)) {
+      error("Numero invalide", "Utilisez le numero Alanya (6 ou 8 chiffres) du contact.")
       return
     }
 
@@ -193,9 +194,11 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
             {showAdd && (
               <div className="ncm-add-box">
                 <input
-                  placeholder="Numero de telephone (+237...)"
+                  placeholder="Numero Alanya (6 ou 8 chiffres)"
                   value={newPhone}
                   onChange={(event) => setNewPhone(event.target.value)}
+                  inputMode="numeric"
+                  maxLength={8}
                 />
                 <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                   Recherche dans les comptes Alanya.
