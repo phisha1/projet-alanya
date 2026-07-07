@@ -691,7 +691,14 @@ export default function ChatRoomPage() {
 
   const refreshMessages = useCallback(async () => {
     const list = await fetchMessages(chatId)
-    setMessages(list)
+    // On conserve les bulles optimistes (tmp-...) encore en cours d'envoi pour
+    // qu'une resynchronisation ne les fasse pas disparaitre avant l'ack.
+    setMessages((prev) => {
+      const pending = prev.filter(
+        (m) => m.id.startsWith("tmp-") && !list.some((saved) => saved.id === m.id)
+      )
+      return [...list, ...pending]
+    })
   }, [chatId])
 
   useEffect(() => {
@@ -776,6 +783,15 @@ export default function ChatRoomPage() {
       void markChatAsRead(chatId)
     })
 
+    // Filet de securite : si le WebSocket de L'AUTRE participant est degrade
+    // (4G capricieuse), ses messages partent en REST sans diffusion temps reel.
+    // On resynchronise donc la conversation ouverte toutes les 10 s (onglet
+    // visible uniquement) pour que rien ne reste bloque.
+    const pollId = setInterval(() => {
+      if (cancelled || document.hidden) return
+      void refreshMessages().catch(() => undefined)
+    }, 10_000)
+
     // Quand on ouvre la conv, on marque tout comme lu
     void markChatAsRead(chatId)
 
@@ -786,6 +802,7 @@ export default function ChatRoomPage() {
       unsubscribeStatus()
       unsubscribeDeleted()
       unsubscribeConnected()
+      clearInterval(pollId)
       if (typingTimeoutId) clearTimeout(typingTimeoutId)
     }
   }, [chat, chatId, refreshMessages, fallbackContact, fallbackGroup])

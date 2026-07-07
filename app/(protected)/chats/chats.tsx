@@ -48,10 +48,17 @@ export default function ChatsPage() {
     // Et on se resynchronise apres chaque (re)connexion du WebSocket.
     const unsubscribeConnected = subscribeToWsConnected(scheduleRefresh)
 
+    // Filet de securite : un expediteur au WebSocket degrade (4G) envoie en
+    // REST sans diffusion -> on resynchronise la liste toutes les 20 s.
+    const pollId = setInterval(() => {
+      if (!cancelled && !document.hidden) scheduleRefresh()
+    }, 20_000)
+
     return () => {
       cancelled = true
       unsubscribeMessages()
       unsubscribeConnected()
+      clearInterval(pollId)
       if (refreshTimer.current) clearTimeout(refreshTimer.current)
     }
   }, [])

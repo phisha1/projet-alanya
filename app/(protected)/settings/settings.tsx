@@ -6,6 +6,7 @@ import { ThemeSelector } from "../../../src/components/theme-toggle"
 import { type SessionUser } from "../../../src/data/session-user"
 import { isTurnConfigured } from "../../../src/services/calls-service"
 import TurnTester from "../../../src/components/turn-tester"
+import RealtimeStatus from "../../../src/components/realtime-status"
 
 type SettingsSection = "profile" | "security" | "notifications" | "appearance" | "privacy" | "about"
 
@@ -1649,6 +1650,12 @@ export default function SettingsPage() {
                     </span>
                   </div>
                 ))}
+              </div>
+
+              {/* Diagnostic en direct de la connexion temps reel (messages) */}
+              <div className="s-card">
+                <div className="s-card-title">Diagnostic temps reel</div>
+                <RealtimeStatus />
               </div>
 
               {/* Comparateur de fournisseurs TURN (Metered, Cloudflare, coturn...) */}

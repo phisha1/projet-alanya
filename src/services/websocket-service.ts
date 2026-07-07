@@ -102,6 +102,28 @@ export function isSocketOpen(): boolean {
   return socket !== null && socket.readyState === WebSocket.OPEN
 }
 
+/* Le serveur envoie { type: "ready" } des que la connexion est authentifiee.
+ * Sans ce "ready", la connexion est un "trou noir" : ouverte en apparence
+ * mais jamais enregistree cote serveur -> aucun evenement ne sera recu. */
+const READY_WATCHDOG_MS = 10_000
+let readyReceived = false
+let readyWatchdog: ReturnType<typeof setTimeout> | null = null
+let lastEventAt = 0
+
+export interface RealtimeState {
+  /** Socket ouverte au sens navigateur. */
+  connected: boolean
+  /** Le serveur a confirme la connexion ({ type: "ready" }). */
+  ready: boolean
+  /** Horodatage du dernier evenement recu du serveur (ms epoch), 0 si aucun. */
+  lastEventAt: number
+}
+
+/** Etat temps reel observable (affiche dans Parametres > A propos). */
+export function getRealtimeState(): RealtimeState {
+  return { connected: isSocketOpen(), ready: readyReceived, lastEventAt }
+}
+
 /** Previent tous les ecrans abonnes qu'il faut se resynchroniser. */
 function dispatchResync() {
   const now = Date.now()
@@ -181,6 +203,23 @@ function connect() {
       clearTimeout(connectWatchdog)
       connectWatchdog = null
     }
+
+    // Trou noir : socket ouverte mais serveur muet (pas de "ready").
+    // On coupe pour declencher une reconnexion propre plutot que de rester
+    // branche sur une connexion que le serveur n'a jamais enregistree.
+    readyReceived = false
+    if (readyWatchdog) clearTimeout(readyWatchdog)
+    readyWatchdog = setTimeout(() => {
+      if (!readyReceived && ws.readyState === WebSocket.OPEN) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          "[ws] connexion ouverte mais aucun 'ready' du serveur en 10s — " +
+            "le serveur temps reel ne traite pas les connexions ; reconnexion."
+        )
+        ws.close()
+      }
+    }, READY_WATCHDOG_MS)
+
     while (pendingSends.length) {
       const data = pendingSends.shift()
       if (data) ws.send(data)
@@ -213,6 +252,15 @@ function connect() {
       return
     }
 
+    lastEventAt = Date.now()
+    if (event.type === "ready") {
+      readyReceived = true
+      if (readyWatchdog) {
+        clearTimeout(readyWatchdog)
+        readyWatchdog = null
+      }
+    }
+
     // Reconciliation des envois optimistes (ack porteur du tempId).
     if (event.type === "message" && event.tempId && pendingAcks.has(event.tempId)) {
       const pending = pendingAcks.get(event.tempId)!
@@ -241,6 +289,11 @@ function connect() {
       clearTimeout(connectWatchdog)
       connectWatchdog = null
     }
+    if (readyWatchdog) {
+      clearTimeout(readyWatchdog)
+      readyWatchdog = null
+    }
+    readyReceived = false
     // eslint-disable-next-line no-console
     console.info(`[ws] connexion fermee (code ${event.code}) — reconnexion dans 4s`)
 
@@ -403,7 +456,9 @@ export function sendCallState(
   sendRaw({ type: "call_state", callId, state, userId, displayName })
 }
 
-const SEND_ACK_TIMEOUT_MS = 5000
+// 8 s : sur une 4G lente, l'aller-retour peut depasser 5 s ; un timeout trop
+// court fait basculer en REST (persiste mais NE DIFFUSE PAS en temps reel).
+const SEND_ACK_TIMEOUT_MS = 8000
 
 /**
  * Envoie un message via le WebSocket et attend l'ack du serveur (tempId).
