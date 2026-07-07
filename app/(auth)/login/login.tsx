@@ -1,12 +1,28 @@
 ﻿import { useMemo, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../../src/components/auth-provider"
-import { isValidAlanyaNumber } from "../../../src/lib/alanya-number"
+import {
+  ALANYA_NUMBER_FORMATTED_MAX_LENGTH,
+  formatAlanyaNumber,
+  isValidAlanyaNumber,
+  normalizeAlanyaNumber,
+} from "../../../src/lib/alanya-number"
 const alanyaLogo = "/alanya-logo.jpeg"
 import "./login-page.css"
 
+function isNumberLikeIdentifier(value: string) {
+  const compact = value.trim().replace(/\s+/g, "")
+  return compact.length > 0 && /^[\d-]+$/.test(compact)
+}
+
 function normalizeIdentifier(value: string) {
-  return value.trim().replace(/\s+/g, "")
+  const compact = value.trim().replace(/\s+/g, "")
+  return isNumberLikeIdentifier(compact) ? normalizeAlanyaNumber(compact) : compact
+}
+
+function formatIdentifierInput(value: string) {
+  if (value.trim() === "") return ""
+  return /^[\d\s-]+$/.test(value) ? formatAlanyaNumber(value) : value
 }
 
 // Le backend accepte un email ou le numero Alanya (6 ou 8 chiffres).
@@ -40,7 +56,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await login({ phone, password: pwd })
+      await login({ phone: normalizeIdentifier(phone), password: pwd })
       navigate(redirectTo, { replace: true })
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Connexion impossible.")
@@ -116,9 +132,12 @@ export default function LoginPage() {
               type="text"
               placeholder=" "
               value={phone}
-              onChange={(event) => setPhone(event.target.value)}
+              onChange={(event) => setPhone(formatIdentifierInput(event.target.value))}
               required
               autoComplete="username"
+              maxLength={
+                isNumberLikeIdentifier(phone) ? ALANYA_NUMBER_FORMATTED_MAX_LENGTH : undefined
+              }
             />
             <label htmlFor="phone">Email ou numero Alanya (6 ou 8 chiffres)</label>
           </div>
