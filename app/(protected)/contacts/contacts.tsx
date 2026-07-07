@@ -7,7 +7,8 @@ import { addContactByPhone } from "../../../src/services/contacts-service"
 import { createPrivateChat } from "../../../src/services/chats-service"
 import { startOutgoingCall } from "../../../src/services/call-manager"
 import {
-  ALANYA_NUMBER_MAX_LENGTH,
+  ALANYA_NUMBER_FORMATTED_MAX_LENGTH,
+  formatAlanyaNumber,
   isValidAlanyaNumber,
   normalizeAlanyaNumber,
 } from "../../../src/lib/alanya-number"
@@ -136,11 +137,11 @@ export default function ContactsPage() {
           >
             <input
               className="input-base"
-              placeholder="Numero Alanya (6 ou 8 chiffres)"
-              value={newNumber}
-              onChange={(e) => setNewNumber(e.target.value)}
+              placeholder="Numero Alanya (ex. 12-34-56-78)"
+              value={formatAlanyaNumber(newNumber)}
+              onChange={(e) => setNewNumber(formatAlanyaNumber(e.target.value))}
               inputMode="numeric"
-              maxLength={ALANYA_NUMBER_MAX_LENGTH}
+              maxLength={ALANYA_NUMBER_FORMATTED_MAX_LENGTH}
               style={{ padding: "10px 12px", width: 200, fontSize: 13 }}
             />
             <input
@@ -195,7 +196,9 @@ export default function ContactsPage() {
 
               <div className="call-info">
                 <div className="call-name">{contact.name}</div>
-                <div className="call-detail">Numero Alanya : {contact.phone}</div>
+                <div className="call-detail">
+                  Numero Alanya : {formatAlanyaNumber(contact.phone)}
+                </div>
               </div>
 
               <div className="call-right" style={{ display: "flex", gap: 8 }}>

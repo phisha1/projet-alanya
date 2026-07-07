@@ -8,6 +8,7 @@ import {
 } from "../../../src/services/websocket-service"
 import { useAuth } from "../../../src/components/auth-provider"
 import { toInitials } from "../../../src/data/session-user"
+import { formatAlanyaNumber } from "../../../src/lib/alanya-number"
 import "./chats-page.css"
 
 function lastMsgIcon(type: ConversationMock["lastMessageType"]) {
@@ -127,7 +128,9 @@ export default function ChatsPage() {
             </div>
             <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
               Numero Alanya :{" "}
-              <strong style={{ color: "var(--accent)" }}>{sessionUser?.phone ?? "—"}</strong>
+              <strong style={{ color: "var(--accent)" }}>
+                {sessionUser?.phone ? formatAlanyaNumber(sessionUser.phone) : "—"}
+              </strong>
             </div>
           </div>
           <svg

@@ -5,7 +5,11 @@ import { CONTACT_COLORS, normalizePhone } from "../../../../src/data/contacts"
 import { useContacts } from "../../../../src/hooks/use-contacts"
 import { addContactByPhone } from "../../../../src/services/contacts-service"
 import { createGroupChat, createPrivateChat } from "../../../../src/services/chats-service"
-import { isValidAlanyaNumber } from "../../../../src/lib/alanya-number"
+import {
+  ALANYA_NUMBER_FORMATTED_MAX_LENGTH,
+  formatAlanyaNumber,
+  isValidAlanyaNumber,
+} from "../../../../src/lib/alanya-number"
 
 type Mode = "chat" | "group"
 
@@ -194,11 +198,11 @@ export function NewChatModal({ onClose }: { onClose: () => void }) {
             {showAdd && (
               <div className="ncm-add-box">
                 <input
-                  placeholder="Numero Alanya (6 ou 8 chiffres)"
-                  value={newPhone}
-                  onChange={(event) => setNewPhone(event.target.value)}
+                  placeholder="Numero Alanya (ex. 12-34-56-78)"
+                  value={formatAlanyaNumber(newPhone)}
+                  onChange={(event) => setNewPhone(formatAlanyaNumber(event.target.value))}
                   inputMode="numeric"
-                  maxLength={8}
+                  maxLength={ALANYA_NUMBER_FORMATTED_MAX_LENGTH}
                 />
                 <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
                   Recherche dans les comptes Alanya.

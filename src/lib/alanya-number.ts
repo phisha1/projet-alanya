@@ -25,3 +25,22 @@ export function isValidAlanyaNumber(value: string): boolean {
   const digits = normalizeAlanyaNumber(value)
   return ALANYA_NUMBER_LENGTHS.includes(digits.length as (typeof ALANYA_NUMBER_LENGTHS)[number])
 }
+
+/**
+ * Formate un numero pour l'affichage/saisie, avec des tirets :
+ * - 6 chiffres  -> groupes de 3 : "123-456"
+ * - 7-8 chiffres -> groupes de 2 : "12-34-56-78"
+ * Les chiffres au-dela de 8 sont ignores. Utilise pendant la frappe.
+ */
+export function formatAlanyaNumber(value: string): string {
+  const digits = normalizeAlanyaNumber(value).slice(0, ALANYA_NUMBER_MAX_LENGTH)
+  const groupSize = digits.length <= 6 ? 3 : 2
+  const groups: string[] = []
+  for (let i = 0; i < digits.length; i += groupSize) {
+    groups.push(digits.slice(i, i + groupSize))
+  }
+  return groups.join("-")
+}
+
+/** Longueur max d'un numero formate (8 chiffres + 3 tirets). */
+export const ALANYA_NUMBER_FORMATTED_MAX_LENGTH = 11
